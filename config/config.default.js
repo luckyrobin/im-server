@@ -20,7 +20,17 @@ module.exports = appInfo => {
 
   // add your user config here
   const userConfig = {
-    // myAppName: 'egg',
+    myAppName: 'im',
+    // mongoose
+    mongoose: {
+      url: 'mongodb://127.0.0.1', // 27017
+      options: {},
+    },
+    security: {
+      csrf: {
+        headerName: 'x-csrf-token',
+      },
+    },
   };
 
   return {
