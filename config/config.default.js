@@ -23,7 +23,7 @@ module.exports = appInfo => {
     myAppName: 'im',
     // mongoose
     mongoose: {
-      url: 'mongodb://127.0.0.1', // 27017
+      url: 'mongodb://127.0.0.1:27017', // connect to other docker image port: 27017
       options: {},
     },
     security: {
@@ -31,6 +31,25 @@ module.exports = appInfo => {
         headerName: 'x-csrf-token',
       },
     },
+    session: {
+      encrypt: false,
+      signed: false,
+      renew: true,
+      key: 'EGG_SESS',
+      maxAge: 24 * 3600 * 1000,
+    },
+    // redis: {
+    //   client: {
+    //     cluster: true,
+    //     nodes: [{
+    //       host: '127.0.0.1', // connect to other docker image port:
+    //       port: '6379',
+    //       family: 'user',
+    //       password: 'password',
+    //       db: 'db',
+    //     }],
+    //   },
+    // },
   };
 
   return {
