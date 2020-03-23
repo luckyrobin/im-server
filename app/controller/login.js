@@ -1,4 +1,4 @@
-const Controller = require('egg').Controller;
+// const Controller = require('egg').Controller;
 const HttpController = require('./base/http');
 
 class LoginController extends HttpController {
