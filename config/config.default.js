@@ -23,7 +23,7 @@ module.exports = appInfo => {
     myAppName: 'im',
     // mongoose
     mongoose: {
-      url: 'mongodb://127.0.0.1:27017', // connect to other docker image port: 27017
+      url: 'mongodb://127.0.0.1:27017/im', // connect to other docker image port: 27017
       options: {},
     },
     security: {
