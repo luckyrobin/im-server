@@ -28,7 +28,8 @@ module.exports = appInfo => {
     },
     security: {
       csrf: {
-        headerName: 'x-csrf-token',
+        // headerName: 'x-csrf-token',
+        enable: false,
       },
     },
     session: {
