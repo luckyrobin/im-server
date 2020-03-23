@@ -1,33 +1,11 @@
-# im-server
+- `npm install`
 
-im server side
+- 首先启动mongo环境， 执行
 
-## QuickStart
+`docker run --name im-mongo -v /data/mongo:/data/db -d -p 27017:27017 mongo`
 
-<!-- add docs here for user -->
+- `npm run dev` 开发环境
 
-see [egg docs][egg] for more detail.
+- `npm run start` 生产环境
 
-### Development
-
-```bash
-$ npm i
-$ npm run dev
-$ open http://localhost:7001/
-```
-
-### Deploy
-
-```bash
-$ npm start
-$ npm stop
-```
-
-### npm scripts
-
-- Use `npm run lint` to check code style.
-- Use `npm test` to run unit test.
-- Use `npm run autod` to auto detect dependencies upgrade, see [autod](https://www.npmjs.com/package/autod) for more detail.
-
-
-[egg]: https://eggjs.org
+- redis 环境稍等
