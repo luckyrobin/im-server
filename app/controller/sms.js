@@ -1,6 +1,7 @@
 // const Controller = require('egg').Controller;
 const HttpController = require('./base/http');
 const Core = require('@alicloud/pop-core');
+const requestIp = require('request-ip');
 
 var client = new Core({
     accessKeyId: 'LTAI4Frk7UF5C4dupvaHfopQ',
@@ -45,6 +46,8 @@ class LoginController extends HttpController {
         const { ctx, app } = this;
         // set
         await app.redis.set('foo', 'bar');
+        const clientIp = requestIp.getClientIp(req);
+        console.log(clientIp)
         // get
         ctx.body = await app.redis.get('foo');
     }
