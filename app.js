@@ -23,7 +23,8 @@ module.exports = app => {
         // const res = await SessionUserInstance.save();
         // console.log('session存储结果', res);
 
-        console.log('====', key, value)
+        // console.log('====', key, value)
+        console.log(app);
       },
   
       async destroy(key) {
