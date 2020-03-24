@@ -28,19 +28,26 @@ function getCode() {
 class LoginController extends HttpController {
 
     async send() {
-        const { ctx } = this;
+        const { ctx, app } = this;
         const body = ctx.request.body;
+
+        const code = getCode();
 
         var params = {
             "RegionId": "cn-hangzhou",
             "PhoneNumbers": body.phone_number,
             "SignName": "黑马云聊",
             "TemplateCode": "SMS_173696221",
-            "TemplateParam": `{"code": ${getCode()}}`
+            "TemplateParam": `{"code": ${code}}`
         }
+
 
         await client.request('SendSms', params, requestOption).then((result) => {
             // console.log(JSON.stringify(result));
+            
+            app.redis.set(body.phone_number, code);
+            app.redis.expire(body.phone_number, 60 * 1000);
+
             this.success({
                 msg: '短信发送成功'
             });
@@ -60,6 +67,5 @@ class LoginController extends HttpController {
         ctx.body = await app.redis.get('foo');
     }
 }
-
 
 module.exports = LoginController;
