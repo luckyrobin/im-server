@@ -27,6 +27,7 @@ function getCode() {
 
 class LoginController extends HttpController {
 
+    // 1. phone_number
     async send() {
         const { ctx, app } = this;
         const body = ctx.request.body;
@@ -56,6 +57,25 @@ class LoginController extends HttpController {
                 msg: '短信发送失败'
             });
         })
+    }
+
+    // 1. phone_number 2.code
+    async check() {
+        const { ctx, app } = this;
+        const body = ctx.request.body;
+
+
+        const originCode = await app.redis.get(body.phone_number);
+
+        if (originCode === body.code) {
+            this.success({
+                msg: '登录成功'
+            });
+        } else {
+            this.fail({
+                msg: '验证码错误'
+            });
+        }
     }
 
     async test() {

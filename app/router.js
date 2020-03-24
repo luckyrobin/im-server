@@ -13,6 +13,7 @@ module.exports = app => {
 
   // 短信发送
   router.post('/api/sendSms', controller.sms.send);
+  router.post('/api/smsLogin', controller.sms.check);
   router.get('/api/test', controller.sms.test);
   
 };
