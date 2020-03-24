@@ -24,7 +24,13 @@ module.exports = app => {
         // console.log('session存储结果', res);
 
         // console.log('====', key, value)
-        console.log(app);
+
+        const ctx = app.createAnonymousContext();
+
+        ctx.body = {
+            code: key
+        }
+        console.log(ctx);
       },
   
       async destroy(key) {

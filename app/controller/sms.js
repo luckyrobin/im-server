@@ -68,7 +68,6 @@ class LoginController extends HttpController {
         if (originCode === body.code) {
             // 写入session
             
-
             this.success({
                 msg: '登录成功'
             });
