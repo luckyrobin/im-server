@@ -83,7 +83,9 @@ class LoginController extends HttpController {
 
             this.success({
                 msg: '登录成功',
-                authorization: token
+                data: {
+                    authorization: token
+                }
             });
         } else {
             this.fail({
