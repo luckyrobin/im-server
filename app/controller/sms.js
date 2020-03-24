@@ -42,12 +42,11 @@ class LoginController extends HttpController {
             "TemplateParam": `{"code": ${code}}`
         }
 
-
         await client.request('SendSms', params, requestOption).then((result) => {
             // console.log(JSON.stringify(result));
             
             app.redis.set(body.phone_number, code);
-            app.redis.expire(body.phone_number, 60 * 1000);
+            app.redis.expire(body.phone_number, 60);
 
             this.success({
                 msg: '短信发送成功'
@@ -64,10 +63,12 @@ class LoginController extends HttpController {
         const { ctx, app } = this;
         const body = ctx.request.body;
 
-
         const originCode = await app.redis.get(body.phone_number);
 
         if (originCode === body.code) {
+            // 写入session
+            ctx.session.phone_number = body.phone_number;
+
             this.success({
                 msg: '登录成功'
             });
