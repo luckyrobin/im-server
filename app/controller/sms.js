@@ -40,6 +40,14 @@ class LoginController extends HttpController {
           })
         
     }
+
+    async test() {
+        const { ctx, app } = this;
+        // set
+        await app.redis.set('foo', 'bar');
+        // get
+        ctx.body = await app.redis.get('foo');
+    }
 }
 
 

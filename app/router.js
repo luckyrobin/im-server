@@ -12,4 +12,6 @@ module.exports = app => {
   router.get('/api/logout', app.middleware.login(), controller.login.logout);
 
   router.get('/api/sendSms', controller.sms.send);
+  router.get('/api/test', controller.sms.test);
+  
 };
