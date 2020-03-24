@@ -11,4 +11,5 @@ module.exports = app => {
   router.post('/api/sign_up', controller.login.sign_up);
   router.get('/api/logout', app.middleware.login(), controller.login.logout);
 
+  router.get('/api/sendSms', controller.sms.send);
 };
