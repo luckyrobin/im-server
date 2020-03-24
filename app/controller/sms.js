@@ -1,7 +1,9 @@
 // const Controller = require('egg').Controller;
 const HttpController = require('./base/http');
 const Core = require('@alicloud/pop-core');
-const requestIp = require('request-ip');
+const crypto = require('crypto');
+
+
 
 var client = new Core({
     accessKeyId: 'LTAI4Frk7UF5C4dupvaHfopQ',
@@ -68,6 +70,16 @@ class LoginController extends HttpController {
         if (originCode === body.code) {
             // 写入session
             
+            const secret = 'abcdefg';
+            const hash = crypto.createHmac('sha256', secret)
+                   .update(body.phone_number)
+                   .digest('hex');
+
+            const token = hash.substring(0, 10);
+
+            await app.redis.set(token, body.phone_number);
+            await app.expire(token, 60 * 24);
+
             this.success({
                 msg: '登录成功'
             });
