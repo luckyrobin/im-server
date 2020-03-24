@@ -82,7 +82,8 @@ class LoginController extends HttpController {
             await app.redis.expire(token, 60 * 24);
 
             this.success({
-                msg: '登录成功'
+                msg: '登录成功',
+                authorization: token
             });
         } else {
             this.fail({
