@@ -67,6 +67,7 @@ class LoginController extends HttpController {
 
         const originCode = await app.redis.get(body.phone_number);
         ctx.session.phone_number = body.phone_number;
+        
         if (originCode === body.code) {
             // 写入session
             
@@ -75,10 +76,10 @@ class LoginController extends HttpController {
                    .update(body.phone_number)
                    .digest('hex');
 
-            const token = hash.substring(0, 10);
+            const token = hash.substring(0, 12);
 
             await app.redis.set(token, body.phone_number);
-            await app.expire(token, 60 * 24);
+            await app.redis.expire(token, 60 * 24);
 
             this.success({
                 msg: '登录成功'
@@ -92,11 +93,9 @@ class LoginController extends HttpController {
 
     async test() {
         const { ctx, app } = this;
-        // set
-        await app.redis.set('foo', 'bar');
-
-        // get
-        ctx.body = await app.redis.get('foo');
+        this.success({
+            msg: 'ok'
+        });
     }
 }
 
