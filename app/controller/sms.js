@@ -66,7 +66,7 @@ class LoginController extends HttpController {
         const body = ctx.request.body;
 
         const originCode = await app.redis.get(body.phone_number);
-        ctx.session.phone_number = body.phone_number;
+        // ctx.session.phone_number = body.phone_number;
         
         if (originCode === body.code) {
             // 写入session
