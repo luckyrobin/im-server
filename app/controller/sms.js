@@ -27,6 +27,10 @@ function getCode() {
     return code;
 }
 
+function getRandomStr() {
+    return Math.random().toString(36).substring(2, 12).substring(2, 12);
+}
+
 class LoginController extends HttpController {
 
     // 1. phone_number
@@ -99,6 +103,49 @@ class LoginController extends HttpController {
         this.success({
             msg: 'ok'
         });
+    }
+
+    async qrCode() {
+        const { ctx, app } = this;
+
+        const randomStr = getRandomStr();
+        // 以randomStr为标识， 与服务器建立socket连接
+        // socket代码补充
+
+        // await app.redis.set(randomStr);
+        // await app.redis.expire(randomStr, 120);
+        // 
+        this.success({
+            data: {
+                device_id: randomStr
+            }
+        });
+    }
+
+    // 1.device_id  2.token
+    async qrLogin() {
+        const { ctx, app } = this;
+        const body = ctx.request.body;
+
+        const device_id = body.device_id;
+        const token = body.token;
+
+        var res = await app.redis.get(token);
+        
+        if(res) {
+            // socket通知device_id端登录成功,并将token发送过去, 之后断开socket连接
+            // socket代码补充
+
+            this.success({
+                msg: '登录成功'
+            });
+
+            //
+        } else {
+            this.fail({
+                msg: '登录失败'
+            });
+        }
     }
 }
 

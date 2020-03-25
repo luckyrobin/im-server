@@ -14,8 +14,14 @@ module.exports = app => {
   // 短信发送
   router.post('/api/sendSms', controller.sms.send);
 
-  // 登录
+  // app登录
   router.post('/api/smsLogin', controller.sms.check);
+
+  // 二维码， app确认登录
+  router.post('/api/qrCodeLogin', controller.sms.qrLogin);
+
+  // 获取二维码 device_id
+  router.get('/api/qrCode', controller.sms.qrCode);
 
   // 测试登录态
   router.get('/api/test', app.middleware.login(),controller.sms.test);
