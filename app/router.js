@@ -32,8 +32,11 @@ module.exports = app => {
   // 录入组织结构
   router.post('/api/address_book', app.controller.addressBook.add);
 
+  // 录入 联系人
+  router.post('/api/add_user', app.controller.addressBook.addUser);
+
   // io is equivalent to io.of('/')
-  // namespace sso
+  // namespace: sso
   // route is equivalent to socket.on(eventName, callback)
   // https://github.com/eggjs/egg-socket.io/blob/master/lib/socket.io/namespace.js#L19
   io.of('/sso').route('qrlogin', app.io.controllers.sso.qrlogin);
