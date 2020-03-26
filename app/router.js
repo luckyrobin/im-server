@@ -25,5 +25,10 @@ module.exports = app => {
 
   // 测试登录态
   router.get('/api/test', app.middleware.login(),controller.sms.test);
+
+
+
+  // 用户
+  router.post('/api/user', app.controller.user.add);
   
 };
