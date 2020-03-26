@@ -8,11 +8,11 @@ module.exports = app => {
             ref: 'address_book'
         },
         child_user: [{
-            user_id: mongoose.Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'user'
         }],
         child_address: [{
-            address_id: mongoose.Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'address_book'
         }],
     }, {timestamps: {createdAt: 'create_time', updatedAt: 'update_time'}});

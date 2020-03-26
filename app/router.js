@@ -30,5 +30,5 @@ module.exports = app => {
   router.post('/api/user', app.controller.user.add);
 
   // 录入组织结构
-  router.post('/api/address_book', app.controller.address_book.add);
+  router.post('/api/address_book', app.controller.addressBook.add);
 };
