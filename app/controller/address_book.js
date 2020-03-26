@@ -1,21 +1,20 @@
 // const Controller = require('egg').Controller;
 const HttpController = require('./base/http');
 
-class UserController extends HttpController {
+class AddressController extends HttpController {
 
     async add() {
         const { ctx } = this;
         const body = ctx.request.body;
 
-        const userInstance = new ctx.model.User({
+        const modelInstance = new ctx.model.addressBook({
             name: body.name,
-            phone_number: body.phone_number
         });
 
         try {
-            const res = await userInstance.save();
+            const res = await modelInstance.save();
             this.success({
-                msg: '添加用户成功'
+                msg: '添加成功'
             });
         } catch(err) {
             this.fail({
@@ -27,4 +26,4 @@ class UserController extends HttpController {
 
 }
 
-module.exports = UserController;
+module.exports = AddressController;
