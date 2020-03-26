@@ -30,7 +30,7 @@ class AddressController extends HttpController {
         const body = ctx.request.body;
 
         try {
-            await ctx.model.AddressBook.updata({
+            await ctx.model.AddressBook.update({
                 _id: '5e7c87cf1e3dea52828583b8'
             }, {
                 $push: {
