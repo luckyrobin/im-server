@@ -49,7 +49,7 @@ module.exports = appInfo => {
       },
       namespace: {
         '/sso': {
-          connectionMiddleware: [ 'connection' ],
+          connectionMiddleware: [ 'ssoconnection' ],
         },
       },
     },
@@ -83,7 +83,7 @@ module.exports = appInfo => {
 
   // io emit cheatsheet config
   const ioConfig = {
-    emmitsheet: {
+    emitsheet: {
       SSO: 'sso',
       SSO_QRLOGIN: 'qrlogin',
     },

@@ -130,18 +130,29 @@ class LoginController extends HttpController {
         const device_id = body.device_id;
         const token = body.token;
 
-        var res = await app.redis.get(token);
-        
+        const res = await app.redis.get(token);
+        const socketId = await app.redis.get(device_id);
+
         if(res) {
             // socket通知device_id端登录成功,并将token发送过去, 之后断开socket连接
-            const socketId = await app.redis.get(device_id);
-            app.io.of('/sso').to(socketId).emit(app.config.emmitsheet.SSO_QRLOGIN, ctx.helper.parseIOMsg(app.config.emmitsheet.SSO, { token: token }));
+            app.io.of('/sso')
+            .to(socketId)
+            .emit(
+                app.config.emitsheet.SSO_QRLOGIN,
+                ctx.helper.parseIOMsg(app.config.emitsheet.SSO_QRLOGIN, { token: token }, 'success'),
+            );
             this.success({
                 msg: '登录成功'
             });
 
             //
         } else {
+            app.io.of('/sso')
+            .to(socketId)
+            .emit(
+                app.config.emitsheet.SSO_QRLOGIN,
+                ctx.helper.parseIOMsg(app.config.emitsheet.SSO_QRLOGIN, {}, 'fail'),
+            );
             this.fail({
                 msg: '登录失败'
             });

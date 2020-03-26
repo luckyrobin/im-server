@@ -1,8 +1,9 @@
 'use strict';
 
 exports.qrlogin = async function() {
-  const { socket, app } = this;
-  const message = this.args[0];
-  // save the device_id to redis
-  await app.redis.set(message.device_id, socket.id);
+  const { socket, app, helper } = this;
+  socket.emit(
+    app.config.emitsheet.SSO_QRLOGIN,
+    helper.parseIOMsg(app.config.emitsheet.SSO_QRLOGIN, 'pong', 'success')
+  );
 };
