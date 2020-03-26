@@ -4,6 +4,8 @@ module.exports = app => {
     const Schema = new mongoose.Schema({  
         name: { type: String, unique: true },
         phone_number: { type: String, unique: true },
+        sex: {type: Number},
+        email: {type: String},
         auth: {
             type: Number,
             default: 2
