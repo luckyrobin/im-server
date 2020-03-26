@@ -5,14 +5,10 @@ module.exports = () => {
         // console.log('-----------------',ctx.cookies.get('EGG_SESS', {
         //     signed: false
         // }));
-        const egg_session = ctx.cookies.get('EGG_SESS', {
-            signed: false
-        });
-        
-        if (egg_session) {
-            const result = await ctx.model.SessionUser.findOne({
-                sessionId: egg_session
-            });
+        const authorization = ctx.request.header.authorization;
+
+        if (authorization) {
+            const result = await ctx.app.redis.get(authorization);
             // console.log('result', result)
             if (result) {
                 await next();

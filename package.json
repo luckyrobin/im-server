@@ -14,7 +14,8 @@
     "egg-session": "^3.1.0",
     "egg-socket.io": "^4.1.6",
     "egg-view": "^2.1.2",
-    "egg-view-nunjucks": "^2.2.0"
+    "egg-view-nunjucks": "^2.2.0",
+    "@alicloud/pop-core": "^1.7.9"
   },
   "devDependencies": {
     "autod": "^3.0.1",
@@ -29,7 +30,7 @@
     "node": ">=10.16.0" 
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --title=egg-server-im-server",
+    "start": "egg-scripts start --daemon --title=egg-server-im-server --port 80",
     "stop": "egg-scripts stop --title=egg-server-im-server",
     "dev": "egg-bin dev --port 80",
     "debug": "egg-bin debug",
