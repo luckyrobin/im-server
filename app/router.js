@@ -33,5 +33,5 @@ module.exports = app => {
   // namespace sso
   // route is equivalent to socket.on(eventName, callback)
   // https://github.com/eggjs/egg-socket.io/blob/master/lib/socket.io/namespace.js#L19
-  io.of('/sso').local.route('pg', app.io.controllers.sso.ping);
+  io.of('/sso').route('qrlogin', app.io.controllers.sso.qrlogin);
 };

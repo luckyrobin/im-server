@@ -134,8 +134,8 @@ class LoginController extends HttpController {
         
         if(res) {
             // socket通知device_id端登录成功,并将token发送过去, 之后断开socket连接
-            // socket代码补充
-
+            const socketId = await app.redis.get(device_id);
+            app.io.of('/sso').to(socketId).emit(app.config.emmitsheet.SSO_QRLOGIN, ctx.helper.parseIOMsg(app.config.emmitsheet.SSO, { token: token }));
             this.success({
                 msg: '登录成功'
             });

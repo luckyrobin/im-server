@@ -81,8 +81,17 @@ module.exports = appInfo => {
     // },
   };
 
+  // io emit cheatsheet config
+  const ioConfig = {
+    emmitsheet: {
+      SSO: 'sso',
+      SSO_QRLOGIN: 'qrlogin',
+    },
+  };
+
   return {
     ...config,
     ...userConfig,
+    ...ioConfig,
   };
 };

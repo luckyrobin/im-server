@@ -1,6 +1,8 @@
 'use strict';
 
-exports.ping = async function() {
+exports.qrlogin = async function() {
+  const { socket, app } = this;
   const message = this.args[0];
-  await this.socket.local.emit('res', `Hi! I've got your message: ${message}`);
+  // save the device_id to redis
+  await app.redis.set(message.device_id, socket.id);
 };
