@@ -1,5 +1,6 @@
 // const Controller = require('egg').Controller;
 const HttpController = require('./base/http');
+const mongoose = require('mongoose');
 
 class AddressController extends HttpController {
 
@@ -7,7 +8,7 @@ class AddressController extends HttpController {
         const { ctx } = this;
         const body = ctx.request.body;
 
-        const modelInstance = new ctx.model.addressBook({
+        const modelInstance = new ctx.model.AddressBook({
             name: body.name,
         });
 
@@ -16,7 +17,7 @@ class AddressController extends HttpController {
             this.success({
                 msg: '添加成功'
             });
-        } catch(err) {
+        } catch (err) {
             this.fail({
                 msg: '添加失败'
             });
@@ -24,6 +25,25 @@ class AddressController extends HttpController {
         }
     }
 
+    async addUser() {
+        const { ctx } = this;
+        const body = ctx.request.body;
+
+        try {
+            await ctx.model.AddressBook.updata({
+                _id: '5e7c87cf1e3dea52828583b8'
+            }, {
+                $push: {
+                    child_user: '5e7c87cf1e3dea52828583b8'
+                }
+            })
+
+            this.success();
+        } catch(err) {
+            console.log(err);
+            this.fail()
+        }
+    }
 }
 
 module.exports = AddressController;
