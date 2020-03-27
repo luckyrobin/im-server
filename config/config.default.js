@@ -41,7 +41,7 @@ module.exports = appInfo => {
         enable: false,
       },
     },
-    nunjucks = {
+    nunjucks : {
       cache: false
     },
 
