@@ -34,12 +34,7 @@ module.exports = appInfo => {
         db: 0,
       },
     },
-    view = {
-      defaultViewEngine: 'nunjucks',
-      mapping: {
-        '.html': 'nunjucks',
-      },
-    },
+
     security: {
       csrf: {
         // headerName: 'x-csrf-token',
