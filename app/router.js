@@ -4,8 +4,7 @@
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  const { router, controller } = app;
-  // router.get('/', controller.home.index);
+  const { router, controller, io } = app;
 
   router.post('/api/login', controller.login.login);
   router.post('/api/sign_up', controller.login.sign_up);
@@ -24,16 +23,24 @@ module.exports = app => {
   router.get('/api/qrCode', controller.sms.qrCode);
 
   // 测试登录态
-  router.get('/api/test', app.middleware.login(),controller.sms.test);
+  router.get('/api/test', app.middleware.login(), controller.sms.test);
 
   // 用户
   router.post('/api/user', app.controller.user.add);
 
   // 录入组织结构
   router.post('/api/address_book', app.controller.addressBook.add);
-  
+
   // 录入 联系人
   router.post('/api/add_user', app.controller.addressBook.addUser);
 
+<<<<<<< HEAD
   router.get('*', controller.render.index);
+=======
+  // io is equivalent to io.of('/')
+  // namespace: sso
+  // route is equivalent to socket.on(eventName, callback)
+  // https://github.com/eggjs/egg-socket.io/blob/master/lib/socket.io/namespace.js#L19
+  io.of('/sso').route('qrlogin', app.io.controllers.sso.qrlogin);
+>>>>>>> d5da314426fd1ef12bbb10966b43bcf28adecbf1
 };

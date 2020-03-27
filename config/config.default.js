@@ -50,12 +50,32 @@ module.exports = appInfo => {
       cache: false
     },
 
+    io: {
+      // io like server
+      // init options see that, options use io.attach to server
+      // https://socket.io/docs/server-api/#Server
+      init: {
+        path: '/ws',
+      },
+      namespace: {
+        '/sso': {
+          connectionMiddleware: [ 'ssoconnection' ],
+        },
+      },
+    },
     session: {
       encrypt: false,
       signed: false,
       renew: true,
       key: 'EGG_SESS',
       maxAge: 24 * 3600 * 1000,
+    },
+    view: {
+      defaultViewEngine: 'nunjucks',
+      mapping: {
+        '.html': 'nunjucks',
+      },
+      cache: false,
     },
     // redis: {
     //   client: {
@@ -71,8 +91,17 @@ module.exports = appInfo => {
     // },
   };
 
+  // io emit cheatsheet config
+  const ioConfig = {
+    emitsheet: {
+      SSO: 'sso',
+      SSO_QRLOGIN: 'qrlogin',
+    },
+  };
+
   return {
     ...config,
     ...userConfig,
+    ...ioConfig,
   };
 };
