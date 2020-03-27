@@ -5,7 +5,7 @@
  */
 module.exports = app => {
   const { router, controller } = app;
-  router.get('/', controller.home.index);
+  // router.get('/', controller.home.index);
 
   router.post('/api/login', controller.login.login);
   router.post('/api/sign_up', controller.login.sign_up);
@@ -34,4 +34,6 @@ module.exports = app => {
   
   // 录入 联系人
   router.post('/api/add_user', app.controller.addressBook.addUser);
+
+  router.get('*', controller.render.index);
 };
