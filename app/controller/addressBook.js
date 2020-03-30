@@ -28,15 +28,25 @@ class AddressController extends HttpController {
     async addUser() {
         const { ctx } = this;
         const body = ctx.request.body;
-
+        
         try {
-            await ctx.model.AddressBook.update({
-                _id: '5e7c87cf1e3dea52828583b8'
-            }, {
-                $push: {
-                    child_user: '5e7c87cf1e3dea52828583b8'
-                }
-            })
+
+            const userInstance = new ctx.model.User({
+                name: body.name,
+                phone_number: body.phone_number,
+                sex: 1,
+                email: 'aaaa@aaa.com'
+            });
+
+            const res = await userInstance.save();
+            console.log('res', res);
+            // await ctx.model.AddressBook.update({
+            //     _id: '5e7c87cf1e3dea52828583b8'
+            // }, {
+            //     $push: {
+            //         child_user: '5e7c87cf1e3dea52828583b8'
+            //     }
+            // })
 
             this.success();
         } catch(err) {
@@ -44,6 +54,8 @@ class AddressController extends HttpController {
             this.fail()
         }
     }
+
+    
 }
 
 module.exports = AddressController;
