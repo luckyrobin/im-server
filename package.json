@@ -32,7 +32,7 @@
   "scripts": {
     "start": "egg-scripts start --daemon --title=egg-server-im-server --port 80",
     "stop": "egg-scripts stop --title=egg-server-im-server",
-    "dev": "egg-bin dev --port 80",
+    "dev": "egg-bin dev",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",

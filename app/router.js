@@ -34,7 +34,8 @@ module.exports = app => {
   // 录入 联系人
   router.post('/api/add_user', app.controller.addressBook.addUser);
 
-
+  // 查询通讯录
+  router.get('/api/address_book', app.controller.addressBook.getAddress);
   // io is equivalent to io.of('/')
   // namespace: sso
   // route is equivalent to socket.on(eventName, callback)

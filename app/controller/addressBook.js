@@ -11,12 +11,31 @@ class AddressController extends HttpController {
         const modelInstance = new ctx.model.AddressBook({
             name: body.name,
         });
+//Copy from NoSQLBooster for MongoDB free edition. This message does not appear if you are using a registered version.
 
         try {
-            const res = await modelInstance.save();
-            this.success({
-                msg: '添加成功'
-            });
+            if (body.parent) {
+                const res = await modelInstance.save();
+                await ctx.model.AddressBook.update({
+                    _id: body.parent,
+                }, {
+                        $push: {
+                            child_address: res._id
+                        }
+                    });
+
+                this.success({
+                    msg: '子级部门添加成功',
+                    data: res
+                });
+
+            } else {
+                const res = await modelInstance.save();
+                this.success({
+                    msg: '顶级部门添加成功',
+                    data: res
+                });
+            }
         } catch (err) {
             this.fail({
                 msg: '添加失败'
@@ -24,11 +43,12 @@ class AddressController extends HttpController {
             console.log(err)
         }
     }
+//Copy from NoSQLBooster for MongoDB free edition. This message does not appear if you are using a registered version.
 
     async addUser() {
         const { ctx } = this;
         const body = ctx.request.body;
-        
+
         try {
 
             const userInstance = new ctx.model.User({
@@ -40,22 +60,39 @@ class AddressController extends HttpController {
 
             const res = await userInstance.save();
             console.log('res', res);
-            // await ctx.model.AddressBook.update({
-            //     _id: '5e7c87cf1e3dea52828583b8'
-            // }, {
-            //     $push: {
-            //         child_user: '5e7c87cf1e3dea52828583b8'
-            //     }
-            // })
+            await ctx.model.AddressBook.update({
+                _id: body.parent
+            }, {
+                $push: {
+                    child_user: res._id
+                }
+            })
 
             this.success();
-        } catch(err) {
+        } catch (err) {
             console.log(err);
             this.fail()
         }
     }
 
-    
+    async getAddress() {
+        const { ctx } = this;
+        // console.log('======================',ctx.model.AddressBook.find)
+        const res = await ctx.model.AddressBook.findOne({
+            name: '武汉'
+        }).populate({
+            path: 'child_address',
+            select: {
+                name: 1,
+                child_address: 1,
+                child_user: 1
+            }
+        });
+
+        this.success({
+            data: res
+        })
+    }
 }
 
 module.exports = AddressController;
