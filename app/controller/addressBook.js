@@ -1,6 +1,5 @@
 // const Controller = require('egg').Controller;
 const HttpController = require('./base/http');
-const mongoose = require('mongoose');
 
 class AddressController extends HttpController {
 
@@ -74,19 +73,13 @@ class AddressController extends HttpController {
             this.fail()
         }
     }
+//Copy from NoSQLBooster for MongoDB free edition. This message does not appear if you are using a registered version.
 
     async getAddress() {
         const { ctx } = this;
         // console.log('======================',ctx.model.AddressBook.find)
         const res = await ctx.model.AddressBook.findOne({
-            name: '武汉'
-        }).populate({
-            path: 'child_address',
-            select: {
-                name: 1,
-                child_address: 1,
-                child_user: 1
-            }
+            _id: '5e84a7bc6cc3d42f120c0147'
         });
 
         this.success({
