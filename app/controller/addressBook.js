@@ -49,23 +49,22 @@ class AddressController extends HttpController {
         const body = ctx.request.body;
 
         try {
-
             const userInstance = new ctx.model.User({
                 name: body.name,
                 phone_number: body.phone_number,
-                sex: 1,
-                email: 'aaaa@aaa.com'
+                sex: body.sex,
+                email: body.email
             });
 
             const res = await userInstance.save();
-            console.log('res', res);
+            // console.log('res', res);
             await ctx.model.AddressBook.update({
                 _id: body.parent
             }, {
                 $push: {
                     child_user: res._id
                 }
-            })
+            });
 
             this.success();
         } catch (err) {
