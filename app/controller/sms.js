@@ -52,7 +52,7 @@ class LoginController extends HttpController {
             // console.log(JSON.stringify(result));
             
             app.redis.set(body.phone_number, code);
-            app.redis.expire(body.phone_number, 60);
+            app.redis.expire(body.phone_number, 600);
 
             this.success({
                 msg: '短信发送成功'
@@ -83,7 +83,7 @@ class LoginController extends HttpController {
             const token = hash.substring(0, 12);
 
             await app.redis.set(token, body.phone_number);
-            await app.redis.expire(token, 60 * 24);
+            await app.redis.expire(token, 60 * 1000);
 
             this.success({
                 msg: '登录成功',

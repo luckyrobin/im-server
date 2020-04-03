@@ -10,6 +10,11 @@ module.exports = app => {
             type: Number,
             default: 2
         },  // 1管理员  2 普通用户
+        avatar: String,
+        parent: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'address_book'
+        }
     }, {timestamps: {createdAt: 'create_time', updatedAt: 'update_time'}});
     
     //创建model类, ctx上面可以访问到 model类， 业务里面会经常调用 这个类的方法进行增删改查

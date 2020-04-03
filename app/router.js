@@ -26,16 +26,21 @@ module.exports = app => {
   router.get('/api/test', app.middleware.login(), controller.sms.test);
 
   // 用户
-  router.post('/api/user', app.controller.user.add);
+  // router.post('/api/user', app.controller.user.add);
 
-  // 录入组织结构
-  router.post('/api/address_book', app.controller.addressBook.add);
+  // 通讯录管理
+  router.resources('/api/address', app.controller.addressBook);
 
   // 录入 联系人
-  router.post('/api/add_user', app.controller.addressBook.addUser);
+  router.resources('/api/user', app.controller.user);
+  // 头像设置
+  router.post('/api/setAvatar', app.controller.user.setAvatar);
+  // router.post('/api/add_user', app.controller.addressBook.addUser);
+  // router.put('/api/update_user', app.controller.addressBook.updateUser);
+  // router.delete('/api/delete_user', app.controller.addressBook.deleteUser);
 
-  // 查询通讯录
-  router.get('/api/address_book', app.controller.addressBook.getAddress);
+  // // 查询通讯录
+  // router.get('/api/address_book', app.controller.addressBook.getAddress);
   // io is equivalent to io.of('/')
   // namespace: sso
   // route is equivalent to socket.on(eventName, callback)

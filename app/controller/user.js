@@ -1,30 +1,124 @@
 // const Controller = require('egg').Controller;
 const HttpController = require('./base/http');
+const OSS = require('ali-oss');
+const sendToWormhole = require('stream-wormhole');
+const path = require('path');
 
 class UserController extends HttpController {
 
-    async add() {
+    async create() {
         const { ctx } = this;
         const body = ctx.request.body;
 
-        const userInstance = new ctx.model.User({
-            name: body.name,
-            phone_number: body.phone_number
-        });
-
         try {
-            const res = await userInstance.save();
-            this.success({
-                msg: '添加用户成功'
+            const res = await this.service.user.add({
+                name: body.name,
+                phone_number: body.phone_number,
+                sex: body.sex,
+                email: body.email,
+                parent: body.parent
             });
-        } catch(err) {
+
+            this.success({
+                data: res
+            });
+        } catch (err) {
             this.fail({
                 msg: '添加失败'
             });
-            console.log(err)
         }
     }
 
+    async update() {
+        const { ctx, service } = this;
+        const body = ctx.request.body;
+        const id = ctx.params.id;
+
+        try {
+            const res = await service.user.update({
+                _id: id
+            }, {
+                    ...body
+                });
+
+            this.success({
+                msg: '修改成功',
+                data: res
+            });
+            //Copy from NoSQLBooster for MongoDB free edition. This message does not appear if you are using a registered version.
+
+        } catch (err) {
+            this.fail({
+                data: err
+            })
+        }
+    }
+
+    async destroy() {
+        const { ctx } = this;
+        const id = ctx.params.id;
+
+        try {
+            const res = await ctx.model.User.findOneAndRemove({
+                _id: id,
+            });
+
+            const res2 = await ctx.model.AddressBook.update({
+                _id: res.parent
+            }, {
+                    $pull: {
+                        child_user: body.user_id
+                    }
+                });
+
+            this.success({
+                data: res2,
+            });
+        } catch (err) {
+            this.fail({
+                data: err
+            });
+        }
+    }
+
+    // 头像设置
+    async setAvatar() {
+        const userData = await this.service.user.getUser();
+        console.log(userData)
+        let client = new OSS({
+            accessKeyId: 'LTAI4Fdg3EUT6ui43RDQhaUT',
+            accessKeySecret: 'RU7fdReSzGp64kxDnqvNtCP871Ngcm',
+            bucket: 'wh-qd-group',
+            // region: 'oss-cn-hangzhou',
+            endpoint: 'oss-cn-zhangjiakou.aliyuncs.com'
+        });
+
+        const stream = await this.ctx.getFileStream();
+        const imgName = `avatar/${userData.name}_${new Date().getTime()}_${path.basename(stream.filename)}`;
+        try {
+            // console.log(this.ctx.request.files[0])
+            
+            // console.log(stream.filename)
+            let result = await client.put(imgName, stream);
+
+            this.service.user.update({
+                _id: userData._id
+            }, {
+                avatar: imgName
+            });
+
+            this.success({
+                data: result
+            })
+        } catch(err) {
+            // console.log(err)
+            await sendToWormhole(stream);
+
+            this.fail({
+                data: err
+            })
+        }
+    }
 }
 
 module.exports = UserController;
