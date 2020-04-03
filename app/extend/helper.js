@@ -15,4 +15,13 @@ module.exports = {
       },
     };
   },
+  lazyCloseSocket(socket, log) {
+    const { logger } = this.app;
+    logger.debug(log);
+    setTimeout(() => {
+      if (socket && socket.connected) {
+        socket.disconnect(true);
+      }
+    }, 300);
+  },
 };
