@@ -3,6 +3,7 @@ const HttpController = require('./base/http');
 const OSS = require('ali-oss');
 const sendToWormhole = require('stream-wormhole');
 const path = require('path');
+const fs = require('fs');
 
 class UserController extends HttpController {
 
@@ -84,7 +85,7 @@ class UserController extends HttpController {
     // 头像设置
     async setAvatar() {
         const userData = await this.service.user.getUser();
-        console.log(userData)
+        // console.log(userData)
         let client = new OSS({
             accessKeyId: 'LTAI4Fdg3EUT6ui43RDQhaUT',
             accessKeySecret: 'RU7fdReSzGp64kxDnqvNtCP871Ngcm',
@@ -97,20 +98,20 @@ class UserController extends HttpController {
         const imgName = `avatar/${userData.name}_${new Date().getTime()}_${path.basename(stream.filename)}`;
         try {
             // console.log(this.ctx.request.files[0])
-            
+
             // console.log(stream.filename)
             let result = await client.put(imgName, stream);
 
             this.service.user.update({
                 _id: userData._id
             }, {
-                avatar: imgName
-            });
+                    avatar: imgName
+                });
 
             this.success({
                 data: result
             })
-        } catch(err) {
+        } catch (err) {
             // console.log(err)
             await sendToWormhole(stream);
 
@@ -118,6 +119,44 @@ class UserController extends HttpController {
                 data: err
             })
         }
+    }
+
+    async getAvatar() {
+        const { ctx } = this;
+
+        console.log(ctx.params.id);
+        const userData = await this.service.user.getUser();
+
+        let client = new OSS({
+            accessKeyId: 'LTAI4Fdg3EUT6ui43RDQhaUT',
+            accessKeySecret: 'RU7fdReSzGp64kxDnqvNtCP871Ngcm',
+            bucket: 'wh-qd-group',
+            // region: 'oss-cn-hangzhou',
+            endpoint: 'oss-cn-zhangjiakou.aliyuncs.com'
+        });
+
+        const avatarUrl = userData.avatar;
+
+        if (avatarUrl) {
+            // console.log(avatarUrl)
+            let resultStream = await client.signatureUrl(avatarUrl, {expires: 3600});
+            // console.log('==========', resultStream)
+            
+            this.success({
+                data: {
+                    img_url: resultStream
+                }
+            });
+
+        } else {
+            this.fail({
+                msg: '未上传头像'
+            });
+        }
+
+        // this.success({
+        //     data: ctx.params.id
+        // })
     }
 }
 

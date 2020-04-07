@@ -32,10 +32,11 @@ class AddressController extends HttpController {
         }
     }
 
-    async show() {
+    async index() {
         const { ctx } = this;
+        console.log('xxxxxxxx')
         const res = await ctx.model.AddressBook.findOne({
-            _id: ctx.params.id
+            name: '武汉'
         });
 
         this.success({

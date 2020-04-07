@@ -34,18 +34,14 @@ module.exports = app => {
   // 录入 联系人
   router.resources('/api/user', app.controller.user);
   // 头像设置
-  router.post('/api/setAvatar', app.controller.user.setAvatar);
-  // router.post('/api/add_user', app.controller.addressBook.addUser);
-  // router.put('/api/update_user', app.controller.addressBook.updateUser);
-  // router.delete('/api/delete_user', app.controller.addressBook.deleteUser);
-
-  // // 查询通讯录
-  // router.get('/api/address_book', app.controller.addressBook.getAddress);
-  // io is equivalent to io.of('/')
-  // namespace: sso
+  router.post('/api/avatar', app.controller.user.setAvatar);
+  router.get('/api/avatar', app.controller.user.getAvatar);
   // route is equivalent to socket.on(eventName, callback)
   // https://github.com/eggjs/egg-socket.io/blob/master/lib/socket.io/namespace.js#L19
-  io.of('/sso').route('qrlogin', app.io.controllers.sso.qrlogin);
+  io.of('/sso').route('qrlogin', app.io.controller.sso.qrlogin);
+  // io.of('/');
+
+  // io.of('/chat').route('test', app.io.controller.sso.test);
 
   router.get('*', controller.render.index);
 };
