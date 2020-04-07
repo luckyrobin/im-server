@@ -35,12 +35,43 @@ class AddressController extends HttpController {
     async index() {
         const { ctx } = this;
         console.log('xxxxxxxx')
-        const res = await ctx.model.AddressBook.find({});
+        const res = await ctx.model.AddressBook.find({
+            parent: {
+                $exists: false
+            }
+        });
 
         this.success({
             data: res
         });
     }
+
+    async search() {
+        const { ctx } = this;
+        console.log('xxxxxxxx')
+        const body = ctx.request.body;
+        
+        const userRes = await ctx.model.User.find({
+            name: {
+                $regex: body.search
+            }
+        });
+
+        const addressRes = await ctx.model.AddressBook.find({
+            name: {
+                $regex: body.search
+            }
+        });
+
+        this.success({
+            data: {
+                user: userRes,
+                address: addressRes
+            }
+        });
+    }
+
+
 }
 
 module.exports = AddressController;

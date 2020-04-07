@@ -30,9 +30,12 @@ module.exports = app => {
 
   // 通讯录管理
   router.resources('/api/address', app.controller.addressBook);
+  // 通讯录模糊查询
+  router.post('/api/address_search', app.controller.addressBook.search);
 
   // 录入 联系人
   router.resources('/api/user', app.controller.user);
+  router.get('/api/user_address', app.controller.user.getAddress);
   // 头像设置
   router.post('/api/avatar', app.controller.user.setAvatar);
   router.get('/api/avatar', app.controller.user.getAvatar);

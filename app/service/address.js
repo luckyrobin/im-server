@@ -12,6 +12,7 @@ class AddressService extends Service {
     async addChildAddress(data) {
         const modelInstance = new this.ctx.model.AddressBook({
             name: data.name,
+            parent: data.parent
         });
 
         const res = await modelInstance.save();

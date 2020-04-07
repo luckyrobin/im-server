@@ -25,7 +25,8 @@ class UserController extends HttpController {
             });
         } catch (err) {
             this.fail({
-                msg: '添加失败'
+                msg: '添加失败',
+                data: err
             });
         }
     }
@@ -158,6 +159,29 @@ class UserController extends HttpController {
         //     data: ctx.params.id
         // })
     }
+
+    async getAddress() {
+        // const authorization = this.ctx.request.header.authorization;
+        // const result = await this.ctx.app.redis.get('105a6a3b146d');
+        
+        const { ctx } = this;
+        const body = ctx.request.body;
+
+        // const userRes = ctx.model.User.find({
+        //     _id: body.user_id
+        // });
+        
+        const addrssArr = await this._handleAddress('5e8c4aae9026ca0cca4336aa', ctx);
+        console.log(addrssArr.join('-'))
+
+        this.success({
+            data: addrssArr.reverse().join('-')
+        });
+    }
+
+//Copy from NoSQLBooster for MongoDB free edition. This message does not appear if you are using a registered version.
+
+
 }
 
 module.exports = UserController;
