@@ -69,7 +69,7 @@ class UserController extends HttpController {
                 _id: res.parent
             }, {
                     $pull: {
-                        child_user: body.user_id
+                        child_user: id
                     }
                 });
 

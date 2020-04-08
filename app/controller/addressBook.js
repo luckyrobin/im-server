@@ -48,7 +48,7 @@ class AddressController extends HttpController {
 
     async search() {
         const { ctx } = this;
-        console.log('xxxxxxxx')
+        // console.log('xxxxxxxx')
         const body = ctx.request.body;
         
         const userRes = await ctx.model.User.find({
@@ -71,6 +71,54 @@ class AddressController extends HttpController {
         });
     }
 
+    async destroy() {
+        const { ctx } = this;
+        const id = ctx.params.id;
+
+        const res = await ctx.model.AddressBook.findOneAndRemove({
+            _id: id
+        });
+
+        const del_user_res = await ctx.model.User.remove({
+            address_id_arr: id
+        });
+        // // 在子集中删除
+        // const user_arr = [];
+        // const address_arr = [];
+
+        // if(res.child_address.length) {
+            
+        // }
+        
+        // 在父级中删除
+        if(res.parent) {
+            const res2 = await ctx.model.AddressBook.update({
+                _id: res.parent
+            }, {
+                $pull: {
+                    child_address: id
+                }
+            });
+        }
+
+        this.success({
+            msg: '删除成功'
+        });
+    }
+//Copy from NoSQLBooster for MongoDB free edition. This message does not appear if you are using a registered version.
+//Copy from NoSQLBooster for MongoDB free edition. This message does not appear if you are using a registered version.
+
+
+
+    async test() {
+        const res = await this.ctx.model.AddressBook.find({
+            _id: '5e8c4aae9026ca0cca4336aa'
+        });
+
+        this.success({
+            data: res
+        });
+    }
 
 }
 

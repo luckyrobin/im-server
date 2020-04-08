@@ -13,6 +13,10 @@ module.exports = app => {
         avatar: String,
         job: String,
         address_str: String,   // 部门层级
+        address_id_arr: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'address_book'
+        }],
         parent: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'address_book'

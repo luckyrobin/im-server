@@ -36,6 +36,9 @@ module.exports = app => {
   // 录入 联系人
   router.resources('/api/user', app.controller.user);
   router.get('/api/user_address', app.controller.user.getAddress);
+
+
+  router.get('/api/test1', app.controller.addressBook.test);
   // 头像设置
   router.post('/api/avatar', app.controller.user.setAvatar);
   router.get('/api/avatar', app.controller.user.getAvatar);
