@@ -35,7 +35,12 @@ module.exports = app => {
 
   // 录入 联系人
   router.resources('/api/user', app.controller.user);
-  router.get('/api/user_address', app.controller.user.getAddress);
+  router.post('/api/user_delete', app.controller.user.destroy);
+
+  // 通过部门查询user
+  router.post('/api/address_user', app.controller.user.findUser);
+  // 
+  // router.get('/api/user_address', app.controller.user.getAddress);
 
 
   router.get('/api/test1', app.controller.addressBook.test);

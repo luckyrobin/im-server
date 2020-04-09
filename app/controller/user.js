@@ -3,7 +3,7 @@ const HttpController = require('./base/http');
 const OSS = require('ali-oss');
 const sendToWormhole = require('stream-wormhole');
 const path = require('path');
-const fs = require('fs');
+
 
 class UserController extends HttpController {
 
@@ -56,20 +56,27 @@ class UserController extends HttpController {
         }
     }
 
+    // address_id   user_arr
     async destroy() {
         const { ctx } = this;
-        const id = ctx.params.id;
+        const body = ctx.request.body;
+
+        // console.log('======', body.user_arr)
 
         try {
-            const res = await ctx.model.User.findOneAndRemove({
-                _id: id,
+            const res = await ctx.model.User.remove({
+                _id: {
+                    $in: body.user_arr
+                }
             });
 
+            // console.log('======',  res)
+
             const res2 = await ctx.model.AddressBook.update({
-                _id: res.parent
+                _id: body.address_id
             }, {
                     $pull: {
-                        child_user: id
+                        child_user: body.user_arr
                     }
                 });
 
@@ -81,6 +88,37 @@ class UserController extends HttpController {
                 data: err
             });
         }
+    }
+
+    // count page address_id_arr search_name
+    async findUser() {
+        const { ctx } = this;
+        const body = ctx.request.body;
+
+
+        const userLength = await ctx.model.User.find({
+            address_id_arr: body.address_id,
+            name: {
+                $regex: body.search_name || ''
+            }
+        }).count();
+
+        const count = body.count || 20;
+        const page = body.page || 1;
+
+        const res = await ctx.model.User.find({
+            address_id_arr: body.address_id,
+            name: {
+                $regex: body.search_name || ''
+            }
+        }).skip( count * (page - 1) ).limit(body.count);
+
+        this.success({
+            data: {
+                userList: res,
+                count: userLength
+            }
+        });
     }
 
     // 头像设置
