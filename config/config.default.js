@@ -30,8 +30,8 @@ module.exports = appInfo => {
     },
     redis: {
       client: {
-        port: 6379,          // Redis port
-        host: '127.0.0.1',   // Redis host
+        port: 6379, // Redis port
+        host: '127.0.0.1', // Redis host
         password: 'auth',
         db: 0,
       },
@@ -43,8 +43,8 @@ module.exports = appInfo => {
         enable: false,
       },
     },
-    nunjucks : {
-      cache: false
+    nunjucks: {
+      cache: false,
     },
 
     io: {
@@ -53,10 +53,14 @@ module.exports = appInfo => {
       // https://socket.io/docs/server-api/#Server
       init: {
         path: '/ws',
+        origins: '*:*',
       },
       namespace: {
         '/sso': {
           connectionMiddleware: [ 'ssoconnection' ],
+        },
+        '/chat': {
+          connectionMiddleware: [ 'chatconnection' ],
         },
       },
     },
