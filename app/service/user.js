@@ -2,11 +2,28 @@ var Service = require('egg').Service;
 
 class UserService extends Service {
     async add(data) {
+        // 生成部门信息
+        // console.log(this._handleAddress)
+        const address_arr = await this._handleAddress(data.parent, this.ctx);
+
+        const address_str = address_arr.map((res) => {
+            return res.name
+        })
+            .reverse()
+            .join('-');
+
+        const address_id_arr = address_arr.map((res) => {
+            return res.address_id;
+        });
+
         const userInstance = new this.ctx.model.User({
             name: data.name,
             phone_number: data.phone_number,
             sex: data.sex,
-            email: data.email
+            email: data.email,
+            parent: data.parent,
+            address_str,
+            address_id_arr
         });
 
         const res = await userInstance.save();
@@ -34,6 +51,34 @@ class UserService extends Service {
         });
 
         return userData;
+    }
+
+    async _handleAddress(id, ctx) {
+        const arr = [];
+        await this._findAddress(id, ctx, arr);
+        return arr;
+    }
+
+    async _findAddress(id, ctx, arr) {
+        // const arr = [];
+        // console.log(arr)
+        const res = await ctx.model.AddressBook.findOne({
+            _id: id
+        });
+
+        // console.log(res);
+        arr.push({
+            name: res.name,
+            address_id: res._id
+        });
+
+        await this.ctx.model.User.finda
+        if (res.parent) {
+            // arr.push(res.name);
+            await this._findAddress(res.parent, ctx, arr);
+        }
+        // console.log(arr);
+        // return arr;
     }
 }
 

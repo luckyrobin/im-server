@@ -11,6 +11,12 @@ module.exports = app => {
             default: 2
         },  // 1管理员  2 普通用户
         avatar: String,
+        job: String,
+        address_str: String,   // 部门层级
+        address_id_arr: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'address_book'
+        }],
         parent: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'address_book'

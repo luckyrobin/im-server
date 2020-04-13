@@ -30,22 +30,29 @@ module.exports = app => {
 
   // 通讯录管理
   router.resources('/api/address', app.controller.addressBook);
+  // 通讯录模糊查询
+  router.post('/api/address_search', app.controller.addressBook.search);
 
   // 录入 联系人
   router.resources('/api/user', app.controller.user);
-  // 头像设置
-  router.post('/api/setAvatar', app.controller.user.setAvatar);
-  // router.post('/api/add_user', app.controller.addressBook.addUser);
-  // router.put('/api/update_user', app.controller.addressBook.updateUser);
-  // router.delete('/api/delete_user', app.controller.addressBook.deleteUser);
+  router.post('/api/user_delete', app.controller.user.destroy);
 
-  // // 查询通讯录
-  // router.get('/api/address_book', app.controller.addressBook.getAddress);
-  // io is equivalent to io.of('/')
-  // namespace: sso
+  // 通过部门查询user
+  router.post('/api/address_user', app.controller.user.findUser);
+  // 
+  // router.get('/api/user_address', app.controller.user.getAddress);
+
+
+  router.get('/api/test1', app.controller.addressBook.test);
+  // 头像设置
+  router.post('/api/avatar', app.controller.user.setAvatar);
+  router.get('/api/avatar', app.controller.user.getAvatar);
   // route is equivalent to socket.on(eventName, callback)
   // https://github.com/eggjs/egg-socket.io/blob/master/lib/socket.io/namespace.js#L19
-  io.of('/sso').route('qrlogin', app.io.controllers.sso.qrlogin);
+  io.of('/sso').route('qrlogin', app.io.controller.sso.qrlogin);
+  // io.of('/');
+
+  // io.of('/chat').route('test', app.io.controller.sso.test);
 
   router.get('*', controller.render.index);
 };

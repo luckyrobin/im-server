@@ -30,16 +30,32 @@ module.exports = app => {
         // console.log(schema.pre)
         // schema.add({ kkkkk: 'llllll' })
         schema.pre('find', function(next) {
-            // console.log('find!!!!!!!!!!!', docs)
+            // console.log('find!!!!!!!!!!!', next)
             this.populate('child_address child_user', 'name');
             next();
         });
 
         schema.pre('findOne', function(next) {
-            // console.log('find!!!!!!!!!!!', docs)
+            // console.log('============', next)
             this.populate('child_address child_user', 'name');
             next();
         });
+
+        schema.post('find', function(next) {
+            console.log('============', next)
+            // console.log('find!!!!!!!!!!!', next)
+            // this.populate('child_address child_user', 'name');
+            // next();
+        });
+
+        schema.post('findOne', function(next) {
+
+            console.log('!!!!!!!!!', next)
+            // console.log('============', next)
+            // this.populate('child_address child_user', 'name');
+            // next();
+        });
+        
     }
 
     Schema.plugin(plugin);

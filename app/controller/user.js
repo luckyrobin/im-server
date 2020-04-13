@@ -4,6 +4,7 @@ const OSS = require('ali-oss');
 const sendToWormhole = require('stream-wormhole');
 const path = require('path');
 
+
 class UserController extends HttpController {
 
     async create() {
@@ -24,7 +25,8 @@ class UserController extends HttpController {
             });
         } catch (err) {
             this.fail({
-                msg: '添加失败'
+                msg: '添加失败',
+                data: err
             });
         }
     }
@@ -54,20 +56,27 @@ class UserController extends HttpController {
         }
     }
 
+    // address_id   user_arr
     async destroy() {
         const { ctx } = this;
-        const id = ctx.params.id;
+        const body = ctx.request.body;
+
+        // console.log('======', body.user_arr)
 
         try {
-            const res = await ctx.model.User.findOneAndRemove({
-                _id: id,
+            const res = await ctx.model.User.remove({
+                _id: {
+                    $in: body.user_arr
+                }
             });
 
+            // console.log('======',  res)
+
             const res2 = await ctx.model.AddressBook.update({
-                _id: res.parent
+                _id: body.address_id
             }, {
                     $pull: {
-                        child_user: body.user_id
+                        child_user: body.user_arr
                     }
                 });
 
@@ -81,10 +90,41 @@ class UserController extends HttpController {
         }
     }
 
+    // count page address_id_arr search_name
+    async findUser() {
+        const { ctx } = this;
+        const body = ctx.request.body;
+
+
+        const userLength = await ctx.model.User.find({
+            address_id_arr: body.address_id,
+            name: {
+                $regex: body.search_name || ''
+            }
+        }).count();
+
+        const count = body.count || 20;
+        const page = body.page || 1;
+
+        const res = await ctx.model.User.find({
+            address_id_arr: body.address_id,
+            name: {
+                $regex: body.search_name || ''
+            }
+        }).skip( count * (page - 1) ).limit(body.count);
+
+        this.success({
+            data: {
+                userList: res,
+                count: userLength
+            }
+        });
+    }
+
     // 头像设置
     async setAvatar() {
         const userData = await this.service.user.getUser();
-        console.log(userData)
+        // console.log(userData)
         let client = new OSS({
             accessKeyId: 'LTAI4Fdg3EUT6ui43RDQhaUT',
             accessKeySecret: 'RU7fdReSzGp64kxDnqvNtCP871Ngcm',
@@ -97,20 +137,20 @@ class UserController extends HttpController {
         const imgName = `avatar/${userData.name}_${new Date().getTime()}_${path.basename(stream.filename)}`;
         try {
             // console.log(this.ctx.request.files[0])
-            
+
             // console.log(stream.filename)
             let result = await client.put(imgName, stream);
 
             this.service.user.update({
                 _id: userData._id
             }, {
-                avatar: imgName
-            });
+                    avatar: imgName
+                });
 
             this.success({
                 data: result
             })
-        } catch(err) {
+        } catch (err) {
             // console.log(err)
             await sendToWormhole(stream);
 
@@ -119,6 +159,67 @@ class UserController extends HttpController {
             })
         }
     }
+
+    async getAvatar() {
+        const { ctx } = this;
+
+        console.log(ctx.params.id);
+        const userData = await this.service.user.getUser();
+
+        let client = new OSS({
+            accessKeyId: 'LTAI4Fdg3EUT6ui43RDQhaUT',
+            accessKeySecret: 'RU7fdReSzGp64kxDnqvNtCP871Ngcm',
+            bucket: 'wh-qd-group',
+            // region: 'oss-cn-hangzhou',
+            endpoint: 'oss-cn-zhangjiakou.aliyuncs.com'
+        });
+
+        const avatarUrl = userData.avatar;
+
+        if (avatarUrl) {
+            // console.log(avatarUrl)
+            let resultStream = await client.signatureUrl(avatarUrl, {expires: 3600});
+            // console.log('==========', resultStream)
+            
+            this.success({
+                data: {
+                    img_url: resultStream
+                }
+            });
+
+        } else {
+            this.fail({
+                msg: '未上传头像'
+            });
+        }
+
+        // this.success({
+        //     data: ctx.params.id
+        // })
+    }
+
+    async getAddress() {
+        // const authorization = this.ctx.request.header.authorization;
+        // const result = await this.ctx.app.redis.get('105a6a3b146d');
+        
+        const { ctx } = this;
+        const body = ctx.request.body;
+
+        // const userRes = ctx.model.User.find({
+        //     _id: body.user_id
+        // });
+        
+        const addrssArr = await this._handleAddress('5e8c4aae9026ca0cca4336aa', ctx);
+        console.log(addrssArr.join('-'))
+
+        this.success({
+            data: addrssArr.reverse().join('-')
+        });
+    }
+
+//Copy from NoSQLBooster for MongoDB free edition. This message does not appear if you are using a registered version.
+
+
 }
 
 module.exports = UserController;
