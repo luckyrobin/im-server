@@ -1,5 +1,4 @@
 'use strict';
-
 /**
  * @param {Egg.Application} app - egg application
  */
@@ -47,12 +46,12 @@ module.exports = app => {
   // 头像设置
   router.post('/api/avatar', app.controller.user.setAvatar);
   router.get('/api/avatar', app.controller.user.getAvatar);
-  // route is equivalent to socket.on(eventName, callback)
-  // https://github.com/eggjs/egg-socket.io/blob/master/lib/socket.io/namespace.js#L19
-  io.of('/sso').route('qrlogin', app.io.controller.sso.qrlogin);
-  // io.of('/');
-
-  // io.of('/chat').route('test', app.io.controller.sso.test);
 
   router.get('*', controller.render.index);
+
+  // route is equivalent to socket.on(eventName, callback)
+  // https://github.com/eggjs/egg-socket.io/blob/master/lib/socket.io/namespace.js#L19
+  io.of('/sso').route(app.config.emitsheet.SSO_QRLOGIN, app.io.controller.sso.qrlogin);
+  // chat
+  io.of('/chat').route(app.config.emitsheet.CHAT_TO, app.io.controller.chat.to);
 };

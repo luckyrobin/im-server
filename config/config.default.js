@@ -97,6 +97,10 @@ module.exports = appInfo => {
     emitsheet: {
       SSO: 'sso',
       SSO_QRLOGIN: 'qrlogin',
+      CHAT: 'chat',
+      CHAT_TO: 'to',
+      CHAT_ONLINE: 'online',
+      CHAT_MESSAGE: 'message_s',
     },
   };
 
