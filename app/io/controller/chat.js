@@ -6,11 +6,13 @@ class ChatController extends Controller {
   async to() {
     const { helper, app, args, service, socket } = this.ctx;
     const message = args[0];
+    // escape the dataConent
+    const escapeMessage = { ...message, ...{ dataContent: helper.escapeString(message.dataContent) } };
+    const toSocketId = await service.io.client.get(escapeMessage.to);
 
-    const toSocketId = await service.io.client.get(message.to);
     socket.to(toSocketId).emit(
       app.config.emitsheet.CHAT_MESSAGE,
-      helper.parseIOMsg(app.config.emitsheet.CHAT_MESSAGE, { ...message }, 'success')
+      helper.parseIOMsg(app.config.emitsheet.CHAT_MESSAGE, { ...escapeMessage }, 'success')
     );
   }
 }
