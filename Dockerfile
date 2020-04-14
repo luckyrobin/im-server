@@ -1,15 +1,9 @@
-FROM node:10
+FROM node:slim
 
-# Create app directory
-ADD . /im-server
-WORKDIR /im-server
+COPY . /project
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY package*.json ./
-RUN npm install
-
-# Bundle app source
+WORKDIR /project
 
 EXPOSE 7001
+
+ENTRYPOINT npm run start

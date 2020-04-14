@@ -7,7 +7,7 @@ class AddressController extends HttpController {
     async create() {
         const { ctx, service } = this;
         const body = ctx.request.body;
-        console.log(body)
+        // console.log(body)
         try{
             let res;
             if(body.parent) {
@@ -26,6 +26,7 @@ class AddressController extends HttpController {
                 data: res,
             });
         } catch(err) {
+            console.log(err);
             this.fail({
                 data: err
             });
@@ -69,6 +70,30 @@ class AddressController extends HttpController {
                 address: addressRes
             }
         });
+    }
+
+    async update() {
+        const { ctx, service } = this;
+        const body = ctx.request.body;
+        const id = ctx.params.id;
+        console.log('-----------')
+        try {
+
+            const res = await ctx.model.AddressBook.update({
+                _id: id
+            }, {
+                ...body
+            });
+
+            this.success({
+                data: res
+            });
+
+        } catch(err) {
+            this.fail({
+                data: err
+            });
+        }
     }
 
     async destroy() {

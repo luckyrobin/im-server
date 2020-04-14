@@ -25,13 +25,13 @@ module.exports = appInfo => {
     myAppName: 'im',
     // mongoose
     mongoose: {
-      url: 'mongodb://127.0.0.1:27017/im', // connect to other docker image port: 27017
+      url: 'mongodb://localhost:27017/im', // connect to other docker image port: 27017
       options: {},
     },
     redis: {
       client: {
-        port: 6379, // Redis port
-        host: '127.0.0.1', // Redis host
+        port: 6379,          // Redis port
+        host: 'localhost',   // Redis host
         password: 'auth',
         db: 0,
       },
@@ -90,6 +90,7 @@ module.exports = appInfo => {
     //     }],
     //   },
     // },
+
   };
 
   // io emit cheatsheet config

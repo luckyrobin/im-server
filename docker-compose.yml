@@ -1,5 +1,35 @@
-# Use root/example as user/password credentials
+version: '2'
 
 services:
-  mongo:
+
+  im-server:
+    build: .
+    networks:
+      - mybridge
+    ports:
+      - "7001:7001"
+
+  redis-im:
+    image: redis
+    networks: 
+      - mybridge
+    ports:
+      - "6379:6379"    
+    
+  mongo-im:
     image: mongo
+    networks:
+      - mybridge
+    ports:
+      - "27017:27017"
+  # nginx:
+  #   image: nginx
+  #   networks:
+  #     - mybridge
+  #   volumes:
+  #     - ./docker-config/nginx.conf:/etc/nginx/nginx.conf
+  #   ports:
+  #     - "80:80"
+
+networks:
+  mybridge:
