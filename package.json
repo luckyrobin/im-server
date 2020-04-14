@@ -18,7 +18,6 @@
     "egg-socket.io": "^4.1.6",
     "egg-view": "^2.1.2",
     "egg-view-nunjucks": "^2.2.0",
-    "mongoose-deep-populate": "^3.1.1"
   },
   "devDependencies": {
     "autod": "^3.0.1",
