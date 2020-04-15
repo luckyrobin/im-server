@@ -5,21 +5,21 @@ const Service = require('egg').Service;
 class SSOService extends Service {
   /**
    * save the device_id to redis
-   * @param {string} deviceID
-   * @param {string} socketID
+   * @param {string} deviceId
+   * @param {string} socketId
    */
-  async cacheSocket(deviceID, socketID) {
+  async cacheSocket(deviceId, socketId) {
     const { app } = this;
-    await app.redis.set(deviceID, socketID);
+    await app.redis.set(deviceId, socketId);
   }
 
   /**
    * remove the device_id from redis
-   * @param {string} deviceID
+   * @param {string} deviceId
    */
-  async deCacheSocket(deviceID) {
+  async deCacheSocket(deviceId) {
     const { app } = this;
-    await app.redis.del(deviceID);
+    await app.redis.del(deviceId);
   }
 }
 

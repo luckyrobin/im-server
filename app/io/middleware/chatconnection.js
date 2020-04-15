@@ -3,9 +3,9 @@
 module.exports = () => {
   return async (ctx, next) => {
     const { socket, logger, service, helper } = ctx;
-    const { token } = socket.handshake.query;
-    logger.info(`[CHAT] SOCKET_ID: ${socket.id} with ${token} has connection!`);
-    logger.info(`[CHAT] now authentication the ${token}`);
+    const { token, userId } = socket.handshake.query;
+    logger.info(`[CHAT] SOCKET_ID: ${socket.id} with token: ${token} has connection!`);
+    logger.info('[CHAT] now authentication the token');
 
     const authOK = await service.io.chat.checkAuthToken(token);
 
@@ -15,8 +15,12 @@ module.exports = () => {
       return;
     }
 
+    // push user to client list
+    service.io.client.push(userId, socket);
+
     await next();
-    // execute when disconnect.
+    // pop user to client list
+    service.io.client.pop(userId);
     console.log('disconnect');
   };
 };
