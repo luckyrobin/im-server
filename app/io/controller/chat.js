@@ -10,6 +10,16 @@ class ChatController extends Controller {
     const escapeMessage = { ...message, ...{ dataContent: helper.escapeString(message.dataContent) } };
     const toSocketId = await service.io.client.get(escapeMessage.to);
 
+    // console.log('escapeMessage ========', escapeMessage);
+
+    await service.message.saveSingleMessage(escapeMessage);
+
+    await service.message.getMessageBefore({
+      from: "5e97072c1057cd5732b00b59",
+      to: "5e9709b81057cd5732b00b5e",
+      target_id: "5e9744d039dc5162d43605c9",
+      count: 2
+    });
     socket.to(toSocketId).emit(
       app.config.emitsheet.CHAT_MESSAGE,
       helper.parseIOMsg(app.config.emitsheet.CHAT_MESSAGE, { ...escapeMessage }, 'success')

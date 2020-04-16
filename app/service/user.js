@@ -53,6 +53,15 @@ class UserService extends Service {
         return userData;
     }
 
+
+    async findUser(id) {
+        const result = await this.ctx.model.User.findOne({
+            _id: id
+        });
+
+        return result;
+    }
+
     async _handleAddress(id, ctx) {
         const arr = [];
         await this._findAddress(id, ctx, arr);
