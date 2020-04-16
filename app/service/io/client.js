@@ -26,7 +26,7 @@ class clientService extends Service {
     // broadcast to all client online list
     app.io.of('/chat').emit(
       config.emitsheet.CHAT_ONLINE,
-      helper.parseIOMsg(config.emitsheet.CHAT_ONLINE, { type: 'online', clients: clientsOnline, current: userId }, 'success')
+      helper.parseIOMsg('CHAT_ONLINE', { type: 'online', clients: clientsOnline, current: userId }, 'success')
     );
   }
 
@@ -44,7 +44,7 @@ class clientService extends Service {
     // broadcast to all client online list
     app.io.of('/chat').emit(
       config.emitsheet.CHAT_ONLINE,
-      helper.parseIOMsg(config.emitsheet.CHAT_ONLINE, { type: 'offline', clients: clientsOnline, current: userId }, 'success')
+      helper.parseIOMsg('CHAT_ONLINE', { type: 'offline', clients: clientsOnline, current: userId }, 'success')
     );
   }
 

@@ -139,7 +139,7 @@ class LoginController extends HttpController {
             .to(socketId)
             .emit(
                 app.config.emitsheet.SSO_QRLOGIN,
-                ctx.helper.parseIOMsg(app.config.emitsheet.SSO_QRLOGIN, { token: token }, 'success'),
+                ctx.helper.parseIOMsg('SSO_QRLOGIN', { token: token }, 'success'),
             );
             this.success({
                 msg: '登录成功'
@@ -151,7 +151,7 @@ class LoginController extends HttpController {
             .to(socketId)
             .emit(
                 app.config.emitsheet.SSO_QRLOGIN,
-                ctx.helper.parseIOMsg(app.config.emitsheet.SSO_QRLOGIN, {}, 'fail'),
+                ctx.helper.parseIOMsg('SSO_QRLOGIN', {}, 'fail'),
             );
             this.fail({
                 msg: '登录失败'
