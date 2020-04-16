@@ -12,7 +12,7 @@ class ChatController extends Controller {
 
     socket.to(toSocketId).emit(
       app.config.emitsheet.CHAT_MESSAGE,
-      helper.parseIOMsg(app.config.emitsheet.CHAT_MESSAGE, { ...escapeMessage }, 'success')
+      helper.parseIOMsg('CHAT_MESSAGE', { ...escapeMessage }, 'success')
     );
   }
 }
