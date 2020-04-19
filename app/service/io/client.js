@@ -48,9 +48,13 @@ class clientService extends Service {
     );
   }
 
-  async get(userId) {
+  async get(...args) {
     const { redis } = this.ctx.app;
-    return await redis.hget(CLIENTLIST, userId);
+    const userId = [ ...args ];
+    if (userId.length === 1) {
+      return await redis.hget(CLIENTLIST, userId[0]);
+    }
+    return await redis.hmget(CLIENTLIST, ...userId);
   }
 
   async isOnline(userId) {

@@ -9,4 +9,3 @@ class ChatService extends Service {
 }
 
 module.exports = ChatService;
-
