@@ -97,6 +97,7 @@ module.exports = appInfo => {
   // io emit cheatsheet config
   const ioConfig = {
     emitsheet: {
+      IMERROR: 'im_error',
       SSO: 'sso',
       SSO_QRLOGIN: 'qrlogin',
       CHAT: 'chat',
@@ -106,6 +107,20 @@ module.exports = appInfo => {
       CHAT_GGETMY: 'g_getmy',
     },
     ROOMPREFIX: 'ROOM',
+    errorCode: {
+      AUTH_FAILED: {
+        code: 20001,
+        msg: 'Auth failed',
+      },
+      MISS_PARAMS: {
+        code: 20002,
+        msg: 'Parameter absent',
+      },
+      CHAT_FAILED: {
+        code: 20003,
+        msg: 'Send message failed',
+      },
+    },
   };
 
   return {

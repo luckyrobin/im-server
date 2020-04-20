@@ -6,21 +6,16 @@ class ChatController extends Controller {
   async to() {
     const { helper, app, args, service, socket } = this.ctx;
     const message = args[0];
-    // escape the dataConent
-    const escapeMessage = { ...message, ...{ dataContent: helper.escapeString(message.dataContent) } };
-    const toSocketId = await service.io.client.get(escapeMessage.to);
 
-    // console.log('escapeMessage ========', escapeMessage);
+    // typeu is identify field
+    // 1: c2c get socketId from redis
+    // 2: c2g groupId is equivalent to roomId
+    const toId = message.typeu === 1 ? await service.io.client.get(message.to) : `${app.config.ROOMPREFIX}${message.to}`;
 
-    await service.message.saveMessage(escapeMessage);
+    // escape the content
+    const escapeMessage = { ...message, ...{ content: helper.escapeString(message.content) } };
 
-    await service.message.getMessageBefore({
-      from: "5e97072c1057cd5732b00b59",
-      to: "5e9709b81057cd5732b00b5e",
-      target_id: "5e9744d039dc5162d43605c9",
-      count: 2
-    });
-    socket.to(toSocketId).emit(
+    socket.to(toId).emit(
       app.config.emitsheet.CHAT_MESSAGE,
       helper.parseIOMsg('CHAT_MESSAGE', { ...escapeMessage }, 'success')
     );

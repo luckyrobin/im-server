@@ -10,7 +10,7 @@ class clientService extends Service {
     const { logger, helper, app } = this.ctx;
     const { redis, config } = app;
     const socketId = socket.id;
-    if (await redis.hexists(CLIENTLIST, userId) === 1) {
+    if (this.isOnline(userId)) {
       const previousSocketId = await redis.hget(CLIENTLIST, userId);
       // duplicate socket
       if (previousSocketId === socketId) {
@@ -34,8 +34,9 @@ class clientService extends Service {
     const { logger, helper, app } = this.ctx;
     const { redis, config } = app;
 
-    if (await redis.hexists(CLIENTLIST, userId) === 0) {
-      logger.error(`[CHAT] client: ${userId} is pop failure`);
+    if (this.isOnline(userId)) {
+      logger.error(`[CHAT] client: ${userId} is pop failed`);
+      return;
     }
 
     await redis.hdel(CLIENTLIST, userId);

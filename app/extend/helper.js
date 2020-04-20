@@ -15,9 +15,16 @@ module.exports = {
       },
     };
   },
-  lazyCloseSocket(socket, log) {
-    const { logger } = this.app;
-    logger.debug(log);
+  emitError(socket, status, msg) {
+    const { app, logger } = this;
+    const message = msg || status.msg;
+    logger.debug(`[IMERROR] socketId: ${socket.id} code: ${status.code} msg: ${message}`);
+    socket.emit(
+      app.config.emitsheet.IMERROR,
+      this.parseIOMsg('IMERROR', null, status.code, { msg: message })
+    );
+  },
+  lazyCloseSocket(socket) {
     setTimeout(() => {
       if (socket && socket.connected) {
         socket.disconnect(true);

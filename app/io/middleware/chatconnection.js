@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = () => {
+module.exports = app => {
   return async (ctx, next) => {
     const { socket, logger, service, helper } = ctx;
     const { token, userId } = socket.handshake.query;
@@ -10,8 +10,8 @@ module.exports = () => {
     const authOK = await service.io.chat.checkAuthToken(token);
 
     if (!authOK) {
-      helper.lazyCloseSocket(socket, '[CHAT] connect failure');
-      // next(new Error('[CHAT] connect failure, token has expired'));
+      helper.emitError(socket, app.config.errorCode.AUTH_FAILED);
+      helper.lazyCloseSocket(socket);
       return;
     }
     // push user to client list
