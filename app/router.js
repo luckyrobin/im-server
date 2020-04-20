@@ -49,6 +49,9 @@ module.exports = app => {
 
   router.get('*', controller.render.index);
 
+  // group settings
+  router.post('/api/group', app.controller.group.create);
+
   // route is equivalent to socket.on(eventName, callback)
   // https://github.com/eggjs/egg-socket.io/blob/master/lib/socket.io/namespace.js#L19
   io.of('/sso').route(app.config.emitsheet.SSO_QRLOGIN, app.io.controller.sso.qrlogin);
