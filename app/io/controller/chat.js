@@ -12,7 +12,7 @@ class ChatController extends Controller {
 
     // console.log('escapeMessage ========', escapeMessage);
 
-    await service.message.saveSingleMessage(escapeMessage);
+    await service.message.saveMessage(escapeMessage);
 
     await service.message.getMessageBefore({
       from: "5e97072c1057cd5732b00b59",

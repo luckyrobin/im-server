@@ -30,8 +30,8 @@ module.exports = appInfo => {
     },
     redis: {
       client: {
-        port: 6379,          // Redis port
-        host: 'localhost',   // Redis host
+        port: 6379, // Redis port
+        host: 'localhost', // Redis host
         password: 'auth',
         db: 0,
       },
@@ -61,6 +61,7 @@ module.exports = appInfo => {
         },
         '/chat': {
           connectionMiddleware: [ 'chatconnection' ],
+          packetMiddleware: [ 'chatpacket' ],
         },
       },
     },
@@ -100,9 +101,11 @@ module.exports = appInfo => {
       SSO_QRLOGIN: 'qrlogin',
       CHAT: 'chat',
       CHAT_TO: 'to',
-      CHAT_ONLINE: 'online',
-      CHAT_MESSAGE: 'message_s',
+      CHAT_ONLINE: 'c_online',
+      CHAT_MESSAGE: 'c_message',
+      CHAT_GGETMY: 'g_getmy',
     },
+    ROOMPREFIX: 'ROOM',
   };
 
   return {

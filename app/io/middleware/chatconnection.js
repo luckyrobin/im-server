@@ -11,12 +11,14 @@ module.exports = () => {
 
     if (!authOK) {
       helper.lazyCloseSocket(socket, '[CHAT] connect failure');
-      next(new Error('[CHAT] connect failure, token has expired'));
+      // next(new Error('[CHAT] connect failure, token has expired'));
       return;
     }
-
     // push user to client list
     service.io.client.push(userId, socket);
+
+    // socket.join group
+    service.io.group.joinGroup(userId, socket);
 
     await next();
     // pop user to client list

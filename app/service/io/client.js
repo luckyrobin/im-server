@@ -10,8 +10,8 @@ class clientService extends Service {
     const { logger, helper, app } = this.ctx;
     const { redis, config } = app;
     const socketId = socket.id;
-    if (redis.hexists(CLIENTLIST, userId) === 1) {
-      const previousSocketId = redis.hget(CLIENTLIST, userId);
+    if (await redis.hexists(CLIENTLIST, userId) === 1) {
+      const previousSocketId = await redis.hget(CLIENTLIST, userId);
       // duplicate socket
       if (previousSocketId === socketId) {
         logger.info('[CHAT] socket is duplicate');
@@ -34,7 +34,7 @@ class clientService extends Service {
     const { logger, helper, app } = this.ctx;
     const { redis, config } = app;
 
-    if (redis.hexists(CLIENTLIST, userId) === 0) {
+    if (await redis.hexists(CLIENTLIST, userId) === 0) {
       logger.error(`[CHAT] client: ${userId} is pop failure`);
     }
 
@@ -48,14 +48,18 @@ class clientService extends Service {
     );
   }
 
-  async get(userId) {
+  async get(...args) {
     const { redis } = this.ctx.app;
-    return await redis.hget(CLIENTLIST, userId);
+    const userId = [ ...args ];
+    if (userId.length === 1) {
+      return await redis.hget(CLIENTLIST, userId[0]);
+    }
+    return await redis.hmget(CLIENTLIST, ...userId);
   }
 
   async isOnline(userId) {
     const { redis } = this.ctx.app;
-    return redis.hexists(CLIENTLIST, userId) === 1;
+    return await redis.hexists(CLIENTLIST, userId) === 1;
   }
 }
 
