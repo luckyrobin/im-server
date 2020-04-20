@@ -2,16 +2,16 @@ var Service = require('egg').Service;
 
 class MessageService extends Service {
 
-    // 单聊消息存储
+    // 单、群 聊消息都存储在这里
 
     // 接收参数：
     // from    用户id  Strng 
     // to      用户id  Strng
-    // content 内容    Strng 
-    // type    消息类型  1.'text' 2.'img' 3.'link'
-    // typeu   传什么存什么 number
+    // content  内容    Strng 
+    // type    消息类型 Number  1.'text' 2.'img' 3.'link'
+    // typeu   传什么存什么 Number   1. 单聊 2. 群聊
 
-    async saveSingleMessage(msg) {
+    async saveMessage(msg) {
         const { ctx } = this;
 
         const msgData = {
@@ -28,6 +28,7 @@ class MessageService extends Service {
 
         const userData = await this.service.user.findUser(msg.to);
 
+        // online 维护状态
         if (!userData.online) {  // 如果离线
             // const str = JSON.stringify(msgData);
             // console.log(this.ctx.redis)
@@ -36,13 +37,13 @@ class MessageService extends Service {
         }
     }
 
-    // 拉取离线消息
+    // 拉取离线消息  ajax
     async getOfflineMessage() {
         const { ctx } = this;
         const userData = await this.service.user.getUser();
 
         const messageIdList = await this.app.redis.lrange('inbox:5e97072c1057cd5732b00b59', 0, -1);
-        console.log(messageIdList)
+        console.log(messageIdList);
         const res = await this._getMessageByArray(messageIdList);
         // console.log(res)
 
@@ -85,7 +86,6 @@ class MessageService extends Service {
         // console.log(res)
     }
 
-
     async _getMessageByArray(arr) {
         const res = await this.ctx.model.Message.find({
             _id: arr
@@ -104,7 +104,6 @@ class MessageService extends Service {
 
         return res;
     }
-    
 }
 
 module.exports = MessageService;
