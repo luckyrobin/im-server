@@ -1,5 +1,7 @@
 'use strict';
 
+const uaParser = require('ua-parser-js');
+
 module.exports = {
   parseIOMsg(action, payload = {}, type, metadata = {}) {
     const meta = Object.assign({}, {
@@ -15,9 +17,16 @@ module.exports = {
       },
     };
   },
-  lazyCloseSocket(socket, log) {
-    const { logger } = this.app;
-    logger.debug(log);
+  emitError(socket, status, msg) {
+    const { app, logger } = this;
+    const message = msg || status.msg;
+    logger.debug(`[IMERROR] socketId: ${socket.id} code: ${status.code} msg: ${message}`);
+    socket.emit(
+      app.config.emitsheet.IMERROR,
+      this.parseIOMsg('IMERROR', null, status.code, { msg: message })
+    );
+  },
+  lazyCloseSocket(socket) {
     setTimeout(() => {
       if (socket && socket.connected) {
         socket.disconnect(true);
@@ -55,5 +64,14 @@ module.exports = {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
+  },
+  getDeviceType(ua) {
+    const DEVICES = [ 'DESKTOP', 'MOBILE' ];
+    let index = 0;
+    const parsed = uaParser(ua);
+    if (parsed.device.type === 'mobile') {
+      index = 1;
+    }
+    return DEVICES[index];
   },
 };
