@@ -42,6 +42,12 @@ module.exports = app => {
   // router.get('/api/user_address', app.controller.user.getAddress);
 
 
+  // 通知 （消息）
+  router.resources('/api/note', app.controller.note);
+  router.resources('/api/notice', app.controller.notice);
+  router.post('api/notice/upload', app.controller.notice.upload);
+
+
   router.get('/api/test1', app.controller.addressBook.test);
   // 头像设置
   router.post('/api/avatar', app.controller.user.setAvatar);
