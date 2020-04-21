@@ -6,17 +6,19 @@ const CLIENTLIST = 'clientlist';
 
 class clientService extends Service {
 
-  async push(userId, socket) {
+  async push(socket, userId, deviceType) {
     const { logger, helper, app } = this.ctx;
     const { redis, config } = app;
     const socketId = socket.id;
-    if (this.isOnline(userId)) {
+
+    if (await this.isOnline(userId)) {
       const previousSocketId = await redis.hget(CLIENTLIST, userId);
       // duplicate socket
       if (previousSocketId === socketId) {
         logger.info('[CHAT] socket is duplicate');
       } else {
-        helper.lazyCloseSocket(previousSocketId, '[CHAT] duplicate socket');
+        const previousSocket = app.io.of('/chat').sockets[previousSocketId];
+        helper.lazyCloseSocket(previousSocket);
       }
     }
 
@@ -30,15 +32,14 @@ class clientService extends Service {
     );
   }
 
-  async pop(userId) {
+  async pop(userId, deviceType) {
     const { logger, helper, app } = this.ctx;
     const { redis, config } = app;
 
-    if (this.isOnline(userId)) {
+    if (await !this.isOnline(userId)) {
       logger.error(`[CHAT] client: ${userId} is pop failed`);
       return;
     }
-
     await redis.hdel(CLIENTLIST, userId);
 
     const clientsOnline = await redis.hkeys(CLIENTLIST);

@@ -17,7 +17,8 @@
     "egg-session": "^3.1.0",
     "egg-socket.io": "^4.1.6",
     "egg-view": "^2.1.2",
-    "egg-view-nunjucks": "^2.2.0"
+    "egg-view-nunjucks": "^2.2.0",
+    "ua-parser-js": "^0.7.21"
   },
   "devDependencies": {
     "autod": "^3.0.1",

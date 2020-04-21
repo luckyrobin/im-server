@@ -1,9 +1,12 @@
 'use strict';
 
+
 module.exports = app => {
   return async (ctx, next) => {
     const { socket, logger, service, helper } = ctx;
     const { token, userId } = socket.handshake.query;
+    const deviceType = helper.getDeviceType(socket.request.headers['user-agent']);
+    console.log(deviceType);
     logger.info(`[CHAT] SOCKET_ID: ${socket.id} with token: ${token} has connection!`);
     logger.info('[CHAT] now authentication the token');
 
@@ -15,14 +18,14 @@ module.exports = app => {
       return;
     }
     // push user to client list
-    service.io.client.push(userId, socket);
+    service.io.client.push(socket, userId, deviceType);
 
     // socket.join group
-    service.io.group.joinGroup(userId, socket);
+    service.io.group.joinGroup(socket, userId);
 
     await next();
     // pop user to client list
-    service.io.client.pop(userId);
+    service.io.client.pop(userId, deviceType);
     console.log('disconnect');
   };
 };

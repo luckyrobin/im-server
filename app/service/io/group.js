@@ -4,7 +4,7 @@ const Service = require('egg').Service;
 
 class GroupService extends Service {
 
-  async joinGroup(userId, socket) {
+  async joinGroup(socket, userId) {
     const { service, app } = this.ctx;
 
     const myGroups = await service.group.findRelationalGroups(userId);

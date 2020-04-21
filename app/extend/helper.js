@@ -1,5 +1,7 @@
 'use strict';
 
+const uaParser = require('ua-parser-js');
+
 module.exports = {
   parseIOMsg(action, payload = {}, type, metadata = {}) {
     const meta = Object.assign({}, {
@@ -62,5 +64,14 @@ module.exports = {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
+  },
+  getDeviceType(ua) {
+    const DEVICES = [ 'DESKTOP', 'MOBILE' ];
+    let index = 0;
+    const parsed = uaParser(ua);
+    if (parsed.device.type === 'mobile') {
+      index = 1;
+    }
+    return DEVICES[index];
   },
 };

@@ -20,6 +20,10 @@ class ChatController extends Controller {
       helper.parseIOMsg('CHAT_MESSAGE', { ...escapeMessage }, 'success')
     );
   }
+
+  async synchronous() {
+    
+  }
 }
 
 module.exports = ChatController;

@@ -106,7 +106,6 @@ module.exports = appInfo => {
       CHAT_MESSAGE: 'c_message',
       CHAT_GGETMY: 'g_getmy',
     },
-    ROOMPREFIX: 'ROOM',
     errorCode: {
       AUTH_FAILED: {
         code: 20001,
@@ -121,6 +120,7 @@ module.exports = appInfo => {
         msg: 'Send message failed',
       },
     },
+    ROOMPREFIX: 'ROOM',
   };
 
   return {
