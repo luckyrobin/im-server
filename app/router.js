@@ -66,7 +66,7 @@ module.exports = app => {
   // router.get('/api/img', app.controller.notice.test);
 
    // 批量审批头像
-  router.resources('/api/avatar/check', app.controller.avatarCheck.check);
+  router.resources('/api/avatar/check', app.controller.avatarCheck);
 
   // route is equivalent to socket.on(eventName, callback)
   // https://github.com/eggjs/egg-socket.io/blob/master/lib/socket.io/namespace.js#L19
