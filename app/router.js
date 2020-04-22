@@ -42,11 +42,12 @@ module.exports = app => {
   // router.get('/api/user_address', app.controller.user.getAddress);
 
 
-  // 通知 （消息）
+  // 系统消息
   router.resources('/api/note', app.controller.note);
   // 系统消息批量删除
   router.post('/api/note/delete', app.controller.note.delete);
 
+  // 公告
   router.resources('/api/notice', app.controller.notice);
     // 公告 批量删除
   router.post('/api/notice/delete', app.controller.notice.delete);
@@ -64,9 +65,8 @@ module.exports = app => {
 
   // router.get('/api/img', app.controller.notice.test);
 
-
-
-
+   // 批量审批头像
+  router.resources('/api/avatar/check', app.controller.avatarCheck.check);
 
   // route is equivalent to socket.on(eventName, callback)
   // https://github.com/eggjs/egg-socket.io/blob/master/lib/socket.io/namespace.js#L19

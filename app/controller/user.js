@@ -139,19 +139,26 @@ class UserController extends HttpController {
 
             // console.log(stream.filename)
             let result = await client.put(imgName, stream);
-
+            let img_url = await client.signatureUrl(imgName, {expires: 3600 * 24 * 30});
             this.service.user.update({
                 _id: userData._id
             }, {
-                    avatar: imgName
+                    avatar: img_url
                 });
 
+            // await this.ctx.model.AvatarCheck.fin
+            const instance = new ctx.model.AvatarCheck({
+                user_id: userData._id,
+                status: 0
+            });
+            
+            await instance.save();
             this.success({
                 data: result
             })
         } catch (err) {
             // console.log(err)
-            await sendToWormhole(stream);
+            // await sendToWormhole(stream);
 
             this.fail({
                 data: err
