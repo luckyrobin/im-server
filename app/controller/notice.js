@@ -1,6 +1,7 @@
 const HttpController = require('./base/http');
 const OSS = require('ali-oss');
 const path = require('path');
+const fs = require('fs');
 
 // 通知（公告）
 class NoticeController extends HttpController {
@@ -47,7 +48,7 @@ class NoticeController extends HttpController {
         try {
             const res = await ctx.model.Notice.remove({
                 _id: {
-                    $in: body.note_arr
+                    $in: body.notice_arr
                 }
             });
 
@@ -61,6 +62,15 @@ class NoticeController extends HttpController {
         }
     }
 
+    async index() {
+        const res = await this.ctx.model.Notice.find({
+        });
+
+        this.success({
+            data: res
+        });
+    }
+
     async upload() {
         let client = new OSS({
             accessKeyId: 'LTAI4Fdg3EUT6ui43RDQhaUT',
@@ -70,16 +80,18 @@ class NoticeController extends HttpController {
             endpoint: 'oss-cn-zhangjiakou.aliyuncs.com'
         });
 
+        // 获取用户信息
+        // const userData = await this.service.user.getUser();
+
         const stream = await this.ctx.getFileStream();
-        const imgName = `avatar/${userData.name}_${new Date().getTime()}_${path.basename(stream.filename)}`;
+        // const imgName = `notice/${userData.name}_${new Date().getTime()}_${path.basename(stream.filename)}`;
+        const imgName = `notice/${new Date().getTime()}_${path.basename(stream.filename)}`;
 
         try {
             let result = await client.put(imgName, stream);
+            let img_url = await client.signatureUrl(imgName, { expires: 3600 * 24 * 30 });
             this.success({
-                data: {
-                    imgName,
-                    result
-                }
+                data: img_url
             });
         } catch (err) {
             this.fail({
@@ -87,6 +99,31 @@ class NoticeController extends HttpController {
             });
         }
     }
+
+    // 图片下载测试
+    // async test() {
+    //     const { ctx } = this;
+
+    //     let client = new OSS({
+    //         accessKeyId: 'LTAI4Fdg3EUT6ui43RDQhaUT',
+    //         accessKeySecret: 'RU7fdReSzGp64kxDnqvNtCP871Ngcm',
+    //         bucket: 'wh-qd-group',
+    //         // region: 'oss-cn-hangzhou',
+    //         endpoint: 'oss-cn-zhangjiakou.aliyuncs.com'
+    //     });
+    //     try {
+    //         let result = await client.get('desktop.jpg');
+    //         // console.log(result);
+    //         // let writeStream = fs.createWriteStream('local-file');
+    //         // result.stream.pipe(writeStream);
+
+    //         // ctx.set('Content-Type', 'application/octet-stream');
+    //         ctx.body = result.content;
+
+    //     } catch (e) {
+    //         console.log(e);
+    //     }
+    // }
 }
 
 

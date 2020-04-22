@@ -177,7 +177,7 @@ class UserController extends HttpController {
 
         if (avatarUrl) {
             // console.log(avatarUrl)
-            let resultStream = await client.signatureUrl(avatarUrl, {expires: 3600});
+            let resultStream = await client.signatureUrl(avatarUrl, {expires: 3600 * 24 * 30});
             // console.log('==========', resultStream)
             
             this.success({

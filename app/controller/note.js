@@ -22,6 +22,16 @@ class NoteController extends HttpController {
         }
     }
 
+    async index() {
+        const res = await this.ctx.model.Note.find({
+
+        });
+
+        this.success({
+            data: res
+        });
+    }
+
     async show() {
         const { ctx } = this;
         const id = ctx.params.id;
