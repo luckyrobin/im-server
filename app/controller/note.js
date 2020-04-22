@@ -36,7 +36,7 @@ class NoteController extends HttpController {
         const { ctx } = this;
         const id = ctx.params.id;
 
-        const res = await this.ctx.model.Note.find({
+        const res = await this.ctx.model.Note.findOne({
             _id: id
         });
         
