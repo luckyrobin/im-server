@@ -119,6 +119,10 @@ module.exports = appInfo => {
         code: 20003,
         msg: 'Send message failed',
       },
+      DUPLICATE_CLIENT: {
+        code: 20004,
+        msg: 'you are sign in on other device',
+      }
     },
     ROOMPREFIX: 'ROOM',
   };

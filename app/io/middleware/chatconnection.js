@@ -6,7 +6,7 @@ module.exports = app => {
     const { socket, logger, service, helper } = ctx;
     const { token, userId } = socket.handshake.query;
     const deviceType = helper.getDeviceType(socket.request.headers['user-agent']);
-    console.log(deviceType);
+
     logger.info(`[CHAT] SOCKET_ID: ${socket.id} with token: ${token} has connection!`);
     logger.info('[CHAT] now authentication the token');
 
@@ -25,7 +25,7 @@ module.exports = app => {
 
     await next();
     // pop user to client list
-    service.io.client.pop(userId, deviceType);
+    service.io.client.pop(socket, userId, deviceType);
     console.log('disconnect');
   };
 };
