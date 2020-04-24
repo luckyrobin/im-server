@@ -31,13 +31,13 @@ module.exports = app => {
         // schema.add({ kkkkk: 'llllll' })
         schema.pre('find', function(next) {
             // console.log('find!!!!!!!!!!!', next)
-            this.populate('child_address child_user', 'name');
+            this.populate('child_address child_user');
             next();
         });
 
         schema.pre('findOne', function(next) {
             // console.log('============', next)
-            this.populate('child_address child_user', 'name');
+            this.populate('child_address child_user');
             next();
         });
 
