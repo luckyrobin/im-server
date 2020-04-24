@@ -4,6 +4,15 @@ const Service = require('egg').Service;
 
 const CLIENTLIST = 'clientlist';
 
+const parseRaw = (raw, deviceType) => {
+  if (deviceType) {
+    return JSON.parse(raw)[deviceType];
+  }
+  return JSON.parse(raw);
+};
+
+const stringify2Raw = cooked => JSON.stringify(cooked);
+
 class clientService extends Service {
 
   async push(socket, userId, deviceType) {
@@ -11,18 +20,42 @@ class clientService extends Service {
     const { redis, config } = app;
     const socketId = socket.id;
 
+    // userID is existed?
     if (await this.isOnline(userId)) {
-      const previousSocketId = await redis.hget(CLIENTLIST, userId);
-      // duplicate socket
-      if (previousSocketId === socketId) {
-        logger.info('[CHAT] socket is duplicate');
-      } else {
-        const previousSocket = app.io.of('/chat').sockets[previousSocketId];
-        helper.lazyCloseSocket(previousSocket);
-      }
-    }
+      const cooked = parseRaw(await this.get(userId));
 
-    await redis.hset(CLIENTLIST, userId, socketId);
+      if (Reflect.get(cooked, deviceType)) {
+        const previousSocketId = Reflect.get(cooked, deviceType);
+        // duplicate socket
+        // else
+        // kicked out
+        if (previousSocketId === socketId) {
+          logger.info('[CHAT] socket is duplicate');
+        } else {
+          try {
+            const previousSocket = app.io.of('/chat').sockets[previousSocketId];
+            helper.emitError(previousSocket, app.config.errorCode.DUPLICATE_CLIENT);
+            helper.lazyCloseSocket(previousSocket);
+          } catch (e) {
+            logger.error('[CHAT] previousSocket is not existed');
+          }
+        }
+      }
+
+      const newCooked = {
+        ...cooked,
+        ...{
+          [deviceType]: socketId,
+        },
+      };
+
+      await redis.hset(CLIENTLIST, userId, stringify2Raw(newCooked));
+    } else {
+      const newCooked = {
+        [deviceType]: socketId,
+      };
+      await redis.hset(CLIENTLIST, userId, stringify2Raw(newCooked));
+    }
 
     const clientsOnline = await redis.hkeys(CLIENTLIST);
     // broadcast to all client online list
@@ -32,7 +65,7 @@ class clientService extends Service {
     );
   }
 
-  async pop(userId, deviceType) {
+  async pop(socket, userId, deviceType) {
     const { logger, helper, app } = this.ctx;
     const { redis, config } = app;
 
@@ -40,7 +73,27 @@ class clientService extends Service {
       logger.error(`[CHAT] client: ${userId} is pop failed`);
       return;
     }
-    await redis.hdel(CLIENTLIST, userId);
+
+    const cooked = parseRaw(await this.get(userId));
+
+    if (!Reflect.get(cooked, deviceType)) {
+      logger.error(`[CHAT] client: ${userId} is pop failed`);
+      return;
+    }
+
+    // verify that the current to be deleted
+    if (Reflect.get(cooked, deviceType) !== socket.id) {
+      logger.error('[CHAT] client: the current socket is not matching');
+      return;
+    }
+
+    Reflect.deleteProperty(cooked, deviceType);
+
+    if (Reflect.ownKeys(cooked).length) {
+      await redis.hset(CLIENTLIST, userId, stringify2Raw(cooked));
+    } else {
+      await redis.hdel(CLIENTLIST, userId);
+    }
 
     const clientsOnline = await redis.hkeys(CLIENTLIST);
     // broadcast to all client online list
@@ -62,6 +115,12 @@ class clientService extends Service {
   async isOnline(userId) {
     const { redis } = this.ctx.app;
     return await redis.hexists(CLIENTLIST, userId) === 1;
+  }
+
+  async getCooked(userId) {
+    const raw = await this.get(userId);
+    if (!raw) return 0;
+    return parseRaw(raw);
   }
 }
 
