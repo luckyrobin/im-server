@@ -42,7 +42,7 @@ module.exports = app => {
         });
 
         schema.post('find', function(next) {
-            console.log('============', next)
+            // console.log('============', next)
             // console.log('find!!!!!!!!!!!', next)
             // this.populate('child_address child_user', 'name');
             // next();
@@ -50,7 +50,7 @@ module.exports = app => {
 
         schema.post('findOne', function(next) {
 
-            console.log('!!!!!!!!!', next)
+            // console.log('!!!!!!!!!', next)
             // console.log('============', next)
             // this.populate('child_address child_user', 'name');
             // next();

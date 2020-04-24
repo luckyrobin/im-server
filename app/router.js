@@ -41,6 +41,8 @@ module.exports = app => {
   // 
   // router.get('/api/user_address', app.controller.user.getAddress);
 
+  // 备注管理
+  router.post('/api/remark', app.controller.remark.setRemark);
 
   // 系统消息
   router.resources('/api/note', app.controller.note);
@@ -58,7 +60,7 @@ module.exports = app => {
   router.get('/api/test1', app.controller.addressBook.test);
   // 头像设置
   router.post('/api/avatar', app.controller.user.setAvatar);
-  router.get('/api/avatar', app.controller.user.getAvatar);
+  // router.get('/api/avatar', app.controller.user.getAvatar);
   // group settings
   router.post('/api/group', app.controller.group.create);
 

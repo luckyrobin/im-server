@@ -4,7 +4,6 @@ const OSS = require('ali-oss');
 const sendToWormhole = require('stream-wormhole');
 const path = require('path');
 
-
 class UserController extends HttpController {
 
     async create() {
@@ -117,6 +116,13 @@ class UserController extends HttpController {
                 userList: res,
                 count: userLength
             }
+        });
+    }
+
+    async getUser() {
+        const userData = await this.service.user.getUser();
+        this.success({
+            data: userData
         });
     }
 
