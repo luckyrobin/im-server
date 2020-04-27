@@ -31,7 +31,28 @@ class GroupService extends Service {
         });
       });
     });
+  }
 
+  // leave room and broadcast to all client
+  async dissolveMembers(members, groupId) {
+    const { service, app, config, helper } = this.ctx;
+
+    members.forEach(async userId => {
+      const cooked = await service.io.client.getCooked(userId);
+
+      app.io.of('/chat').emit(
+        config.emitsheet.CHAT_GLEAVE,
+        helper.parseIOMsg('CHAT_GLEAVE', { id: groupId, isDissolve: true }, 'success')
+      );
+
+      Object.keys(cooked).forEach(deviceType => {
+        const socket = app.io.of('/chat').sockets[cooked[deviceType]];
+
+        socket.leave(`${app.config.ROOMPREFIX}${groupId}`, () => {
+          // TODO
+        });
+      });
+    });
   }
 }
 

@@ -104,7 +104,7 @@ module.exports = appInfo => {
       CHAT_TO: 'to',
       CHAT_ONLINE: 'c_online',
       CHAT_MESSAGE: 'c_message',
-      CHAT_GGETMY: 'g_getmy',
+      CHAT_GLEAVE: 'g_leave',
     },
     errorCode: {
       AUTH_FAILED: {

@@ -31,11 +31,13 @@ class GroupController extends HttpController {
   }
 
   async destroy() {
-    const { request } = this.ctx;
-    const params = request.body;
-    console.log(params);
+    const { params } = this.ctx;
     try {
-      const res = {};
+      const res = await this.service.group.delete(params.id);
+
+      // leave room and broadcast to all client
+      await this.service.io.group.aggregationMembers(res.members, res._id);
+
       this.success({
         data: {
           _id: res._id,
@@ -43,7 +45,7 @@ class GroupController extends HttpController {
       });
     } catch (error) {
       this.fail({
-        msg: '创建群组失败',
+        msg: '解散群组失败',
         data: error,
       });
     }

@@ -20,7 +20,10 @@ module.exports = app => {
       background: true,
       required: true,
     }],
-  }, { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } });
+  }, {
+    timestamps: { createdAt: 'create_time', updatedAt: 'update_time' },
+    writeConcern: { w: 'majority', wtimeout: 1000 },
+  });
 
   return mongoose.model('Group', Schema);
 };

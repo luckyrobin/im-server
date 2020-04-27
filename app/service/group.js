@@ -14,6 +14,10 @@ class GroupService extends Service {
     return await groupDocument.save();
   }
 
+  async delete(id) {
+    return await this.ctx.model.Group.findByIdAndDelete(id);
+  }
+
   async findRelationalGroups(userId) {
     // the slow query
     return await this.ctx.model.Group.find({ members: userId });
