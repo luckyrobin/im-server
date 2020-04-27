@@ -1,4 +1,6 @@
-var Service = require('egg').Service;
+'use strict';
+
+const Service = require('egg').Service;
 
 class MessageService extends Service {
 

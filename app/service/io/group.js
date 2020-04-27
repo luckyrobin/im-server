@@ -4,7 +4,7 @@ const Service = require('egg').Service;
 
 class GroupService extends Service {
 
-  async joinGroup(socket, userId) {
+  async joinMineGroup(socket, userId) {
     const { service, app } = this.ctx;
 
     const myGroups = await service.group.findRelationalGroups(userId);
@@ -14,6 +14,24 @@ class GroupService extends Service {
         // TODO
       });
     });
+  }
+
+  // create group and join room immediately
+  async aggregationMembers(members, groupId) {
+    const { service, app } = this.ctx;
+
+    members.forEach(async userId => {
+      const cooked = await service.io.client.getCooked(userId);
+
+      Object.keys(cooked).forEach(deviceType => {
+        const socket = app.io.of('/chat').sockets[cooked[deviceType]];
+
+        socket.join(`${app.config.ROOMPREFIX}${groupId}`, () => {
+          // TODO
+        });
+      });
+    });
+
   }
 }
 

@@ -122,7 +122,7 @@ module.exports = appInfo => {
       DUPLICATE_CLIENT: {
         code: 20004,
         msg: 'you are sign in on other device',
-      }
+      },
     },
     ROOMPREFIX: 'ROOM',
   };

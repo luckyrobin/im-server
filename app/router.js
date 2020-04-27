@@ -59,14 +59,16 @@ module.exports = app => {
   // 头像设置
   router.post('/api/avatar', app.controller.user.setAvatar);
   router.get('/api/avatar', app.controller.user.getAvatar);
-  // group settings
-  router.post('/api/group', app.controller.group.create);
 
 
   // router.get('/api/img', app.controller.notice.test);
 
-   // 批量审批头像
+  // 批量审批头像
   router.resources('/api/avatar/check', app.controller.avatarCheck);
+
+  // group settings
+  router.post('/api/group', app.controller.group.create);
+  router.del('/api/group/:id', app.controller.group.destroy);
 
   // route is equivalent to socket.on(eventName, callback)
   // https://github.com/eggjs/egg-socket.io/blob/master/lib/socket.io/namespace.js#L19
