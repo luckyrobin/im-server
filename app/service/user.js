@@ -44,7 +44,7 @@ class UserService extends Service {
 
     async getUser() {
         const authorization = this.ctx.request.header.authorization;
-        const result = await this.ctx.app.redis.get('105a6a3b146d');
+        const result = await this.ctx.app.redis.get(authorization);
 
         const userData = await this.ctx.model.User.findOne({
             phone_number: result
