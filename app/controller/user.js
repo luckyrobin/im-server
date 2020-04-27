@@ -4,7 +4,6 @@ const OSS = require('ali-oss');
 const sendToWormhole = require('stream-wormhole');
 const path = require('path');
 
-
 class UserController extends HttpController {
 
     async create() {
@@ -120,8 +119,21 @@ class UserController extends HttpController {
         });
     }
 
+    async getUser() {
+        // const userData = await this.service.user.getUser();
+        const id = this.ctx.params.id;
+        const res = await this.ctx.model.User.findOne({
+            _id: id
+        });
+        this.success({
+            data: res
+        });
+    }
+
     // 头像设置
     async setAvatar() {
+        const { ctx } = this;
+
         const userData = await this.service.user.getUser();
         // console.log(userData)
         let client = new OSS({
@@ -154,7 +166,7 @@ class UserController extends HttpController {
             
             await instance.save();
             this.success({
-                data: result
+                data: img_url
             })
         } catch (err) {
             // console.log(err)

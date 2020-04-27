@@ -35,12 +35,17 @@ module.exports = app => {
   // 录入 联系人
   router.resources('/api/user', app.controller.user);
   router.post('/api/user_delete', app.controller.user.destroy);
+  router.get('/api/user_info/:id', app.controller.user.getUser);
 
   // 通过部门查询user
   router.post('/api/address_user', app.controller.user.findUser);
-  // 
+
   // router.get('/api/user_address', app.controller.user.getAddress);
 
+  // 备注管理
+  router.post('/api/remark', app.controller.remark.setRemark);
+  router.get('/api/remark', app.controller.remark.list);
+  router.get('/api/remark/:id', app.controller.remark.findOne);
 
   // 系统消息
   router.resources('/api/note', app.controller.note);
@@ -49,9 +54,9 @@ module.exports = app => {
 
   // 公告
   router.resources('/api/notice', app.controller.notice);
-    // 公告 批量删除
+  // 公告 批量删除
   router.post('/api/notice/delete', app.controller.notice.delete);
-    // 公告 图片上传
+  // 公告 图片上传
   router.post('/api/notice/upload', app.controller.notice.upload);
 
 
@@ -60,7 +65,7 @@ module.exports = app => {
   router.post('/api/avatar', app.controller.user.setAvatar);
   router.get('/api/avatar', app.controller.user.getAvatar);
 
-
+  // router.get('/api/avatar', app.controller.user.getAvatar);
   // router.get('/api/img', app.controller.notice.test);
 
   // 批量审批头像
