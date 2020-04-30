@@ -1,5 +1,7 @@
+'use strict';
+
 const Controller = require('egg').Controller;
-// 如果成功 
+
 // {
 //     msg: 'success',
 //     code: 0,
@@ -22,19 +24,19 @@ class HttpController extends Controller {
     // msg 和 code这样的2个字段 在所有的请求里面都需要返回。
     // 好好理解oop
     this.ctx.body = {
-        msg: data && data.msg || 'ok',
-        code: 0,
-        data: data && data.data,
-    }
+      msg: data && data.msg || 'ok',
+      code: 0,
+      data: data && data.data,
+    };
   }
 
-  async fail(data) {  // data代表错误信息
+  async fail(data) { // data代表错误信息
     this.logger.error(data); // 错误信息存入日志
     this.ctx.body = {
-        msg: data && data.msg || 'fail',
-        code: data && data.code || 1,  // 只要不是0就是失败
-        data: data && data.data,  // 可以兼容对象和字符串
-    }
+      msg: data && data.msg || 'fail',
+      code: data && data.code || 1, // 只要不是0就是失败
+      data: data && data.data, // 可以兼容对象和字符串
+    };
   }
 }
 

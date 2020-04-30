@@ -4,10 +4,14 @@ const uaParser = require('ua-parser-js');
 
 module.exports = {
   parseIOMsg(action, payload = {}, type, metadata = {}) {
-    const meta = Object.assign({}, {
-      timestamp: Date.now(),
-    }, metadata);
-    const code = type === 'success' ? 0 : (type === 'fail' ? 1 : type);
+    const meta = Object.assign(
+      {},
+      {
+        timestamp: Date.now(),
+      },
+      metadata
+    );
+    const code = type === 'success' ? 0 : type === 'fail' ? 1 : type;
     return {
       meta,
       code,
@@ -20,7 +24,9 @@ module.exports = {
   emitError(socket, status, msg) {
     const { app, logger } = this;
     const message = msg || status.msg;
-    logger.debug(`[IMERROR] socketId: ${socket.id} code: ${status.code} msg: ${message}`);
+    logger.debug(
+      `[IMERROR] socketId: ${socket.id} code: ${status.code} msg: ${message}`
+    );
     socket.emit(
       app.config.emitsheet.IMERROR,
       this.parseIOMsg('IMERROR', null, status.code, { msg: message })
@@ -34,7 +40,9 @@ module.exports = {
     }, 300);
   },
   escapeString(string) {
-    return ('' + string).replace(/["'\\\n\r\u2028\u2029]/g, function(character) {
+    return ('' + string).replace(/["'\\\n\r\u2028\u2029]/g, function(
+      character
+    ) {
       // Escape all characters not included in SingleStringCharacters and
       // DoubleStringCharacters on
       // http://www.ecma-international.org/ecma-262/5.1/#sec-7.8.4
@@ -58,7 +66,8 @@ module.exports = {
     });
   },
   uuid(len = 10) {
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const possible =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let text = '';
     for (let i = 0; i < len; i += 1) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));

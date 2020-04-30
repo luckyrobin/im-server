@@ -10,7 +10,7 @@ module.exports = app => {
       background: true,
       required: true,
     },
-    otherid: {}
+    otherid: {},
   }, {
     timestamps: { createdAt: 'create_time', updatedAt: 'update_time' },
     writeConcern: { w: 'majority', wtimeout: 1000 },

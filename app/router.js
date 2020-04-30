@@ -62,7 +62,6 @@ module.exports = app => {
   router.get('/api/test1', app.controller.addressBook.test);
   // 头像设置
   router.post('/api/avatar', app.controller.user.setAvatar);
-<<<<<<< HEAD
   // router.get('/api/avatar', app.controller.user.getAvatar);
   // group settings
   router.post('/api/group', app.controller.group.create);
@@ -73,12 +72,7 @@ module.exports = app => {
   // 菜单权限
   router.post('/api/role/menu', app.controller.auth.setRole);
   router.get('/api/menu', app.controller.auth.getMenu);
-  
-=======
-  router.get('/api/avatar', app.controller.user.getAvatar);
 
-  // router.get('/api/avatar', app.controller.user.getAvatar);
->>>>>>> 3a649eac4652fb0913d02cf35002e5ca33837ef7
   // router.get('/api/img', app.controller.notice.test);
 
   // 批量审批头像
@@ -90,10 +84,12 @@ module.exports = app => {
 
   // route is equivalent to socket.on(eventName, callback)
   // https://github.com/eggjs/egg-socket.io/blob/master/lib/socket.io/namespace.js#L19
-  io.of('/sso').route(app.config.emitsheet.SSO_QRLOGIN, app.io.controller.sso.qrlogin);
+  io.of('/sso').route(
+    app.config.emitsheet.SSO_QRLOGIN,
+    app.io.controller.sso.qrlogin
+  );
   // chat
   io.of('/chat').route(app.config.emitsheet.CHAT_TO, app.io.controller.chat.to);
-
 
   router.get('*', controller.render.index);
 };
