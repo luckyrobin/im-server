@@ -61,7 +61,7 @@ module.exports = appInfo => {
         },
         '/chat': {
           connectionMiddleware: [ 'chatconnection' ],
-          packetMiddleware: [ 'chatpacket' ],
+          packetMiddleware: [ 'chatpacket', 'chatcache' ],
         },
       },
     },
@@ -96,6 +96,7 @@ module.exports = appInfo => {
 
   // io emit cheatsheet config
   const ioConfig = {
+    globalchannel: 'globalchannel',
     emitsheet: {
       IMERROR: 'im_error',
       SSO: 'sso',
