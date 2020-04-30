@@ -1,46 +1,17 @@
-module.exports = app => {
+'use strict';
 
-    app.sessionStore = {
-      async get(key) {
-        // const res = await app.redis.get(key);
-        // if (!res) return null;
-        // return JSON.parse(res);
-        // console.log('!!!!!!!!!!!!', key);
-        const res = await app.model.SessionUser.find({
-            sessionId: key
-        });
-        // console.log('!!!!!!!!!!!!', res);
-        return res;
-      },
-  
-      async set(key, value, maxAge) {
+const RedisSMQ = require('rsmq');
 
-        // var SessionUserInstance = new app.model.SessionUser({
-        //     user: value.user,
-        //     sessionId: key
-        // });
-        
-        // const res = await SessionUserInstance.save();
-        // console.log('session存储结果', res);
+class AppBootHook {
+  constructor(app) {
+    this.app = app;
+    app.mq = new RedisSMQ({ client: app.redis });
+  }
 
-        // console.log('====', key, value)
+  async serverDidReady() {
+    const ctx = await this.app.createAnonymousContext();
+    ctx.service.io.mq.create(this.app.config.globalchannel);
+  }
+}
 
-        const ctx = app.createAnonymousContext();
-
-        ctx.body = {
-            code: key
-        }
-        console.log(ctx);
-      },
-  
-      async destroy(key) {
-        // await app.redis.del(key);
-        // console.log('-------', key);
-        const res = await app.model.SessionUser.remove({
-            sessionId: key
-        });
-
-        console.log('session销毁结果', res);
-      },
-    };
-  };
+module.exports = AppBootHook;

@@ -39,7 +39,7 @@ module.exports = app => {
 
   // 通过部门查询user
   router.post('/api/address_user', app.controller.user.findUser);
-  // 
+
   // router.get('/api/user_address', app.controller.user.getAddress);
 
   // 备注管理
@@ -54,14 +54,15 @@ module.exports = app => {
 
   // 公告
   router.resources('/api/notice', app.controller.notice);
-    // 公告 批量删除
+  // 公告 批量删除
   router.post('/api/notice/delete', app.controller.notice.delete);
-    // 公告 图片上传
+  // 公告 图片上传
   router.post('/api/notice/upload', app.controller.notice.upload);
 
   router.get('/api/test1', app.controller.addressBook.test);
   // 头像设置
   router.post('/api/avatar', app.controller.user.setAvatar);
+<<<<<<< HEAD
   // router.get('/api/avatar', app.controller.user.getAvatar);
   // group settings
   router.post('/api/group', app.controller.group.create);
@@ -73,10 +74,19 @@ module.exports = app => {
   router.post('/api/role/menu', app.controller.auth.setRole);
   router.get('/api/menu', app.controller.auth.getMenu);
   
+=======
+  router.get('/api/avatar', app.controller.user.getAvatar);
+
+  // router.get('/api/avatar', app.controller.user.getAvatar);
+>>>>>>> 3a649eac4652fb0913d02cf35002e5ca33837ef7
   // router.get('/api/img', app.controller.notice.test);
 
-   // 批量审批头像
+  // 批量审批头像
   router.resources('/api/avatar/check', app.controller.avatarCheck);
+
+  // group settings
+  router.post('/api/group', app.controller.group.create);
+  router.del('/api/group/:id', app.controller.group.destroy);
 
   // route is equivalent to socket.on(eventName, callback)
   // https://github.com/eggjs/egg-socket.io/blob/master/lib/socket.io/namespace.js#L19

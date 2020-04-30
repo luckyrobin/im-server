@@ -21,7 +21,7 @@ module.exports = app => {
     service.io.client.push(socket, userId, deviceType);
 
     // socket.join group
-    service.io.group.joinGroup(socket, userId);
+    service.io.group.joinMineGroup(socket, userId);
 
     await next();
     // pop user to client list

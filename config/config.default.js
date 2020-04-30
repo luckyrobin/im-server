@@ -61,7 +61,7 @@ module.exports = appInfo => {
         },
         '/chat': {
           connectionMiddleware: [ 'chatconnection' ],
-          packetMiddleware: [ 'chatpacket' ],
+          packetMiddleware: [ 'chatpacket', 'chatcache' ],
         },
       },
     },
@@ -96,6 +96,7 @@ module.exports = appInfo => {
 
   // io emit cheatsheet config
   const ioConfig = {
+    globalchannel: 'globalchannel',
     emitsheet: {
       IMERROR: 'im_error',
       SSO: 'sso',
@@ -104,7 +105,7 @@ module.exports = appInfo => {
       CHAT_TO: 'to',
       CHAT_ONLINE: 'c_online',
       CHAT_MESSAGE: 'c_message',
-      CHAT_GGETMY: 'g_getmy',
+      CHAT_GLEAVE: 'g_leave',
     },
     errorCode: {
       AUTH_FAILED: {
@@ -122,7 +123,7 @@ module.exports = appInfo => {
       DUPLICATE_CLIENT: {
         code: 20004,
         msg: 'you are sign in on other device',
-      }
+      },
     },
     ROOMPREFIX: 'ROOM',
   };

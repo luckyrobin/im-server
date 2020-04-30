@@ -1,40 +1,33 @@
-var Service = require('egg').Service;
+'use strict';
+
+const Service = require('egg').Service;
 
 class MessageService extends Service {
 
-    // 单、群 聊消息都存储在这里
+  async saveMessage(msg) {
+    const { ctx } = this;
 
-    // 接收参数：
-    // from    用户id  Strng 
-    // to      用户id  Strng
-    // content  内容    Strng 
-    // type    消息类型 Number  1.'text' 2.'img' 3.'link'
-    // typeu   传什么存什么 Number   1. 单聊 2. 群聊
+    const msgData = {
+      from: msg.from,
+      to: msg.to,
+      content: msg.dataContent,
+      type: msg.type,
+      typeu: msg.typeu,
+    };
 
-    async saveMessage(msg) {
-        const { ctx } = this;
+    const instance = new ctx.model.Message(msgData);
 
-        const msgData = {
-            from: msg.from,
-            to: msg.to,
-            content: msg.dataContent,
-            type: msg.type,
-            typeu: msg.typeu
-        };
+    const message = await instance.save();
 
-        const instance = new ctx.model.Message(msgData);
+    const userData = await this.service.user.findUser(msg.to);
 
-        const message = await instance.save();
-
-        const userData = await this.service.user.findUser(msg.to);
-
-        // online 维护状态
-        if (!userData.online) {  // 如果离线
-            // const str = JSON.stringify(msgData);
-            // console.log(this.ctx.redis)
-            // console.log(userData)
-            await this.app.redis.rpush(`inbox:${userData._id}`, message._id);
-        }
+    // online 维护状态
+    if (!userData.online) {  // 如果离线
+        // const str = JSON.stringify(msgData);
+        // console.log(this.ctx.redis)
+        // console.log(userData)
+        await this.app.redis.rpush(`inbox:${userData._id}`, message._id);
+    }
     }
 
     // 拉取离线消息  ajax

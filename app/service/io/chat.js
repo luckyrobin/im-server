@@ -10,6 +10,7 @@ class ChatService extends Service {
   async checkUserInGroup(userId, groupId) {
     const { service } = this.ctx;
     const groupMembers = await service.group.findMembers(groupId);
+    if (!groupMembers) return false;
     return groupMembers.members.includes(userId);
   }
 }
