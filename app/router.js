@@ -59,15 +59,20 @@ module.exports = app => {
     // 公告 图片上传
   router.post('/api/notice/upload', app.controller.notice.upload);
 
-
   router.get('/api/test1', app.controller.addressBook.test);
   // 头像设置
   router.post('/api/avatar', app.controller.user.setAvatar);
   // router.get('/api/avatar', app.controller.user.getAvatar);
   // group settings
   router.post('/api/group', app.controller.group.create);
-  
 
+  // 超管
+  // 验证码校验
+  router.post('/api/sms_check', app.controller.auth.check);
+  // 菜单权限
+  router.post('/api/role/menu', app.controller.auth.setRole);
+  router.get('/api/menu', app.controller.auth.getMenu);
+  
   // router.get('/api/img', app.controller.notice.test);
 
    // 批量审批头像

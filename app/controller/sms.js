@@ -39,7 +39,7 @@ class LoginController extends HttpController {
         const body = ctx.request.body;
 
         const code = getCode();
-
+        console.log('验证码生成=======', code)
         var params = {
             "RegionId": "cn-hangzhou",
             "PhoneNumbers": body.phone_number,
@@ -48,9 +48,20 @@ class LoginController extends HttpController {
             "TemplateParam": `{"code": ${code}}`
         }
 
+        const res = await ctx.model.User.find({
+            phone_number: body.phone_number
+        });
+        // console.log(res)
+        if(!res.length) {
+            
+            this.fail({
+                msg: '用户不存在'
+            });
+            return;
+        }
+
         await client.request('SendSms', params, requestOption).then((result) => {
             // console.log(JSON.stringify(result));
-            
             app.redis.set(body.phone_number, code);
             app.redis.expire(body.phone_number, 600);
 

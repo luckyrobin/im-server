@@ -228,7 +228,6 @@ class UserController extends HttpController {
         // });
         
         const addrssArr = await this._handleAddress('5e8c4aae9026ca0cca4336aa', ctx);
-        console.log(addrssArr.join('-'))
 
         this.success({
             data: addrssArr.reverse().join('-')

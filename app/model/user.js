@@ -9,7 +9,7 @@ module.exports = app => {
         auth: {
             type: Number,
             default: 2
-        },  // 1管理员  2 普通用户
+        },  // 1超级管理员  2 普通用户
         avatar: String,
         job: String,
         address_str: String,   // 部门层级
@@ -20,7 +20,8 @@ module.exports = app => {
         parent: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'address_book'
-        }
+        },
+        menuRole: Array
     }, {timestamps: {createdAt: 'create_time', updatedAt: 'update_time'}});
     
     //创建model类, ctx上面可以访问到 model类， 业务里面会经常调用 这个类的方法进行增删改查
