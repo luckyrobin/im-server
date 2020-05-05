@@ -4,9 +4,12 @@ const Controller = require('egg').Controller;
 
 class ChatController extends Controller {
   async to() {
-    const { helper, app, args, service, socket } = this.ctx;
-    const message = args[0];
-
+    const { helper, app, service } = this.ctx;
+    const mqPop = await service.io.mq.ack(app.config.globalchannel);
+    const message = { ...JSON.parse(mqPop.message), sequenceId: mqPop.sent };
+    console.log(message, mqPop);
+    // const s = await service.io.messageStore.save(message);
+    // console.log('ssss', s);
     // typeu is identify field
     // 1: c2c get socketId from redis
     // 2: c2g groupId is equivalent to roomId
@@ -30,10 +33,7 @@ class ChatController extends Controller {
     const escapeMessage = { ...message, ...{ content: helper.escapeString(message.content) } };
 
     toSocketIds.forEach(socketId => {
-      socket.to(socketId).emit(
-        app.config.emitsheet.CHAT_MESSAGE,
-        helper.parseIOMsg('CHAT_MESSAGE', { ...escapeMessage }, 'success')
-      );
+      app.gateway.CHAT_MESSAGE(this.ctx, socketId, helper.parseIOMsg('CHAT_MESSAGE', { ...escapeMessage }, 'success'));
     });
   }
 }

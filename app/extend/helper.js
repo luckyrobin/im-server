@@ -27,10 +27,8 @@ module.exports = {
     logger.debug(
       `[IMERROR] socketId: ${socket.id} code: ${status.code} msg: ${message}`
     );
-    socket.emit(
-      app.config.emitsheet.IMERROR,
-      this.parseIOMsg('IMERROR', null, status.code, { msg: message })
-    );
+
+    app.gateway.IMERROR({ ...this, socket }, this.parseIOMsg('IMERROR', null, status.code, { msg: message }));
   },
   lazyCloseSocket(socket) {
     setTimeout(() => {

@@ -28,5 +28,5 @@ module.exports = app => {
     sequenceId: String,
   }, { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } });
 
-  return mongoose.model('Message', Schema);
+  return mongoose.model('MessageSync', Schema);
 };

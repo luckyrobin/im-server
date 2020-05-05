@@ -3,7 +3,7 @@
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  const { router, controller, io } = app;
+  const { router, controller } = app;
 
   router.post('/api/login', controller.login.login);
   router.post('/api/sign_up', controller.login.sign_up);
@@ -82,14 +82,7 @@ module.exports = app => {
   router.post('/api/group', app.controller.group.create);
   router.del('/api/group/:id', app.controller.group.destroy);
 
-  // route is equivalent to socket.on(eventName, callback)
-  // https://github.com/eggjs/egg-socket.io/blob/master/lib/socket.io/namespace.js#L19
-  io.of('/sso').route(
-    app.config.emitsheet.SSO_QRLOGIN,
-    app.io.controller.sso.qrlogin
-  );
-  // chat
-  io.of('/chat').route(app.config.emitsheet.CHAT_TO, app.io.controller.chat.to);
-
   router.get('*', controller.render.index);
+
+  require('./router/io').gw_receive(app);
 };

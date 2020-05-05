@@ -17,7 +17,7 @@ class clientService extends Service {
 
   async push(socket, userId, deviceType) {
     const { logger, helper, app } = this.ctx;
-    const { redis, config } = app;
+    const { redis } = app;
     const socketId = socket.id;
 
     // userID is existed?
@@ -59,15 +59,15 @@ class clientService extends Service {
 
     const clientsOnline = await redis.hkeys(CLIENTLIST);
     // broadcast to all client online list
-    app.io.of('/chat').emit(
-      config.emitsheet.CHAT_ONLINE,
+    app.gateway.CHAT_ONLINE(
+      this.ctx,
       helper.parseIOMsg('CHAT_ONLINE', { type: 'online', clients: clientsOnline, current: userId }, 'success')
     );
   }
 
   async pop(socket, userId, deviceType) {
     const { logger, helper, app } = this.ctx;
-    const { redis, config } = app;
+    const { redis } = app;
 
     if (await !this.isOnline(userId)) {
       logger.error(`[CHAT] client: ${userId} is pop failed`);
@@ -97,8 +97,8 @@ class clientService extends Service {
 
     const clientsOnline = await redis.hkeys(CLIENTLIST);
     // broadcast to all client online list
-    app.io.of('/chat').emit(
-      config.emitsheet.CHAT_ONLINE,
+    app.gateway.CHAT_ONLINE(
+      this.ctx,
       helper.parseIOMsg('CHAT_ONLINE', { type: 'offline', clients: clientsOnline, current: userId }, 'success')
     );
   }

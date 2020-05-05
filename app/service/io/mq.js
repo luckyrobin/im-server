@@ -11,31 +11,20 @@ class mqService extends Service {
       return;
     }
     const mqlist = await this.getList();
-    if (mqlist.includes('mqName')) {
-      return;
-    }
-    app.mq.createQueue({ qname: mqName, maxsize: -1 }, (err, resp) => {
-      if (err) {
+    if (mqlist.includes(mqName)) return;
+    return app.mq.createQueueAsync({ qname: mqName, maxsize: -1 })
+      .then(() => logger.info(`[CHAT] ${mqName} MQ: has created`))
+      .catch(err => {
         logger.error(`[CHAT] ${mqName} MQ: ${err}`);
-        return;
-      }
-      if (resp === 1) {
-        logger.info(`[CHAT] ${mqName} MQ: has created`);
-      }
-    });
+      });
   }
 
   async getList() {
     const { logger, app } = this.ctx;
-    return new Promise((resolve, reject) => {
-      app.mq.listQueues((err, queues) => {
-        if (err) {
-          logger.error(`[CHAT] MQ: ${err}`);
-          reject(err);
-        }
-        resolve(queues);
+    return app.mq.listQueuesAsync()
+      .catch(err => {
+        logger.error(`[CHAT] MQ: ${err}`);
       });
-    });
   }
 
   async remove(mqName) {
@@ -44,43 +33,43 @@ class mqService extends Service {
       logger.error("[CHAT] MQ: miss the 'mqName'");
       return;
     }
-    app.mq.deleteQueue({ qname: mqName }, (err, resp) => {
-      if (err) {
+    return app.mq.deleteQueueAsync({ qname: mqName })
+      .then(resp => resp !== 1 && logger.info(`[CHAT] ${mqName} MQ: Queue not found`))
+      .catch(err => {
         logger.error(`[CHAT] ${mqName} MQ: ${err}`);
-        return;
-      }
-      if (resp === 1) {
-        logger.info(`[CHAT] ${mqName} MQ: Queue and all messages deleted`);
-      } else {
-        logger.info(`[CHAT] ${mqName} MQ: Queue not found`);
-      }
-    });
+      });
   }
 
   async send(mqName, message) {
     const { logger, app } = this.ctx;
-    return new Promise((resolve, reject) => {
-      app.mq.sendMessage({ qname: mqName, message }, (err, resp) => {
-        if (err) {
-          logger.error(`[CHAT] ${mqName} MQ: ${err}`);
-          reject(err);
-        }
-        resolve(resp);
+    return app.mq.sendMessageAsync({ qname: mqName, message })
+      .catch(err => {
+        logger.error(`[CHAT] ${mqName} MQ: ${err}`);
       });
-    });
   }
 
-  async receive(mqName, cb) {
+  async receive(mqName) {
     const { logger, app } = this.ctx;
-    app.mq.receiveMessage({ qname: mqName }, (err, resp) => {
-      if (err) {
+    return app.mq.receiveMessageAsync({ qname: mqName })
+      .catch(err => {
         logger.error(`[CHAT] ${mqName} MQ: ${err}`);
-        return;
-      }
-      if (resp.id) {
-        cb(resp);
-      }
-    });
+      });
+  }
+
+  async delete(mqName) {
+    const { logger, app } = this.ctx;
+    return app.mq.deleteMessageAsync({ qname: mqName })
+      .catch(err => {
+        logger.error(`[CHAT] ${mqName} MQ: ${err}`);
+      });
+  }
+
+  async ack(mqName) {
+    const { logger, app } = this.ctx;
+    return app.mq.popMessageAsync({ qname: mqName })
+      .catch(err => {
+        logger.error(`[CHAT] ${mqName} MQ: ${err}`);
+      });
   }
 }
 

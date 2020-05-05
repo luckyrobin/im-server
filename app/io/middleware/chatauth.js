@@ -11,10 +11,7 @@ const syncToOtherDevice = async (ctx, message) => {
   // escape the content
   const escapeMessage = { ...message, ...{ content: helper.escapeString(message.content) } };
 
-  socket.to(cooked[otherDevice]).emit(
-    app.config.emitsheet.CHAT_MESSAGE,
-    helper.parseIOMsg('CHAT_MESSAGE', { ...escapeMessage }, 'success', { sync: true })
-  );
+  app.gateway.CHAT_MESSAGE(ctx, cooked[otherDevice], helper.parseIOMsg('CHAT_MESSAGE', { ...escapeMessage }, 'success', { sync: true }));
 };
 
 module.exports = app => {

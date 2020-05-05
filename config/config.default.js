@@ -61,7 +61,7 @@ module.exports = appInfo => {
         },
         '/chat': {
           connectionMiddleware: [ 'chatconnection' ],
-          packetMiddleware: [ 'chatpacket', 'chatcache' ],
+          packetMiddleware: [ 'chatauth', 'chatcache' ],
         },
       },
     },
