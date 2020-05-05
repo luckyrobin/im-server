@@ -4,10 +4,8 @@ module.exports = app => {
   const mongoose = app.mongoose;
   const Schema = new mongoose.Schema({
     _id: {
-      type: mongoose.Schema.Types.ObjectId,
-      index: true,
-      background: true,
-      required: true,
+      type: String,
+      unique: true,
     },
     from: {
       type: mongoose.Schema.Types.ObjectId,
@@ -32,7 +30,11 @@ module.exports = app => {
       enum: [ 1, 2 ], // 1: c2c 消息 2: c2g 消息
     },
     sequenceId: String,
-  }, { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } });
+  }, { timestamps: { createdAt: 'send_time', updatedAt: 'update_time' } });
+
+  Schema.virtual('timelineId').get(function() {
+    return `${this.from}@${this.to}`;
+  });
 
   return mongoose.model('MessageStore', Schema);
 };

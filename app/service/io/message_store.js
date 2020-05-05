@@ -6,7 +6,7 @@ class MessageStoreService extends Service {
 
   async save(params) {
     const messageDocument = new this.ctx.model.MessageStore({
-      _id: params.id,
+      _id: params._id,
       from: params.from,
       to: params.to,
       type: params.type,
@@ -15,7 +15,19 @@ class MessageStoreService extends Service {
       sequenceId: params.sequenceId,
     });
 
-    return await messageDocument.save();
+    const message = await messageDocument.save();
+
+    return {
+      _id: message._id,
+      from: message.from,
+      to: message.to,
+      type: message.type,
+      content: message.content,
+      typeu: message.typeu,
+      sequenceId: message.sequenceId,
+      send_time: message.send_time,
+      timelineId: message.timelineId,
+    };
   }
 }
 

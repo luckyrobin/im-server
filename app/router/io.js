@@ -46,5 +46,12 @@ module.exports = {
         message
       );
     },
+    CHAT_TO_ACK: (ctx, socketId, message) => {
+      const { app } = ctx;
+      app.io.of('/chat').to(socketId).emit(
+        app.config.emitsheet.CHAT_TO_ACK,
+        message
+      );
+    },
   },
 };

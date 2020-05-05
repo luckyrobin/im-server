@@ -103,6 +103,7 @@ module.exports = appInfo => {
       SSO_QRLOGIN: 'qrlogin',
       CHAT: 'chat',
       CHAT_TO: 'to',
+      CHAT_TO_ACK: 'to_ack',
       CHAT_ONLINE: 'c_online',
       CHAT_MESSAGE: 'c_message',
       CHAT_GLEAVE: 'g_leave',
