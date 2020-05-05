@@ -1,6 +1,6 @@
 'use strict';
 
-const HttpController = require('./base/http');
+const HttpController = require('../../controller/base/http');
 
 class GroupController extends HttpController {
   async create() {
@@ -8,7 +8,7 @@ class GroupController extends HttpController {
     const params = request.body;
 
     try {
-      const res = await this.service.group.create({
+      const res = await this.service.io.group.create({
         name: params.name,
         members: params.members,
         owner: params.owner,
@@ -33,7 +33,7 @@ class GroupController extends HttpController {
   async destroy() {
     const { params } = this.ctx;
     try {
-      const res = await this.service.group.delete(params.id);
+      const res = await this.service.io.group.delete(params.id);
 
       // leave room and broadcast to all client
       await this.service.io.group.aggregationMembers(res.members, res._id);

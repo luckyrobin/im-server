@@ -63,8 +63,6 @@ module.exports = app => {
   // 头像设置
   router.post('/api/avatar', app.controller.user.setAvatar);
   // router.get('/api/avatar', app.controller.user.getAvatar);
-  // group settings
-  router.post('/api/group', app.controller.group.create);
 
   // 超管
   // 验证码校验
@@ -79,8 +77,8 @@ module.exports = app => {
   router.resources('/api/avatar/check', app.controller.avatarCheck);
 
   // group settings
-  router.post('/api/group', app.controller.group.create);
-  router.del('/api/group/:id', app.controller.group.destroy);
+  router.post('/api/group', app.io.controller.group.create);
+  router.del('/api/group/:id', app.io.controller.group.destroy);
 
   router.get('*', controller.render.index);
 
