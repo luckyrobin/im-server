@@ -17,7 +17,24 @@ class ChatService extends Service {
   async save2Store(mqmsg) {
     const { service } = this.ctx;
     const message = { ...JSON.parse(mqmsg.message), _id: mqmsg.id, sequenceId: mqmsg.sent };
-    return await service.io.messageStore.save(message);
+    const savemsg = await service.io.message.saveDB(message);
+    return {
+      _id: savemsg._id,
+      from: savemsg.from,
+      to: savemsg.to,
+      type: savemsg.type,
+      content: savemsg.content,
+      typeu: savemsg.typeu,
+      sequenceId: savemsg.sequenceId,
+      send_time: savemsg.send_time,
+      timelineId: savemsg.timelineId,
+      fp: message.fp,
+    };
+  }
+
+  async save2Sync(savedmsg) {
+    const { service } = this.ctx;
+    return await service.io.message.saveCache(savedmsg);
   }
 
   async to(savedmsg) {
@@ -53,7 +70,7 @@ class ChatService extends Service {
   }
 
   // multiterminal synchronization
-  async sync(mqmsg, savedmsg) {
+  async syncToOtherDevice(mqmsg, savedmsg) {
     const { service, helper, app } = this.ctx;
     const rawmsg = JSON.parse(mqmsg.message);
     const deviceType = helper.getDeviceType(rawmsg.requestHeaders['user-agent']);
