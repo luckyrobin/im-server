@@ -2,6 +2,7 @@
 
 const RedisSMQ = require('rsmq');
 const gateway = require('./app/router/io').gw_emit;
+const supportioredis = require('./patch/support');
 
 class AppBootHook {
   constructor(app) {
@@ -9,7 +10,7 @@ class AppBootHook {
   }
 
   async didLoad() {
-    this.app.mq = new RedisSMQ({ client: this.app.redis });
+    this.app.mq = new RedisSMQ({ client: supportioredis(this.app.redis) });
     this.app.gateway = gateway;
   }
 
