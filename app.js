@@ -6,8 +6,11 @@ const gateway = require('./app/router/io').gw_emit;
 class AppBootHook {
   constructor(app) {
     this.app = app;
-    app.mq = new RedisSMQ({ client: app.redis });
-    app.gateway = gateway;
+  }
+
+  async didLoad() {
+    this.app.mq = new RedisSMQ({ client: this.app.redis });
+    this.app.gateway = gateway;
   }
 
   async serverDidReady() {
