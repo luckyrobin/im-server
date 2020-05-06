@@ -12,6 +12,8 @@ module.exports = {
     const savedmsg = await ctx.service.io.chat.save2Store(mqmsg);
     ctx.service.io.chat.syncToOtherDevice(mqmsg, savedmsg);
     ctx.service.io.chat.to(savedmsg);
+    // update timeline
+    ctx.service.io.chat.save2Timeline(savedmsg);
     // 消息同步库 -- 写扩散
     ctx.service.io.chat.save2Sync(savedmsg);
   },

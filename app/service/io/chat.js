@@ -1,8 +1,12 @@
 'use strict';
 
 const Service = require('egg').Service;
+const debounce = require('debounce-promise');
+
+let InitDebounceUpdateRecentMessage = null;
 
 class ChatService extends Service {
+
   async checkAuthToken() {
     return true;
   }
@@ -34,7 +38,28 @@ class ChatService extends Service {
 
   async save2Sync(savedmsg) {
     const { service } = this.ctx;
-    return await service.io.message.saveCache(savedmsg);
+    return service.io.message.saveCache(savedmsg);
+  }
+
+  async save2Timeline(savedmsg) {
+    const { service, model, helper } = this.ctx;
+    const hasCreated = await model.RecentTimelines.findOne({ timelineId: helper.generateTimelineId(savedmsg.from, savedmsg.to) });
+    if (!hasCreated) {
+      service.io.timeline.save(savedmsg);
+    } else {
+      this._debounceUpdateRecentMessage()(savedmsg);
+    }
+  }
+
+  _debounceUpdateRecentMessage() {
+    if (!InitDebounceUpdateRecentMessage) {
+      const { service } = this.ctx;
+      const fn = function(p) {
+        return service.io.timeline.updateRecentMessage(p);
+      };
+      InitDebounceUpdateRecentMessage = debounce(fn, 10000);
+    }
+    return InitDebounceUpdateRecentMessage;
   }
 
   async to(savedmsg) {

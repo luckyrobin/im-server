@@ -6,6 +6,15 @@ module.exports = app => {
     _id: {
       type: String,
       unique: true,
+      index: true,
+      background: true,
+      required: true,
+    },
+    timelineId: {
+      type: String,
+      index: true,
+      background: true,
+      required: true,
     },
     from: {
       type: mongoose.Schema.Types.ObjectId,
@@ -31,10 +40,6 @@ module.exports = app => {
     },
     sequenceId: String,
   }, { timestamps: { createdAt: 'send_time', updatedAt: 'update_time' } });
-
-  Schema.virtual('timelineId').get(function() {
-    return `${this.from}@${this.to}`;
-  });
 
   return mongoose.model('MessageStore', Schema);
 };

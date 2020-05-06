@@ -5,8 +5,10 @@ const Service = require('egg').Service;
 class MessageService extends Service {
 
   async saveDB(params) {
+    const { helper } = this.ctx;
     const messageDocument = new this.ctx.model.MessageStore({
       _id: params._id,
+      timelineId: helper.generateTimelineId(params.from, params.to),
       from: params.from,
       to: params.to,
       type: params.type,

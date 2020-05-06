@@ -81,4 +81,7 @@ module.exports = {
     }
     return DEVICES[index];
   },
+  generateTimelineId(from, to) {
+    return `${from}@${to}`;
+  },
 };
