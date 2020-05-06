@@ -97,8 +97,8 @@ class ChatService extends Service {
   // multiterminal synchronization
   async syncToOtherDevice(mqmsg, savedmsg) {
     const { service, helper, app } = this.ctx;
-    const rawmsg = JSON.parse(mqmsg.message);
-    const deviceType = helper.getDeviceType(rawmsg.requestHeaders['user-agent']);
+    const cookedmsg = JSON.parse(mqmsg.message);
+    const deviceType = helper.getDeviceType(cookedmsg.requestQuery.deviceType);
     const cooked = await service.io.client.getCooked(`${savedmsg.from}`);
     const currentDevice = Reflect.ownKeys(cooked).filter(item => item === deviceType).join('');
     const escapeMessage = { ...savedmsg, ...{ content: helper.escapeString(savedmsg.content) } };

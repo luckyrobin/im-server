@@ -70,20 +70,20 @@ class clientService extends Service {
     const { redis } = app;
 
     if (await !this.isOnline(userId)) {
-      logger.error(`[CHAT] client: ${userId} is pop failed`);
+      logger.debug(`[CHAT] client: ${userId} is pop failed`);
       return;
     }
 
     const cooked = parseRaw(await this.get(userId));
 
     if (!Reflect.get(cooked, deviceType)) {
-      logger.error(`[CHAT] client: ${userId} is pop failed`);
+      logger.debug(`[CHAT] client: ${userId} is pop failed`);
       return;
     }
 
     // verify that the current to be deleted
     if (Reflect.get(cooked, deviceType) !== socket.id) {
-      logger.error('[CHAT] client: the current socket is not matching');
+      logger.debug('[CHAT] client: the current socket is not matching');
       return;
     }
 

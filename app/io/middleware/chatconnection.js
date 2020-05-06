@@ -4,8 +4,18 @@
 module.exports = app => {
   return async (ctx, next) => {
     const { socket, logger, service, helper } = ctx;
-    const { token, userId } = socket.handshake.query;
-    const deviceType = helper.getDeviceType(socket.request.headers['user-agent']);
+    const { token, userId, deviceType } = socket.handshake.query;
+    const dt = helper.getDeviceType(deviceType);
+
+    if (!token || !userId || !deviceType) {
+      helper.emitError(socket, app.config.errorCode.MISS_PARAMS, '[CHAT] connect failed, missing params in query');
+      return;
+    }
+
+    if (!dt) {
+      helper.emitError(socket, app.config.errorCode.MISS_PARAMS, '[CHAT] connect failed, current deviceType is not support');
+      return;
+    }
 
     logger.info(`[CHAT] SOCKET_ID: ${socket.id} with token: ${token} has connection!`);
     logger.info('[CHAT] now authentication the token');
@@ -18,14 +28,14 @@ module.exports = app => {
       return;
     }
     // push user to client list
-    service.io.client.push(socket, userId, deviceType);
+    service.io.client.push(socket, userId, dt);
 
     // socket.join group
     service.io.group.joinMineGroup(socket, userId);
 
     await next();
     // pop user to client list
-    service.io.client.pop(socket, userId, deviceType);
+    service.io.client.pop(socket, userId, dt);
     console.log('disconnect');
   };
 };

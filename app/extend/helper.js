@@ -1,6 +1,6 @@
 'use strict';
 
-const uaParser = require('ua-parser-js');
+// const uaParser = require('ua-parser-js');
 
 module.exports = {
   parseIOMsg(action, payload = {}, type, metadata = {}) {
@@ -72,14 +72,17 @@ module.exports = {
     }
     return text;
   },
-  getDeviceType(ua) {
-    const DEVICES = [ 'DESKTOP', 'MOBILE' ];
-    let index = 0;
-    const parsed = uaParser(ua);
-    if (parsed.device.type === 'mobile') {
-      index = 1;
-    }
-    return DEVICES[index];
+  getDeviceType(dt) {
+    // get deviceType from socket.handshake.query
+    // becase socket.io not support extraHeaders and ua is unsureness
+    // https://github.com/socketio/engine.io-client/issues/554#issuecomment-336775975
+    const DEVICES = {
+      desktop: 'DESKTOP',
+      mobile: 'MOBILE',
+    };
+    // const parsed = uaParser(ua);
+    const parsed = DEVICES[dt];
+    return parsed;
   },
   generateTimelineId(from, to) {
     return `${from}@${to}`;
