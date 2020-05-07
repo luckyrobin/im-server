@@ -9,6 +9,8 @@ module.exports = {
     io.of('/sso').route(app.config.emitsheet.SSO_QRLOGIN, app.io.controller.sso.qrlogin);
     // chat
     io.of('/chat').route(app.config.emitsheet.CHAT_TO, app.io.controller.chat.to);
+
+    io.of('/chat').route(app.config.emitsheet.CHAT_RECENT_CONVERSATION, app.io.controller.chat.getRecentConversations);
   },
   gw_emit: {
     IMERROR: (ctx, message) => {
@@ -50,6 +52,13 @@ module.exports = {
       const { app } = ctx;
       app.io.of('/chat').to(socketId).emit(
         app.config.emitsheet.CHAT_TO_ACK,
+        message
+      );
+    },
+    CHAT_RECENT_CONVERSATION: (ctx, socketId, message) => {
+      const { app } = ctx;
+      app.io.of('/chat').to(socketId).emit(
+        app.config.emitsheet.CHAT_RECENT_CONVERSATION,
         message
       );
     },

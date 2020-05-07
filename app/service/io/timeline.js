@@ -9,11 +9,11 @@ class TimelineService extends Service {
     let alias = '';
     let avatar = '';
     if (params.typeu === 1) {
-      const user = await model.User.findById(params.to, { name: 1, _id: 0 });
+      const user = await model.User.findById(params.to, { name: 1, avatar: 1, _id: 0 });
       alias = user.name;
       avatar = user.avatar;
     } else if (params.typeu === 2) {
-      const group = await model.Group.findById(params.to, { name: 1, _id: 0 });
+      const group = await model.Group.findById(params.to, { name: 1, avatar: 1, _id: 0 });
       alias = group.name;
       avatar = group.avatar;
     }
@@ -24,7 +24,7 @@ class TimelineService extends Service {
       typeu: params.typeu,
       alias,
       avatar,
-      messageId: params._id,
+      message: params._id,
     });
     return await timelineDocument.save();
   }
@@ -33,7 +33,7 @@ class TimelineService extends Service {
     const { helper, model } = this.ctx;
     return await model.Timeline.findByIdAndUpdate(
       helper.generateTimelineId(params.from, params.to),
-      { messageId: params._id }
+      { message: params._id }
     );
   }
 

@@ -35,13 +35,19 @@ module.exports = app => {
       type: Boolean,
       default: false,
     },
-    messageId: {
+    message: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'MessageStore',
       required: true,
     },
   }, {
     timestamps: { createdAt: 'create_time', updatedAt: 'update_time' },
+  });
+
+  Schema.pre('find', function(next) {
+    this.select('_id top mute owner to typeu alias avatar message update_time')
+      .populate({ path: 'message', select: '_id timelineId from to type typeu content sequenceId send_time' });
+    next();
   });
 
   return mongoose.model('Timeline', Schema);
