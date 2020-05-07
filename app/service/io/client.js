@@ -23,9 +23,8 @@ class clientService extends Service {
     // userID is existed?
     if (await this.isOnline(userId)) {
       const cooked = parseRaw(await this.get(userId));
-
-      if (Reflect.get(cooked, deviceType)) {
-        const previousSocketId = Reflect.get(cooked, deviceType);
+      const previousSocketId = Reflect.get(cooked, deviceType);
+      if (previousSocketId) {
         // duplicate socket
         // else
         // kicked out
@@ -34,8 +33,8 @@ class clientService extends Service {
         } else {
           try {
             const previousSocket = app.io.of('/chat').sockets[previousSocketId];
-            helper.emitError(previousSocket, app.config.errorCode.DUPLICATE_CLIENT);
-            helper.lazyCloseSocket(previousSocket);
+            previousSocket && helper.emitError(previousSocket, app.config.errorCode.DUPLICATE_CLIENT);
+            previousSocket && helper.lazyCloseSocket(previousSocket);
           } catch (e) {
             logger.error('[CHAT] previousSocket is not existed');
           }
