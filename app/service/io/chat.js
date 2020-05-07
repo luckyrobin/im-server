@@ -20,7 +20,7 @@ class ChatService extends Service {
 
   async save2Store(mqmsg) {
     const { service } = this.ctx;
-    const message = { ...JSON.parse(mqmsg.message), _id: mqmsg.id, sequenceId: mqmsg.sent };
+    const message = { ...JSON.parse(mqmsg.message), sequenceId: mqmsg.sent };
     const savemsg = await service.io.message.saveDB(message);
     return {
       _id: savemsg._id,
@@ -43,7 +43,7 @@ class ChatService extends Service {
 
   async save2Timeline(savedmsg) {
     const { service, model, helper } = this.ctx;
-    const hasCreated = await model.RecentTimelines.findOne({ timelineId: helper.generateTimelineId(savedmsg.from, savedmsg.to) });
+    const hasCreated = await model.Timeline.findById(helper.generateTimelineId(savedmsg.from, savedmsg.to));
     if (!hasCreated) {
       service.io.timeline.save(savedmsg);
     } else {

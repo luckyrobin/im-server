@@ -3,13 +3,6 @@
 module.exports = app => {
   const mongoose = app.mongoose;
   const Schema = new mongoose.Schema({
-    _id: {
-      type: String,
-      unique: true,
-      index: true,
-      background: true,
-      required: true,
-    },
     timelineId: {
       type: String,
       index: true,

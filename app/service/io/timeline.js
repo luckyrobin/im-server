@@ -17,22 +17,28 @@ class TimelineService extends Service {
       alias = group.name;
       avatar = group.avatar;
     }
-    const timelineDocument = new this.ctx.model.RecentTimelines({
-      timelineId: helper.generateTimelineId(params.from, params.to),
+    const timelineDocument = new this.ctx.model.Timeline({
+      _id: helper.generateTimelineId(params.from, params.to),
       owner: params.from,
       to: params.to,
       typeu: params.typeu,
       alias,
       avatar,
-      message: params._id,
+      messageId: params._id,
     });
     return await timelineDocument.save();
   }
 
   async updateRecentMessage(params) {
     const { helper, model } = this.ctx;
-    const query = { timelineId: helper.generateTimelineId(params.from, params.to) };
-    return await model.RecentTimelines.findOneAndUpdate(query, { message: params._id });
+    return await model.Timeline.findByIdAndUpdate(
+      helper.generateTimelineId(params.from, params.to),
+      { messageId: params._id }
+    );
+  }
+
+  async findOwnerConversations(owner) {
+    return await this.ctx.model.Timeline.find({ owner });
   }
 }
 

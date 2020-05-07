@@ -3,16 +3,18 @@
 module.exports = app => {
   const mongoose = app.mongoose;
   const Schema = new mongoose.Schema({
-    timelineId: {
+    _id: {
       type: String,
+      unique: true,
       index: true,
       background: true,
       required: true,
-      unique: true,
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'user',
+      index: true,
+      background: true,
       required: true,
     },
     to: {
@@ -33,8 +35,8 @@ module.exports = app => {
       type: Boolean,
       default: false,
     },
-    message: {
-      type: String,
+    messageId: {
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'MessageStore',
       required: true,
     },
@@ -42,5 +44,5 @@ module.exports = app => {
     timestamps: { createdAt: 'create_time', updatedAt: 'update_time' },
   });
 
-  return mongoose.model('RecentTimelines', Schema);
+  return mongoose.model('Timeline', Schema);
 };
