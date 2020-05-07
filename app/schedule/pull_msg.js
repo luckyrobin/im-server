@@ -6,15 +6,17 @@ module.exports = {
     type: 'all',
   },
   async task(ctx) {
-    const mqmsg = await ctx.service.io.mq.ack('globalchannel');
+    const mqmsg = await ctx.service.io.mq.pop('globalchannel');
     if (!Reflect.has(mqmsg, 'id')) return;
-    // 消息存储库 -- 读扩散
+    // 1. 同步：消息存储库 -- 读扩散
     const savedmsg = await ctx.service.io.chat.save2Store(mqmsg);
-    ctx.service.io.chat.syncToOtherDevice(mqmsg, savedmsg);
+    // 2. 异步：应答消息 & 同步到其他登录终端
+    ctx.service.io.chat.ackAndSync(mqmsg, savedmsg);
+    // 3. 异步：发送消息
     ctx.service.io.chat.to(savedmsg);
-    // update timeline
+    // 4. 异步：更新 timeline
     ctx.service.io.chat.save2Timeline(savedmsg);
-    // 消息同步库 -- 写扩散
+    // 5. 异步：消息同步库 -- 写扩散
     ctx.service.io.chat.save2Sync(savedmsg);
   },
 };

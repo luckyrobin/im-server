@@ -56,6 +56,7 @@ class GroupService extends Service {
     const groupDocument = new this.ctx.model.Group({
       name: params.name,
       members: params.members,
+      creator: params.owner,
       owner: params.owner,
     });
 
@@ -69,10 +70,6 @@ class GroupService extends Service {
   async findRelationalGroups(userId) {
     // the slow query
     return await this.ctx.model.Group.find({ members: userId });
-  }
-
-  async findCreateGroups(userId) {
-    return await this.ctx.model.Group.find({ owner: userId });
   }
 
   // projection to members

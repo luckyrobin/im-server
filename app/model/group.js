@@ -6,6 +6,10 @@ module.exports = app => {
     name: String,
     avatar: String,
     notice: String,
+    creator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'user',
+    },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'user',

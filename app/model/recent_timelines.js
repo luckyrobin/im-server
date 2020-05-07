@@ -24,6 +24,7 @@ module.exports = app => {
       enum: [ 1, 2 ], // 1: c2c 消息 2: c2g 消息
     },
     alias: String,
+    avatar: String,
     top: {
       type: Boolean,
       default: false,

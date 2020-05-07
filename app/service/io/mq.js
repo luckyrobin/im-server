@@ -56,7 +56,7 @@ class mqService extends Service {
       });
   }
 
-  async delete(mqName) {
+  async ack(mqName) {
     const { logger, app } = this.ctx;
     return app.mq.deleteMessageAsync({ qname: mqName })
       .catch(err => {
@@ -64,7 +64,7 @@ class mqService extends Service {
       });
   }
 
-  async ack(mqName) {
+  async pop(mqName) {
     const { logger, app } = this.ctx;
     return app.mq.popMessageAsync({ qname: mqName })
       .catch(err => {
