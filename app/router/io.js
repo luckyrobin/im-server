@@ -10,7 +10,9 @@ module.exports = {
     // chat
     io.of('/chat').route(app.config.emitsheet.CHAT_TO, app.io.controller.chat.to);
 
-    io.of('/chat').route(app.config.emitsheet.CHAT_RECENT_CONVERSATION, app.io.controller.chat.getRecentConversations);
+    io.of('/chat').route(app.config.emitsheet.CHAT_PULL_RECENT_CONVERSATION, app.io.controller.chat.getRecentConversations);
+
+    io.of('/chat').route(app.config.emitsheet.CHAT_PULL_OFFLINE_MESSAGE, app.io.controller.chat.getOfflineMessages);
   },
   gw_emit: {
     IMERROR: (ctx, message) => {
@@ -55,10 +57,17 @@ module.exports = {
         message
       );
     },
-    CHAT_RECENT_CONVERSATION: (ctx, socketId, message) => {
+    CHAT_PULL_RECENT_CONVERSATION: (ctx, socketId, message) => {
       const { app } = ctx;
       app.io.of('/chat').to(socketId).emit(
-        app.config.emitsheet.CHAT_RECENT_CONVERSATION,
+        app.config.emitsheet.CHAT_PULL_RECENT_CONVERSATION,
+        message
+      );
+    },
+    CHAT_PULL_OFFLINE_MESSAGE: (ctx, socketId, message) => {
+      const { app } = ctx;
+      app.io.of('/chat').to(socketId).emit(
+        app.config.emitsheet.CHAT_PULL_OFFLINE_MESSAGE,
         message
       );
     },

@@ -38,7 +38,19 @@ class ChatService extends Service {
 
   async save2Sync(savedmsg) {
     const { service } = this.ctx;
-    return service.io.message.saveCache(savedmsg);
+    switch (savedmsg.typeu) {
+      case 1: {
+        return service.io.message.saveCache(savedmsg);
+      }
+      case 2: {
+        const groupMembers = await service.io.group.findMembers(savedmsg.to);
+        if (!groupMembers) return false;
+        const filterSenderMembers = groupMembers.members.filter(item => `${item}` !== `${savedmsg.from}`);
+        return service.io.message.saveCacheMultiple(filterSenderMembers, savedmsg);
+      }
+      default:
+        return;
+    }
   }
 
   async save2Timeline(savedmsg) {

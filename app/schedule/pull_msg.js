@@ -16,7 +16,7 @@ module.exports = {
       // 3. 异步：发送消息
       ctx.service.io.chat.to(savedmsg);
       // 4. 异步：更新 timeline
-      ctx.service.io.chat.save2Timeline(savedmsg);
+      // ctx.service.io.chat.save2Timeline(savedmsg);
       // 5. 异步：消息同步库 -- 写扩散
       ctx.service.io.chat.save2Sync(savedmsg);
     } catch (error) {

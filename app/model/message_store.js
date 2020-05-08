@@ -5,6 +5,7 @@ module.exports = app => {
   const Schema = new mongoose.Schema({
     timelineId: {
       type: String,
+      ref: 'Timeline',
       index: true,
       background: true,
       required: true,

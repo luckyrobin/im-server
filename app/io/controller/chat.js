@@ -15,7 +15,15 @@ class ChatController extends Controller {
     const { app, service, socket, helper } = this.ctx;
     const { userId } = socket.handshake.query;
     const recentConversations = await service.io.timeline.findOwnerConversations(userId);
-    app.gateway.CHAT_RECENT_CONVERSATION(this.ctx, socket.id, helper.parseIOMsg('CHAT_RECENT_CONVERSATION', recentConversations, 'success'));
+    app.gateway.CHAT_PULL_RECENT_CONVERSATION(this.ctx, socket.id, helper.parseIOMsg('CHAT_PULL_RECENT_CONVERSATION', recentConversations, 'success'));
+  }
+
+  async getOfflineMessages() {
+    const { app, service, socket, helper } = this.ctx;
+    const { userId } = socket.handshake.query;
+    const offlineMessages = await service.io.message.findOwnerOfflineMessages(userId);
+    console.log(offlineMessages);
+    app.gateway.CHAT_PULL_OFFLINE_MESSAGE(this.ctx, socket.id, helper.parseIOMsg('CHAT_PULL_OFFLINE_MESSAGE', offlineMessages, 'success'));
   }
 }
 
