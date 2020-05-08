@@ -49,7 +49,6 @@ class UserController extends HttpController {
         msg: '修改成功',
         data: res,
       });
-      //Copy from NoSQLBooster for MongoDB free edition. This message does not appear if you are using a registered version.
     } catch (err) {
       this.fail({
         data: err,
@@ -116,7 +115,7 @@ class UserController extends HttpController {
       },
     })
       .skip(count * (page - 1))
-      .limit(body.count);
+      .limit(parseInt(count));
 
     this.success({
       data: {
@@ -134,6 +133,13 @@ class UserController extends HttpController {
     });
     this.success({
       data: res,
+    });
+  }
+
+  async getCurrentUser() {
+    const userData = await this.service.user.getUser();
+    this.success({
+      data: userData,
     });
   }
 
@@ -175,6 +181,7 @@ class UserController extends HttpController {
       // await this.ctx.model.AvatarCheck.fin
       const instance = new ctx.model.AvatarCheck({
         user_id: userData._id,
+        name: userData.name,
         status: 0,
       });
 

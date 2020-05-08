@@ -97,7 +97,7 @@ class LoginController extends HttpController {
       const token = hash.substring(0, 12);
 
       await app.redis.set(token, body.phone_number);
-      await app.redis.expire(token, 60 * 1000);
+      await app.redis.expire(token, 60 * 60 * 24);
 
       this.success({
         msg: '登录成功',
