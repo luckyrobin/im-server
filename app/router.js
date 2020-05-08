@@ -36,6 +36,7 @@ module.exports = app => {
   router.resources('/api/user', app.controller.user);
   router.post('/api/user_delete', app.controller.user.destroy);
   router.get('/api/user_info/:id', app.controller.user.getUser);
+  router.get('/api/user_info', app.controller.user.getCurrentUser);
 
   // 通过部门查询user
   router.post('/api/address_user', app.controller.user.findUser);
@@ -49,6 +50,7 @@ module.exports = app => {
 
   // 系统消息
   router.resources('/api/note', app.controller.note);
+  router.post('/api/note/find', app.controller.note.find);
   // 系统消息批量删除
   router.post('/api/note/delete', app.controller.note.delete);
 
@@ -56,6 +58,7 @@ module.exports = app => {
   router.resources('/api/notice', app.controller.notice);
   // 公告 批量删除
   router.post('/api/notice/delete', app.controller.notice.delete);
+  router.post('/api/notice/find', app.controller.notice.find);
   // 公告 图片上传
   router.post('/api/notice/upload', app.controller.notice.upload);
 

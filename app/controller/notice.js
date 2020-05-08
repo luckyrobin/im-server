@@ -29,6 +29,59 @@ class NoticeController extends HttpController {
     }
   }
 
+  async update() {
+    const { ctx } = this;
+    const body = ctx.request.body;
+    const id = ctx.params.id;
+
+    try {
+      const res = await ctx.model.Notice.update({
+        _id: id,
+      }, {
+        ...body,
+      });
+
+      this.success({
+        data: res,
+      });
+    } catch (err) {
+      this.fail({
+        data: err,
+      });
+    }
+  }
+
+  async find() {
+    const { ctx } = this;
+    const body = ctx.request.body;
+    try {
+      const dataLength = await ctx.model.Notice.find({
+        title: {
+          $regex: body.search || '',
+        },
+      }).count();
+      const count = body.count || 20;
+      const page = body.page || 1;
+      const res = await ctx.model.Notice.find({
+        content: {
+          $regex: body.search || '',
+        },
+      })
+        .skip(count * (page - 1))
+        .limit(count);
+      this.success({
+        data: {
+          list: res,
+          count: dataLength,
+        },
+      });
+    } catch (err) {
+      this.fail({
+        data: err,
+      });
+    }
+  }
+
   async show() {
     const { ctx } = this;
     const id = ctx.params.id;
@@ -64,10 +117,26 @@ class NoticeController extends HttpController {
   }
 
   async index() {
-    const res = await this.ctx.model.Notice.find({});
+    const { ctx } = this;
+    const dataLength = await this.ctx.model.Notice.find({}).count();
+    // console.log(ctx.query);
+    const query = ctx.query;
+    // this.success({
+    //   data: res,
+    // });
+
+    const count = query.count || 20;
+    const page = query.page || 1;
+
+    const res = await this.ctx.model.Notice.find({})
+      .skip(count * (page - 1))
+      .limit(parseInt(count));
 
     this.success({
-      data: res,
+      data: {
+        list: res,
+        count: dataLength,
+      },
     });
   }
 
