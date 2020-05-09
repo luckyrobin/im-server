@@ -4,6 +4,7 @@ const Service = require('egg').Service;
 const debounce = require('debounce-promise');
 
 let InitDebounceUpdateRecentMessage = null;
+let InitDebounceUpdateRecentMessageBatch = null;
 
 class ChatService extends Service {
 
@@ -46,7 +47,7 @@ class ChatService extends Service {
         const groupMembers = await service.io.group.findMembers(savedmsg.to);
         if (!groupMembers) return false;
         const filterSenderMembers = groupMembers.members.filter(item => `${item}` !== `${savedmsg.from}`);
-        return service.io.message.saveCacheMultiple(filterSenderMembers, savedmsg);
+        return service.io.message.saveCache(savedmsg, filterSenderMembers);
       }
       default:
         return;
@@ -55,11 +56,27 @@ class ChatService extends Service {
 
   async save2Timeline(savedmsg) {
     const { service, model, helper } = this.ctx;
-    const hasCreated = await model.Timeline.findById(helper.generateTimelineId(savedmsg.from, savedmsg.to));
-    if (!hasCreated) {
-      service.io.timeline.save(savedmsg);
-    } else {
-      this._debounceUpdateRecentMessage()(savedmsg);
+    switch (savedmsg.typeu) {
+      case 1: {
+        const hasCreated = await model.Timeline.findById(helper.generateTimelineId(savedmsg.from, savedmsg.to));
+        if (!hasCreated) {
+          service.io.timeline.create(savedmsg);
+        } else {
+          this._debounceUpdateRecentMessage()(savedmsg);
+        }
+        return;
+      }
+      case 2: {
+        const hasCreated = await model.Timeline.findById(helper.generateTimelineId(savedmsg.from, savedmsg.to));
+        if (!hasCreated) {
+          service.io.timeline.createBatch(savedmsg);
+        } else {
+          this._debounceUpdateRecentMessageBatch()(savedmsg);
+        }
+        return;
+      }
+      default:
+        return;
     }
   }
 
@@ -119,12 +136,23 @@ class ChatService extends Service {
   _debounceUpdateRecentMessage() {
     if (!InitDebounceUpdateRecentMessage) {
       const { service } = this.ctx;
-      const fn = function(p) {
-        return service.io.timeline.updateRecentMessage(p);
+      const fn = function(...p) {
+        return service.io.timeline.updateRecentMessage(...p);
       };
       InitDebounceUpdateRecentMessage = debounce(fn, 10000);
     }
     return InitDebounceUpdateRecentMessage;
+  }
+
+  _debounceUpdateRecentMessageBatch() {
+    if (!InitDebounceUpdateRecentMessageBatch) {
+      const { service } = this.ctx;
+      const fn = function(...p) {
+        return service.io.timeline.updateRecentMessageBatch(...p);
+      };
+      InitDebounceUpdateRecentMessageBatch = debounce(fn, 10000);
+    }
+    return InitDebounceUpdateRecentMessageBatch;
   }
 }
 

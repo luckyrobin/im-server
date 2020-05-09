@@ -19,31 +19,30 @@ class MessageService extends Service {
     return await messageDocument.save();
   }
 
-  async saveCache(params) {
+  // 如果是群消息--扩展写
+  async saveCache(params, members) {
     const { helper } = this.ctx;
-    const messageDocument = new this.ctx.model.MessageSync({
-      timelineId: helper.generateTimelineId(params.from, params.to),
-      owner: params.to,
-      from: params.from,
-      typeu: params.typeu,
-      message: params._id,
-    });
+    const insertDocuments = [];
 
-    return await messageDocument.save();
-  }
-
-  // 群消息-扩展写
-  async saveCacheMultiple(members, params) {
-    const { helper } = this.ctx;
-    const insertDocuments = members.map(item => (
-      {
-        timelineId: helper.generateTimelineId(params.from, item),
-        owner: item,
+    if (Array.isArray(members)) {
+      members.forEach(item => {
+        insertDocuments.push({
+          timelineId: helper.generateTimelineId(item, params.to),
+          owner: item,
+          from: params.from,
+          typeu: params.typeu,
+          message: params._id,
+        });
+      });
+    } else {
+      insertDocuments.push({
+        timelineId: helper.generateTimelineId(params.to, params.from),
+        owner: params.to,
         from: params.from,
         typeu: params.typeu,
         message: params._id,
-      }
-    ));
+      });
+    }
 
     return await this.ctx.model.MessageSync.insertMany(insertDocuments);
   }

@@ -4,37 +4,89 @@ const Service = require('egg').Service;
 
 class TimelineService extends Service {
 
-  async save(params) {
+  async create(params) {
     const { helper, model } = this.ctx;
-    let alias = '';
-    let avatar = '';
-    if (params.typeu === 1) {
-      const user = await model.User.findById(params.to, { name: 1, avatar: 1, _id: 0 });
-      alias = user.name;
-      avatar = user.avatar;
-    } else if (params.typeu === 2) {
-      const group = await model.Group.findById(params.to, { name: 1, avatar: 1, _id: 0 });
-      alias = group.name;
-      avatar = group.avatar;
-    }
-    const timelineDocument = new this.ctx.model.Timeline({
+    const senderDocument = {
       _id: helper.generateTimelineId(params.from, params.to),
       owner: params.from,
       to: params.to,
       typeu: params.typeu,
-      alias,
-      avatar,
+      alias: '',
+      avatar: '',
       message: params._id,
+    };
+
+    const receiverDocument = {
+      _id: helper.generateTimelineId(params.to, params.from),
+      owner: params.to,
+      to: params.from,
+      typeu: params.typeu,
+      alias: '',
+      avatar: '',
+      message: params._id,
+    };
+
+    const sender = await model.User.findById(senderDocument.to, { name: 1, avatar: 1, _id: 0 });
+    const receiver = await model.User.findById(receiverDocument.to, { name: 1, avatar: 1, _id: 0 });
+    senderDocument.alias = sender.name;
+    senderDocument.avatar = sender.avatar;
+    receiverDocument.alias = receiver.name;
+    receiverDocument.avatar = receiver.avatar;
+
+    return await this.ctx.model.Timeline.insertMany([ senderDocument, receiverDocument ]);
+  }
+
+  async createBatch(params) {
+    const { helper, service, model } = this.ctx;
+
+    const roleDocuments = [];
+    const groupMembers = await service.io.group.findMembers(params.to);
+    if (!groupMembers) return false;
+    const group = await model.Group.findById(params.to, { name: 1, avatar: 1, _id: 0 });
+    groupMembers.members.forEach(item => {
+      roleDocuments.push({
+        _id: helper.generateTimelineId(item, params.to),
+        owner: item,
+        to: params.to,
+        typeu: params.typeu,
+        alias: group.name,
+        avatar: group.avatar,
+        message: params._id,
+      });
     });
-    return await timelineDocument.save();
+
+    return await this.ctx.model.Timeline.insertMany(roleDocuments);
   }
 
   async updateRecentMessage(params) {
     const { helper, model } = this.ctx;
-    return await model.Timeline.findByIdAndUpdate(
-      helper.generateTimelineId(params.from, params.to),
-      { message: params._id }
-    );
+    const query = {
+      $or: [
+        { _id: helper.generateTimelineId(params.from, params.to) },
+        { _id: helper.generateTimelineId(params.to, params.from) },
+      ],
+    };
+    return await model.Timeline.updateMany(query, { message: params._id });
+  }
+
+  async updateRecentMessageBatch(params) {
+    const { helper, model, service } = this.ctx;
+    const updateDocuments = [];
+
+    const groupMembers = await service.io.group.findMembers(params.to);
+    if (!groupMembers) return false;
+
+    groupMembers.members.forEach(item => {
+      updateDocuments.push({
+        _id: helper.generateTimelineId(item, params.to),
+      });
+    });
+
+    const query = {
+      $or: updateDocuments,
+    };
+
+    return await model.Timeline.updateMany(query, { message: params._id });
   }
 
   async findOwnerConversations(owner) {
