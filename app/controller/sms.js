@@ -99,10 +99,15 @@ class LoginController extends HttpController {
       await app.redis.set(token, body.phone_number);
       await app.redis.expire(token, 60 * 60 * 24);
 
+      const userData = await ctx.model.User.find({
+        phone_number: body.phone_number,
+      });
+
       this.success({
         msg: '登录成功',
         data: {
           authorization: token,
+          userData,
         },
       });
     } else {
