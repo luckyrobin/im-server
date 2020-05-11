@@ -3,8 +3,7 @@
 const Service = require('egg').Service;
 const debounce = require('debounce-promise');
 
-let InitDebounceUpdateRecentMessage = null;
-let InitDebounceUpdateRecentMessageBatch = null;
+const DebouncesPool = {};
 
 class ChatService extends Service {
 
@@ -62,7 +61,10 @@ class ChatService extends Service {
         if (!hasCreated) {
           service.io.timeline.create(savedmsg);
         } else {
-          this._debounceUpdateRecentMessage()(savedmsg);
+          const fn = function(...p) {
+            return service.io.timeline.updateRecentMessage(...p);
+          };
+          this._createDebounce(savedmsg.timelineId, fn)(savedmsg);
         }
         return;
       }
@@ -71,7 +73,10 @@ class ChatService extends Service {
         if (!hasCreated) {
           service.io.timeline.createBatch(savedmsg);
         } else {
-          this._debounceUpdateRecentMessageBatch()(savedmsg);
+          const fn = function(...p) {
+            return service.io.timeline.updateRecentMessageBatch(...p);
+          };
+          this._createDebounce(savedmsg.timelineId, fn)(savedmsg);
         }
         return;
       }
@@ -133,27 +138,13 @@ class ChatService extends Service {
     }
   }
 
-  _debounceUpdateRecentMessage() {
-    if (!InitDebounceUpdateRecentMessage) {
-      const { service } = this.ctx;
-      const fn = function(...p) {
-        return service.io.timeline.updateRecentMessage(...p);
-      };
-      InitDebounceUpdateRecentMessage = debounce(fn, 10000);
+  _createDebounce(key, fn) {
+    if (!Reflect.has(DebouncesPool, key)) {
+      DebouncesPool[key] = debounce(fn, 10000);
     }
-    return InitDebounceUpdateRecentMessage;
+    return DebouncesPool[key];
   }
 
-  _debounceUpdateRecentMessageBatch() {
-    if (!InitDebounceUpdateRecentMessageBatch) {
-      const { service } = this.ctx;
-      const fn = function(...p) {
-        return service.io.timeline.updateRecentMessageBatch(...p);
-      };
-      InitDebounceUpdateRecentMessageBatch = debounce(fn, 10000);
-    }
-    return InitDebounceUpdateRecentMessageBatch;
-  }
 }
 
 module.exports = ChatService;
