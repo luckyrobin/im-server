@@ -16,6 +16,7 @@ module.exports = app => {
         default: 0,
       },
       name: String,
+      avatar: String,
     },
     { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
   ); // 时间

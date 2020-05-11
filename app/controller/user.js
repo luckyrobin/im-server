@@ -182,6 +182,7 @@ class UserController extends HttpController {
       const instance = new ctx.model.AvatarCheck({
         user_id: userData._id,
         name: userData.name,
+        avatar: img_url,
         status: 0,
       });
 
