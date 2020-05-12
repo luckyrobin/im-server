@@ -17,6 +17,7 @@ class UserController extends HttpController {
         sex: body.sex,
         email: body.email,
         parent: body.parent,
+        job: body.job,
       });
 
       this.success({
