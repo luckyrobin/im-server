@@ -2,8 +2,11 @@
 
 const Service = require('egg').Service;
 const debounce = require('debounce-promise');
+const Objectpool = require('../../utils/objectpool');
 
-const DebouncesPool = {};
+const pool = new Objectpool({
+  POOL_SIZE: 1000,
+});
 
 class ChatService extends Service {
 
@@ -62,9 +65,10 @@ class ChatService extends Service {
           service.io.timeline.create(savedmsg);
         } else {
           const fn = function(...p) {
+            pool.release(savedmsg.timelineId);
             return service.io.timeline.updateRecentMessage(...p);
           };
-          this._createDebounce(savedmsg.timelineId, fn)(savedmsg);
+          pool.get(savedmsg.timelineId, debounce(fn, 10000))(savedmsg);
         }
         return;
       }
@@ -74,9 +78,10 @@ class ChatService extends Service {
           service.io.timeline.createBatch(savedmsg);
         } else {
           const fn = function(...p) {
+            pool.release(savedmsg.timelineId);
             return service.io.timeline.updateRecentMessageBatch(...p);
           };
-          this._createDebounce(savedmsg.timelineId, fn)(savedmsg);
+          pool.get(savedmsg.timelineId, debounce(fn, 10000))(savedmsg);
         }
         return;
       }
@@ -136,13 +141,6 @@ class ChatService extends Service {
       if (!otherDevice) return;
       app.gateway.CHAT_MESSAGE(this.ctx, cooked[otherDevice], helper.parseIOMsg('CHAT_MESSAGE', savedmsg, 'success', { sync: true }));
     }
-  }
-
-  _createDebounce(key, fn) {
-    if (!Reflect.has(DebouncesPool, key)) {
-      DebouncesPool[key] = debounce(fn, 10000);
-    }
-    return DebouncesPool[key];
   }
 
 }
