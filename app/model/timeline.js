@@ -2,13 +2,11 @@
 
 module.exports = app => {
   const mongoose = app.mongoose;
+  // custom _id not need unique and index
+  // issue: https://github.com/Automattic/mongoose/issues/8462#issuecomment-570553272
   const Schema = new mongoose.Schema({
     _id: {
       type: String,
-      unique: true,
-      index: true,
-      background: true,
-      required: true,
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,

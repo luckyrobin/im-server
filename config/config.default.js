@@ -26,7 +26,11 @@ module.exports = appInfo => {
     // mongoose
     mongoose: {
       url: 'mongodb://localhost:27017/im', // connect to other docker image port: 27017
-      options: {},
+      options: {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true,
+      },
     },
     redis: {
       client: {

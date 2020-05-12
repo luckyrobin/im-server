@@ -22,10 +22,6 @@ module.exports = {
     enable: true,
     package: 'egg-socket.io',
   },
-  view: {
-    enable: true,
-    package: 'egg-view',
-  },
   nunjucks: {
     enable: true,
     package: 'egg-view-nunjucks',
