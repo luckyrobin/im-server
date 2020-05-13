@@ -63,6 +63,47 @@ class MessageService extends Service {
     }
     return await this.ctx.model.MessageSync.updateOne({ owner, timelineId: msg.timelineId, message: msg._id }, { delivered: true });
   }
+
+  async findOwnerHistoryMessages(owner, params) {
+    const { model, helper } = this.ctx;
+    const limit = params.limit || 10;
+
+    if (!params.messageId) {
+      const conversation = helper.parseTimelineId(params.timelineId);
+      return await model.MessageStore.find({
+        $and: [
+          {
+            $or: [
+              { timelineId: helper.generateTimelineId(conversation.from, conversation.to) },
+              { timelineId: helper.generateTimelineId(conversation.to, conversation.from) },
+            ],
+          },
+          {
+            send_time: {
+              $lte: Date.now(),
+            },
+          },
+        ],
+      }).limit(limit).sort('-sequenceId');
+    }
+
+    const currentMessage = await model.MessageStore.findById(params.messageId);
+    return await model.MessageStore.find({
+      $and: [
+        {
+          $or: [
+            { timelineId: helper.generateTimelineId(currentMessage.from, currentMessage.to) },
+            { timelineId: helper.generateTimelineId(currentMessage.to, currentMessage.from) },
+          ],
+        },
+        {
+          send_time: {
+            $lt: currentMessage.send_time,
+          },
+        },
+      ],
+    }).limit(limit).sort('-sequenceId');
+  }
 }
 
 module.exports = MessageService;

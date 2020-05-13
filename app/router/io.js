@@ -15,6 +15,8 @@ module.exports = {
     io.of('/chat').route(app.config.emitsheet.CHAT_PULL_OFFLINE_MESSAGE, app.io.controller.chat.getOfflineMessages);
 
     io.of('/chat').route(app.config.emitsheet.CHAT_MESSAGE_ACK, app.io.controller.chat.clientHasReceived);
+
+    io.of('/chat').route(app.config.emitsheet.CHAT_PULL_HISTORY_MESSAGE, app.io.controller.chat.getHistoryMessage);
   },
   gw_emit: {
     IMERROR: (ctx, message) => {
@@ -70,6 +72,13 @@ module.exports = {
       const { app } = ctx;
       app.io.of('/chat').to(socketId).emit(
         app.config.emitsheet.CHAT_PULL_OFFLINE_MESSAGE,
+        message
+      );
+    },
+    CHAT_PULL_HISTORY_MESSAGE: (ctx, socketId, message) => {
+      const { app } = ctx;
+      app.io.of('/chat').to(socketId).emit(
+        app.config.emitsheet.CHAT_PULL_HISTORY_MESSAGE,
         message
       );
     },

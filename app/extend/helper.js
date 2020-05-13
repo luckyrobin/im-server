@@ -87,4 +87,11 @@ module.exports = {
   generateTimelineId(from, to) {
     return `${from}@${to}`;
   },
+  parseTimelineId(timelineId) {
+    const temp = timelineId.split('@');
+    return {
+      from: temp[0],
+      to: temp[1],
+    };
+  },
 };

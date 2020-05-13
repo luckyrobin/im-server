@@ -26,10 +26,28 @@ class ChatController extends Controller {
   }
 
   async clientHasReceived() {
-    const { socket } = this.ctx;
+    const { socket, service } = this.ctx;
     const { userId } = socket.handshake.query;
     const messages = this.ctx.packet[1];
-    await this.ctx.service.io.message.updateSyncMessageStatus(userId, messages);
+    await service.io.message.updateSyncMessageStatus(userId, messages);
+  }
+
+  async getHistoryMessage() {
+    const { app, service, socket, helper } = this.ctx;
+    const { userId } = socket.handshake.query;
+    const params = this.ctx.packet[1];
+    if (!Reflect.has(params, 'timelineId')) {
+      helper.emitError(socket, app.config.errorCode.MISS_PARAMS, '[CHAT] missing timelineId params in query');
+      return;
+    }
+    // 鉴别当前用户是否属于既定会话
+    const conversation = params.timelineId.split('@');
+    if (!conversation.includes(userId)) {
+      helper.emitError(socket, app.config.errorCode.AUTH_FAILED, '[CHAT] current conversation is not belong to you');
+      return;
+    }
+    const historyMessages = await service.io.message.findOwnerHistoryMessages(userId, params);
+    app.gateway.CHAT_PULL_HISTORY_MESSAGE(this.ctx, socket.id, helper.parseIOMsg('CHAT_PULL_HISTORY_MESSAGE', historyMessages, 'success'));
   }
 }
 
