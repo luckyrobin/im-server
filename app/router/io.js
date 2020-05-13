@@ -13,6 +13,8 @@ module.exports = {
     io.of('/chat').route(app.config.emitsheet.CHAT_PULL_RECENT_CONVERSATION, app.io.controller.chat.getRecentConversations);
 
     io.of('/chat').route(app.config.emitsheet.CHAT_PULL_OFFLINE_MESSAGE, app.io.controller.chat.getOfflineMessages);
+
+    io.of('/chat').route(app.config.emitsheet.CHAT_MESSAGE_ACK, app.io.controller.chat.clientHasReceived);
   },
   gw_emit: {
     IMERROR: (ctx, message) => {

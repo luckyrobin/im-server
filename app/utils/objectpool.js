@@ -32,6 +32,11 @@ class ObjectPool {
     }
     Reflect.deleteProperty(this.traversePool, key);
   }
+
+  destroy() {
+    this.traversePool = {};
+    this.pool = [];
+  }
 }
 
 module.exports = ObjectPool;

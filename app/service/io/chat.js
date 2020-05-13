@@ -2,9 +2,9 @@
 
 const Service = require('egg').Service;
 const debounce = require('debounce-promise');
-const Objectpool = require('../../utils/objectpool');
+const ObjectPool = require('../../utils/objectpool');
 
-const pool = new Objectpool({
+const pool = new ObjectPool({
   POOL_SIZE: 1000,
 });
 
@@ -135,7 +135,7 @@ class ChatService extends Service {
     // 4. ack to current device
     app.gateway.CHAT_TO_ACK(this.ctx, cooked[currentDevice], helper.parseIOMsg('CHAT_TO_ACK', savedmsg, 'success'));
 
-    // 同步 c2c 消息，由于 c2g 消息是广播类型，所以不需要同步
+    // 同步 c2c 消息到其他设备，由于 c2g 消息是广播类型，所以不需要同步
     if (savedmsg.typeu === 1) {
       const otherDevice = Reflect.ownKeys(cooked).filter(item => item !== deviceType).join('');
       if (!otherDevice) return;

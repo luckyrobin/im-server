@@ -24,6 +24,13 @@ class ChatController extends Controller {
     const offlineMessages = await service.io.message.findOwnerOfflineMessages(userId);
     app.gateway.CHAT_PULL_OFFLINE_MESSAGE(this.ctx, socket.id, helper.parseIOMsg('CHAT_PULL_OFFLINE_MESSAGE', offlineMessages, 'success'));
   }
+
+  async clientHasReceived() {
+    const { socket } = this.ctx;
+    const { userId } = socket.handshake.query;
+    const messages = this.ctx.packet[1];
+    await this.ctx.service.io.message.updateSyncMessageStatus(userId, messages);
+  }
 }
 
 module.exports = ChatController;
