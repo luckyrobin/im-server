@@ -36,8 +36,8 @@ class ChatController extends Controller {
     const { app, service, socket, helper } = this.ctx;
     const { userId } = socket.handshake.query;
     const params = this.ctx.packet[1];
-    if (!Reflect.has(params, 'timelineId')) {
-      helper.emitError(socket, app.config.errorCode.MISS_PARAMS, '[CHAT] missing timelineId params in query');
+    if (!Reflect.has(params, 'timelineId') || !Reflect.has(params, 'typeu')) {
+      helper.emitError(socket, app.config.errorCode.MISS_PARAMS, '[CHAT] missing timelineId or typeu params in query');
       return;
     }
     // 鉴别当前用户是否属于既定会话
@@ -46,7 +46,19 @@ class ChatController extends Controller {
       helper.emitError(socket, app.config.errorCode.AUTH_FAILED, '[CHAT] current conversation is not belong to you');
       return;
     }
-    const historyMessages = await service.io.message.findOwnerHistoryMessages(userId, params);
+    let historyMessages = [];
+    switch (params.typeu) {
+      case 1: {
+        historyMessages = await service.io.message.findOwnerHistoryMessages(userId, params);
+        break;
+      }
+      case 2: {
+        historyMessages = await service.io.message.findGroupHistoryMessages(userId, params);
+        break;
+      }
+      default:
+        return;
+    }
     app.gateway.CHAT_PULL_HISTORY_MESSAGE(this.ctx, socket.id, helper.parseIOMsg('CHAT_PULL_HISTORY_MESSAGE', historyMessages, 'success'));
   }
 }

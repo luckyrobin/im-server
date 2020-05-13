@@ -104,6 +104,41 @@ class MessageService extends Service {
       ],
     }).limit(limit).sort('-sequenceId');
   }
+
+  async findGroupHistoryMessages(owner, params) {
+    const { model, helper } = this.ctx;
+    const limit = params.limit || 10;
+
+    if (!params.messageId) {
+      const conversation = helper.parseTimelineId(params.timelineId);
+      return await model.MessageStore.find({
+        $and: [
+          {
+            to: conversation.to,
+          },
+          {
+            send_time: {
+              $lte: Date.now(),
+            },
+          },
+        ],
+      }).limit(limit).sort('-sequenceId');
+    }
+
+    const currentMessage = await model.MessageStore.findById(params.messageId);
+    return await model.MessageStore.find({
+      $and: [
+        {
+          to: currentMessage.to,
+        },
+        {
+          send_time: {
+            $lt: currentMessage.send_time,
+          },
+        },
+      ],
+    }).limit(limit).sort('-sequenceId');
+  }
 }
 
 module.exports = MessageService;
