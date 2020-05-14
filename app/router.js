@@ -83,6 +83,9 @@ module.exports = app => {
   router.post('/api/group', app.io.controller.group.create);
   router.del('/api/group/:id', app.io.controller.group.destroy);
 
+  // timeline update
+  router.put('/api/timeline/:id', app.io.controller.timeline.update);
+
   router.get('*', controller.render.index);
 
   require('./router/io').gw_receive(app);

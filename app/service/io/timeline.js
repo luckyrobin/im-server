@@ -92,6 +92,11 @@ class TimelineService extends Service {
   async findOwnerConversations(owner) {
     return await this.ctx.model.Timeline.find({ owner });
   }
+
+  async updateOneById(params) {
+    const { _id, ...otherParams } = params;
+    return await this.ctx.model.Timeline.updateOne({ _id }, { ...otherParams });
+  }
 }
 
 module.exports = TimelineService;

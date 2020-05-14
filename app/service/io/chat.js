@@ -41,7 +41,7 @@ class ChatService extends Service {
         fp: savemsg.fp,
       };
     } catch (error) {
-      // fp 重复校验
+      // fp 唯一性校验不通过
       const { helper, app } = this.ctx;
       const deviceType = helper.getDeviceType(message.requestQuery.deviceType);
       const cooked = await service.io.client.getCooked(`${message.from}`);
