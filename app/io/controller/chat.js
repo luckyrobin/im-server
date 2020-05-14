@@ -36,16 +36,7 @@ class ChatController extends Controller {
     const { app, service, socket, helper } = this.ctx;
     const { userId } = socket.handshake.query;
     const params = this.ctx.packet[1];
-    if (!Reflect.has(params, 'timelineId') || !Reflect.has(params, 'typeu')) {
-      helper.emitError(socket, app.config.errorCode.MISS_PARAMS, '[CHAT] missing timelineId or typeu params in query');
-      return;
-    }
-    // 鉴别当前用户是否属于既定会话
-    const conversation = params.timelineId.split('@');
-    if (!conversation.includes(userId)) {
-      helper.emitError(socket, app.config.errorCode.AUTH_FAILED, '[CHAT] current conversation is not belong to you');
-      return;
-    }
+
     let historyMessages = [];
     switch (params.typeu) {
       case 1: {
