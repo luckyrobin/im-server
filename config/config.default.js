@@ -30,6 +30,7 @@ module.exports = appInfo => {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
+        useFindAndModify: false,
       },
     },
     redis: {
@@ -115,6 +116,7 @@ module.exports = appInfo => {
       CHAT_PULL_RECENT_CONVERSATION: 'recent_conversation',
       CHAT_PULL_OFFLINE_MESSAGE: 'offline_message',
       CHAT_PULL_HISTORY_MESSAGE: 'history_message',
+      CHAT_TO_READED: 'to_reader',
     },
     errorCode: {
       AUTH_FAILED: {

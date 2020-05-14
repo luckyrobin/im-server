@@ -51,7 +51,7 @@ class MessageService extends Service {
   }
 
   async updateSyncMessageStatus(owner, msg) {
-    // 1. 如果 msg 是数组，表示离线消息推送成功，并且确认用户收到
+    // 1. 如果 msg 是数组，表示离线消息推送成功，并且用户确认收到
     // 2. 非数组，表示在线用户确认收到消息
     if (Array.isArray(msg) && msg.length > 0) {
       const interior = msg.map(item => ({ timelineId: item.message.timelineId, message: item.message._id }));
@@ -139,6 +139,11 @@ class MessageService extends Service {
       ],
     }).limit(limit).sort('-sequenceId');
   }
+
+  async updateStoreMessageStatus(owner, msg) {
+    return await this.ctx.model.MessageStore.findByIdAndUpdate(msg._id, { $push: { readed: owner } }, { new: true });
+  }
+
 }
 
 module.exports = MessageService;

@@ -35,6 +35,7 @@ class ChatService extends Service {
       sequenceId: savemsg.sequenceId,
       send_time: savemsg.send_time,
       timelineId: savemsg.timelineId,
+      readed: savemsg.readed,
       fp: message.fp,
     };
   }

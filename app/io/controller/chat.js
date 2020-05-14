@@ -61,6 +61,29 @@ class ChatController extends Controller {
     }
     app.gateway.CHAT_PULL_HISTORY_MESSAGE(this.ctx, socket.id, helper.parseIOMsg('CHAT_PULL_HISTORY_MESSAGE', historyMessages, 'success'));
   }
+
+  async markReader() {
+    const { app, service, socket, helper } = this.ctx;
+    const { userId } = socket.handshake.query;
+    const message = this.ctx.packet[1];
+
+    const storeMessage = await service.io.message.updateStoreMessageStatus(userId, message);
+
+    const toSocketIds = [];
+    const cooked = await service.io.client.getCooked(message.from);
+    Object.keys(cooked).forEach(item => {
+      toSocketIds.push(cooked[item]);
+    });
+    toSocketIds.forEach(socketId => {
+      app.gateway.CHAT_TO_READED(this.ctx, socketId, helper.parseIOMsg('CHAT_TO_READED', {
+        _id: storeMessage._id,
+        timelineId: storeMessage.timelineId,
+        typeu: storeMessage.typeu,
+        readed: storeMessage.readed,
+        fp: message.fp,
+      }, 'success'));
+    });
+  }
 }
 
 module.exports = ChatController;

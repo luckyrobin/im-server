@@ -16,6 +16,12 @@ module.exports = app => {
         }
       }
     }
+
+    if (emitName === app.config.emitsheet.CHAT_TO_READED) {
+      const message = ctx.packet[1];
+      const { userId } = socket.handshake.query;
+      if (userId === message.from) return;
+    }
     await next();
   };
 };

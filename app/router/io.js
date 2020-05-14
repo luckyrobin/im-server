@@ -17,6 +17,8 @@ module.exports = {
     io.of('/chat').route(app.config.emitsheet.CHAT_MESSAGE_ACK, app.io.controller.chat.clientHasReceived);
 
     io.of('/chat').route(app.config.emitsheet.CHAT_PULL_HISTORY_MESSAGE, app.io.controller.chat.getHistoryMessage);
+
+    io.of('/chat').route(app.config.emitsheet.CHAT_TO_READED, app.io.controller.chat.markReader);
   },
   gw_emit: {
     IMERROR: (ctx, message) => {
@@ -79,6 +81,13 @@ module.exports = {
       const { app } = ctx;
       app.io.of('/chat').to(socketId).emit(
         app.config.emitsheet.CHAT_PULL_HISTORY_MESSAGE,
+        message
+      );
+    },
+    CHAT_TO_READED: (ctx, socketId, message) => {
+      const { app } = ctx;
+      app.io.of('/chat').to(socketId).emit(
+        app.config.emitsheet.CHAT_TO_READED,
         message
       );
     },

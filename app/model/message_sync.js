@@ -12,7 +12,7 @@ module.exports = app => {
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'user',
+      ref: 'User',
       index: true,
       background: true,
       required: true,

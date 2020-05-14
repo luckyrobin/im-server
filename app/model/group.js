@@ -8,18 +8,18 @@ module.exports = app => {
     notice: String,
     creator: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'user',
+      ref: 'User',
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'user',
+      ref: 'User',
       index: true,
       background: true,
       required: true,
     },
     members: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'user',
+      ref: 'User',
       index: true,
       background: true,
       required: true,

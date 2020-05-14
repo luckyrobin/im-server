@@ -12,7 +12,7 @@ module.exports = app => {
     },
     from: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'user',
+      ref: 'User',
       index: true,
       background: true,
       required: true,
@@ -33,7 +33,16 @@ module.exports = app => {
       enum: [ 1, 2 ], // 1: c2c 消息 2: c2g 消息
     },
     sequenceId: String,
+    readed: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    }],
   }, { timestamps: { createdAt: 'send_time', updatedAt: 'update_time' } });
+
+  Schema.pre('find', function(next) {
+    this.select('_id timelineId from to type typeu content sequenceId send_time readed');
+    next();
+  });
 
   return mongoose.model('MessageStore', Schema);
 };
