@@ -24,20 +24,31 @@ class ChatService extends Service {
   async save2Store(mqmsg) {
     const { service } = this.ctx;
     const message = { ...JSON.parse(mqmsg.message), sequenceId: mqmsg.sent };
-    const savemsg = await service.io.message.saveDB(message);
-    return {
-      _id: savemsg._id,
-      from: savemsg.from,
-      to: savemsg.to,
-      type: savemsg.type,
-      content: savemsg.content,
-      typeu: savemsg.typeu,
-      sequenceId: savemsg.sequenceId,
-      send_time: savemsg.send_time,
-      timelineId: savemsg.timelineId,
-      readed: savemsg.readed,
-      fp: message.fp,
-    };
+
+    try {
+      const savemsg = await service.io.message.saveDB(message);
+      return {
+        _id: savemsg._id,
+        from: savemsg.from,
+        to: savemsg.to,
+        type: savemsg.type,
+        content: savemsg.content,
+        typeu: savemsg.typeu,
+        sequenceId: savemsg.sequenceId,
+        send_time: savemsg.send_time,
+        timelineId: savemsg.timelineId,
+        readed: savemsg.readed,
+        fp: savemsg.fp,
+      };
+    } catch (error) {
+      // fp 重复校验
+      const { helper, app } = this.ctx;
+      const deviceType = helper.getDeviceType(message.requestQuery.deviceType);
+      const cooked = await service.io.client.getCooked(`${message.from}`);
+      const socket = helper.getSocketById('/chat', cooked[deviceType]);
+      helper.emitError(socket, app.config.errorCode.CHAT_FAILED, `[CHAT] failed: fp -> ${message.fp} isn't to be unique`);
+      throw new Error(error);
+    }
   }
 
   async save2Sync(savedmsg) {

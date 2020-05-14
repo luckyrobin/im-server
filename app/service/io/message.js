@@ -14,6 +14,7 @@ class MessageService extends Service {
       content: params.content,
       typeu: params.typeu,
       sequenceId: params.sequenceId,
+      fp: params.fp,
     });
 
     return await messageDocument.save();

@@ -38,7 +38,7 @@ module.exports = app => {
 
   Schema.pre('find', function(next) {
     this.select('timelineId owner from typeu message')
-      .populate({ path: 'message', select: '_id timelineId from to type typeu content sequenceId send_time' });
+      .populate({ path: 'message', select: '_id timelineId from to type typeu content sequenceId send_time readed fp' });
     next();
   });
 

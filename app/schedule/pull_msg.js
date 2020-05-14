@@ -11,6 +11,7 @@ module.exports = {
       if (typeof mqmsg !== 'object' || !Reflect.has(mqmsg, 'id')) return;
       // 1. 同步：消息存储库 -- 读扩散
       const savedmsg = await ctx.service.io.chat.save2Store(mqmsg);
+      if (typeof savedmsg !== 'object' || !Reflect.has(savedmsg, '_id')) return;
       // 2. 异步：更新 timeline
       ctx.service.io.chat.save2Timeline(savedmsg);
       // 3. 同步：消息同步库 -- 写扩散

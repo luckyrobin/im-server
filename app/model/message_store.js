@@ -1,5 +1,7 @@
 'use strict';
 
+const uniqueValidator = require('mongoose-unique-validator');
+
 module.exports = app => {
   const mongoose = app.mongoose;
   const Schema = new mongoose.Schema({
@@ -37,12 +39,18 @@ module.exports = app => {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     }],
+    fp: {
+      type: String,
+      unique: true,
+    },
   }, { timestamps: { createdAt: 'send_time', updatedAt: 'update_time' } });
 
   Schema.pre('find', function(next) {
-    this.select('_id timelineId from to type typeu content sequenceId send_time readed');
+    this.select('_id timelineId from to type typeu content sequenceId send_time readed fp');
     next();
   });
+
+  Schema.plugin(uniqueValidator);
 
   return mongoose.model('MessageStore', Schema);
 };

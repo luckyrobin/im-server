@@ -21,6 +21,9 @@ module.exports = {
       },
     };
   },
+  getSocketById(nsp, socketId) {
+    return this.app.io.of(nsp).sockets[socketId];
+  },
   emitError(socket, status, msg) {
     const { app, logger } = this;
     const message = msg || status.msg;
