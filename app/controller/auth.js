@@ -67,9 +67,16 @@ class AuthController extends HttpController {
 
     const userData = await this.service.user.getUser();
 
-    this.success({
-      data: userData.menuRole,
-    });
+    if (userData.auth === 1) {
+      this.success({
+        data: [ 1, 2, 3, 4 ],
+      });
+    } else {
+      this.success({
+        data: userData.menuRole,
+      });
+    }
+
   }
 }
 
