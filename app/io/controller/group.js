@@ -68,8 +68,9 @@ class GroupController extends HttpController {
   }
 
   async update() {
-    const { params, request } = this.ctx;
+    const { params, request, groupInfo } = this.ctx;
     const body = request.body;
+    const { userId } = request;
 
     const updatedParams = {};
     Reflect.has(body, 'name') && (updatedParams.name = body.name);
@@ -77,6 +78,16 @@ class GroupController extends HttpController {
     Reflect.has(body, 'owner') && (updatedParams.owner = body.owner);
     Reflect.has(body, 'onlyOwner') && (updatedParams.onlyOwner = body.onlyOwner);
     Reflect.has(body, 'membersUpdate') && (updatedParams.membersUpdate = body.membersUpdate);
+
+    if (Reflect.has(updatedParams, 'owner')) {
+      if (userId !== `${groupInfo.owner}`) {
+        this.fail({
+          msg: `[GROUP] current user ${userId} is not the owner of group`,
+          data: {},
+        });
+        return;
+      }
+    }
 
     try {
       const res = await this.service.io.group.updateOneById({

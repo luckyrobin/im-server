@@ -16,7 +16,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1584590197781_8973';
 
   // add your middleware config here
-  config.middleware = [];
+  config.middleware = [ 'connection', 'errorhandle' ];
   // config.multipart = {
   //   mode: 'file'
   // }
