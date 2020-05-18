@@ -5,13 +5,14 @@ const HttpController = require('../../controller/base/http');
 class GroupController extends HttpController {
   async create() {
     const { request } = this.ctx;
-    const params = request.body;
+    const body = request.body;
 
     try {
       const res = await this.service.io.group.create({
-        name: params.name,
-        members: params.members,
-        owner: params.owner,
+        name: body.name,
+        members: body.members,
+        owner: body.owner,
+        avatar: body.avatar,
       });
 
       // create group and join room immediately
@@ -36,7 +37,7 @@ class GroupController extends HttpController {
       const res = await this.service.io.group.delete(params.id);
 
       // leave room and broadcast to all client
-      await this.service.io.group.aggregationMembers(res.members, res._id);
+      await this.service.io.group.dissolveMembers(res.members, res._id);
 
       this.success({
         data: {
@@ -51,6 +52,47 @@ class GroupController extends HttpController {
     }
   }
 
+  async show() {
+    const { params } = this.ctx;
+    try {
+      const res = await this.service.io.group.find(params.id);
+      this.success({
+        data: res,
+      });
+    } catch (error) {
+      this.fail({
+        msg: '查询群组信息失败',
+        data: error,
+      });
+    }
+  }
+
+  async update() {
+    const { params, request } = this.ctx;
+    const body = request.body;
+
+    const updatedParams = {};
+    Reflect.has(body, 'name') && (updatedParams.name = body.name);
+    Reflect.has(body, 'notice') && (updatedParams.notice = body.notice);
+    Reflect.has(body, 'owner') && (updatedParams.owner = body.owner);
+    Reflect.has(body, 'onlyOwner') && (updatedParams.onlyOwner = body.onlyOwner);
+    Reflect.has(body, 'membersUpdate') && (updatedParams.membersUpdate = body.membersUpdate);
+
+    try {
+      const res = await this.service.io.group.updateOneById({
+        ...{ _id: params.id },
+        ...updatedParams,
+      });
+      this.success({
+        data: res,
+      });
+    } catch (error) {
+      this.fail({
+        msg: '更新群组信息失败',
+        data: error,
+      });
+    }
+  }
 }
 
 module.exports = GroupController;

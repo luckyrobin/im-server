@@ -80,8 +80,9 @@ module.exports = app => {
   router.resources('/api/avatar/check', app.controller.avatarCheck);
 
   // group settings
-  router.post('/api/group', app.io.controller.group.create);
-  router.del('/api/group/:id', app.io.controller.group.destroy);
+  // router.post('/api/group', app.io.controller.group.create);
+  // router.del('/api/group/:id', app.io.controller.group.destroy);
+  router.resources('/api/group', app.io.controller.group);
 
   // timeline update
   router.put('/api/timeline/:id', app.io.controller.timeline.update);
