@@ -33,7 +33,7 @@ class TimelineService extends Service {
     receiverDocument.alias = receiver.name;
     receiverDocument.avatar = receiver.avatar;
 
-    return await this.ctx.model.Timeline.insertMany([ senderDocument, receiverDocument ]);
+    return await model.Timeline.insertMany([ senderDocument, receiverDocument ]);
   }
 
   async createBatch(params) {
@@ -55,7 +55,27 @@ class TimelineService extends Service {
       });
     });
 
-    return await this.ctx.model.Timeline.insertMany(roleDocuments);
+    return await model.Timeline.insertMany(roleDocuments);
+  }
+
+  async createByStatic(pseudos) {
+    const { helper, model } = this.ctx;
+    if (Array.isArray(pseudos) && pseudos.length > 0) {
+      const group = await model.Group.findById(pseudos[0].to, { name: 1, avatar: 1, _id: 0 });
+      const roleDocuments = [];
+      pseudos.forEach(async item => {
+        const existed = await model.Timeline.exists({ _id: helper.generateTimelineId(item.from, item.to) });
+        !existed && roleDocuments.push({
+          _id: helper.generateTimelineId(item.from, item.to),
+          owner: item.from,
+          to: item.to,
+          typeu: item.typeu,
+          alias: group.name,
+          avatar: group.avatar,
+        });
+      });
+      return await model.Timeline.insertMany(roleDocuments);
+    }
   }
 
   async updateRecentMessage(params) {

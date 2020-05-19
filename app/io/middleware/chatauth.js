@@ -12,7 +12,7 @@ module.exports = app => {
       if (message.typeu === 2) {
         const inGroup = await service.io.chat.checkUserInGroup(message.from, message.to);
         if (!inGroup) {
-          helper.emitError(socket, app.config.errorCode.CHAT_FAILED, `[CHAT] you are not members of group ${message.to}`);
+          helper.emitError(socket, app.config.errorCode.CHAT_FAILED, `[CHAT] group is dissolved or you are not members of group ${message.to}`);
           return;
         }
       }

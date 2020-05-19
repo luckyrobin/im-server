@@ -112,7 +112,7 @@ module.exports = appInfo => {
       CHAT_ONLINE: 'c_online',
       CHAT_MESSAGE: 'c_message',
       CHAT_MESSAGE_ACK: 'c_message_ack',
-      CHAT_GLEAVE: 'g_leave',
+      CHAT_GROUP_NOTICE: 'g_notice',
       CHAT_PULL_RECENT_CONVERSATION: 'recent_conversation',
       CHAT_PULL_OFFLINE_MESSAGE: 'offline_message',
       CHAT_PULL_HISTORY_MESSAGE: 'history_message',

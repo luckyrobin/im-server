@@ -49,10 +49,10 @@ module.exports = {
         message
       );
     },
-    CHAT_GLEAVE: (ctx, message) => {
+    CHAT_GROUP_NOTICE: (ctx, socketId, message) => {
       const { app } = ctx;
-      app.io.of('/chat').emit(
-        app.config.emitsheet.CHAT_GLEAVE,
+      app.io.of('/chat').to(socketId).emit(
+        app.config.emitsheet.CHAT_GROUP_NOTICE,
         message
       );
     },

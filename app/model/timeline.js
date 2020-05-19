@@ -36,7 +36,6 @@ module.exports = app => {
     message: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'MessageStore',
-      required: true,
     },
   }, {
     timestamps: { createdAt: 'create_time', updatedAt: 'update_time' },

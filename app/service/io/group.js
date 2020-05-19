@@ -6,12 +6,16 @@ class GroupService extends Service {
 
   async joinMineGroup(socket, userId) {
     const { app } = this.ctx;
-
     const myGroups = await this.findRelationalGroups(userId);
+    const myGroupsArr = [];
 
     myGroups.forEach(item => {
-      socket.join(`${app.config.ROOMPREFIX}${item._id}`, () => {
-        // TODO
+      myGroupsArr.push(`${app.config.ROOMPREFIX}${item._id}`);
+    });
+
+    return new Promise(resolve => {
+      socket.join(myGroupsArr, () => {
+        resolve();
       });
     });
   }
@@ -20,36 +24,34 @@ class GroupService extends Service {
   async aggregationMembers(members, groupId) {
     const { service, app } = this.ctx;
 
-    members.forEach(async userId => {
+    return Promise.all(members.map(async userId => {
       const cooked = await service.io.client.getCooked(userId);
-
-      Object.keys(cooked).forEach(deviceType => {
+      return Object.keys(cooked).map(deviceType => {
         const socket = app.io.of('/chat').sockets[cooked[deviceType]];
-
-        socket.join(`${app.config.ROOMPREFIX}${groupId}`, () => {
-          // TODO
+        return new Promise(resolve => {
+          socket.join(`${app.config.ROOMPREFIX}${groupId}`, () => {
+            resolve();
+          });
         });
       });
-    });
+    }));
   }
 
   // leave room and broadcast to all client
   async dissolveMembers(members, groupId) {
-    const { service, app, helper } = this.ctx;
+    const { service, app } = this.ctx;
 
-    members.forEach(async userId => {
+    return Promise.all(members.map(async userId => {
       const cooked = await service.io.client.getCooked(userId);
-
-      app.gateway.CHAT_GLEAVE(this.ctx, helper.parseIOMsg('CHAT_GLEAVE', { id: groupId, isDissolve: true }, 'success'));
-
-      Object.keys(cooked).forEach(deviceType => {
+      return Object.keys(cooked).map(deviceType => {
         const socket = app.io.of('/chat').sockets[cooked[deviceType]];
-
-        socket.leave(`${app.config.ROOMPREFIX}${groupId}`, () => {
-          // TODO
+        return new Promise(resolve => {
+          socket.leave(`${app.config.ROOMPREFIX}${groupId}`, () => {
+            resolve();
+          });
         });
       });
-    });
+    }));
   }
 
   async create(params) {
@@ -109,6 +111,16 @@ class GroupService extends Service {
         bulkOps.push({
           updateOne: { filter: { _id }, update: { $addToSet: { members: { $each: willAdd } } } },
         });
+        // 副作用 -> 为新增群成员创建 timeline
+        const writeTimelines = [];
+        willAdd.forEach(userId => {
+          writeTimelines.push({
+            from: userId,
+            to: _id,
+            typeu: 2,
+          });
+        });
+        await this.ctx.service.io.timeline.createByStatic(writeTimelines);
       }
       if (willRemove.length > 0) {
         bulkOps.push({
