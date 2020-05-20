@@ -103,20 +103,65 @@ module.exports = appInfo => {
   const ioConfig = {
     globalchannel: 'globalchannel',
     emitsheet: {
+      /**
+       * 通用 Error 事件
+      */
       IMERROR: 'im_error',
+      /**
+       * namespace: sso
+      */
       SSO: 'sso',
+      /**
+       * PC 端扫码登录
+      */
       SSO_QRLOGIN: 'qrlogin',
+      /**
+       * namespace: chat
+      */
       CHAT: 'chat',
+      /**
+       * 客户端发送消息事件
+      */
       CHAT_TO: 'to',
+      /**
+       * 服务端推送收到消息回执
+      */
       CHAT_TO_ACK: 'to_ack',
+      /**
+       * 服务端推送当前在线所有用户
+      */
       CHAT_ONLINE: 'c_online',
+      /**
+       * 服务端推送消息事件
+      */
       CHAT_MESSAGE: 'c_message',
+      /**
+       * 客户端收到消息回执
+      */
       CHAT_MESSAGE_ACK: 'c_message_ack',
+      /**
+       * 服务端推送群变更消息
+      */
       CHAT_GROUP_NOTICE: 'g_notice',
+      /**
+       * 服务端推送最近会话列表
+      */
       CHAT_PULL_RECENT_CONVERSATION: 'recent_conversation',
+      /**
+       * 服务端推送离线消息
+      */
       CHAT_PULL_OFFLINE_MESSAGE: 'offline_message',
+      /**
+       * 服务端推送历史消息
+      */
       CHAT_PULL_HISTORY_MESSAGE: 'history_message',
+      /**
+       * 客户端标记已读
+      */
       CHAT_TO_READED: 'to_reader',
+      /**
+       * 客户端标记输入中状态
+      */
       CHAT_TO_TYPING: 'to_typing',
     },
     ROOMPREFIX: 'ROOM',
