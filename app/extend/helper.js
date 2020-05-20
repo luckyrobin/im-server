@@ -2,6 +2,20 @@
 
 // const uaParser = require('ua-parser-js');
 
+function HttpError(message, code) {
+  this.name = 'HttpError';
+  if (typeof message === 'object') {
+    this.code = message.code || 1;
+    this.message = typeof code === 'string' ? code : message.msg;
+  } else {
+    this.message = message;
+    this.code = code || 1;
+  }
+  this.stack = (new Error()).stack;
+}
+HttpError.prototype = Object.create(Error.prototype);
+HttpError.prototype.constructor = HttpError;
+
 module.exports = {
   parseIOMsg(action, payload = {}, type, metadata = {}) {
     const meta = Object.assign(
@@ -33,6 +47,7 @@ module.exports = {
 
     app.gateway.IMERROR({ ...this, socket }, this.parseIOMsg('IMERROR', null, status.code, { msg: message }));
   },
+  HttpError,
   lazyCloseSocket(socket) {
     setTimeout(() => {
       if (socket && socket.connected) {

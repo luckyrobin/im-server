@@ -28,10 +28,9 @@ class GroupController extends HttpController {
       this.success({
         data: res,
       });
-    } catch (error) {
+    } catch (e) {
       this.fail({
-        msg: '创建群组失败',
-        data: error,
+        msg: e.message || '创建群组失败',
       });
     }
   }
@@ -57,10 +56,9 @@ class GroupController extends HttpController {
           _id: res._id,
         },
       });
-    } catch (error) {
+    } catch (e) {
       this.fail({
-        msg: '解散群组失败',
-        data: error,
+        msg: e.message || '解散群组失败',
       });
     }
   }
@@ -72,16 +70,15 @@ class GroupController extends HttpController {
       this.success({
         data: res,
       });
-    } catch (error) {
+    } catch (e) {
       this.fail({
-        msg: '查询群组信息失败',
-        data: error,
+        msg: e.message || '查询群组信息失败',
       });
     }
   }
 
   async update() {
-    const { params, request, app, helper, groupInfo, service } = this.ctx;
+    const { params, request, app, helper, service } = this.ctx;
     const body = request.body;
     const { userId } = request;
 
@@ -92,23 +89,13 @@ class GroupController extends HttpController {
     Reflect.has(body, 'onlyOwner') && (updatedParams.onlyOwner = body.onlyOwner);
     Reflect.has(body, 'membersUpdate') && (updatedParams.membersUpdate = body.membersUpdate);
 
-    if (Reflect.has(updatedParams, 'owner')) {
-      if (userId !== `${groupInfo.owner}`) {
-        this.fail({
-          msg: `[GROUP] current user ${userId} is not the owner of group`,
-          data: {},
-        });
-        return;
-      }
-    }
-
     try {
       const res = await service.io.group.updateOneById({
         ...{ _id: params.id },
         ...updatedParams,
       });
 
-      if (Reflect.has(body, 'membersUpdate')) {
+      if (Reflect.has(updatedParams, 'membersUpdate')) {
         await this._handleMemberUpdate(updatedParams.membersUpdate, res._id);
       }
 
@@ -121,10 +108,9 @@ class GroupController extends HttpController {
       this.success({
         data: res,
       });
-    } catch (error) {
+    } catch (e) {
       this.fail({
-        msg: '更新群组信息失败',
-        data: error,
+        msg: e.message || '更新群组信息失败',
       });
     }
   }

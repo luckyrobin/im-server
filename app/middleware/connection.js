@@ -2,13 +2,19 @@
 
 module.exports = () => {
   return async function connection(ctx, next) {
+    const { helper, app } = ctx;
     try {
       const authorization = ctx.request.header.authorization;
-      // test
-      ctx.request.userId = '5eba5dad2dded04bd7e37881';
+      if (!authorization) throw new helper.HttpError(app.config.errorCode.RE_LOGIN);
+      const result = await ctx.app.redis.get(authorization);
+      // if (!result) throw new helper.HttpError(app.config.errorCode.RE_LOGIN);
+      ctx.request.userId = result || '5eba5dad2dded04bd7e37881';
       await next();
-    } catch (err) {
-      throw new Error(err);
+    } catch (e) {
+      ctx.body = {
+        code: e.code,
+        msg: e.message || '[AUTH] ERROR',
+      };
     }
   };
 };

@@ -118,7 +118,15 @@ module.exports = appInfo => {
       CHAT_PULL_HISTORY_MESSAGE: 'history_message',
       CHAT_TO_READED: 'to_reader',
     },
+    ROOMPREFIX: 'ROOM',
+  };
+
+  const statusCode = {
     errorCode: {
+      RE_LOGIN: {
+        code: 401,
+        msg: 'Re login',
+      },
       AUTH_FAILED: {
         code: 20001,
         msg: 'Auth failed',
@@ -136,12 +144,12 @@ module.exports = appInfo => {
         msg: 'you are sign in on other device',
       },
     },
-    ROOMPREFIX: 'ROOM',
   };
 
   return {
     ...config,
     ...userConfig,
     ...ioConfig,
+    ...statusCode,
   };
 };

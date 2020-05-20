@@ -128,6 +128,11 @@ class GroupService extends Service {
         });
       }
     }
+
+    if (Reflect.has(otherParams, 'name')) {
+      this.ctx.service.io.timeline.updateAlias(_id, otherParams.name);
+    }
+
     await this.ctx.model.Group.bulkWrite(bulkOps);
     return this.find(_id);
   }

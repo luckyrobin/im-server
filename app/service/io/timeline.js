@@ -58,12 +58,12 @@ class TimelineService extends Service {
     return await model.Timeline.insertMany(roleDocuments);
   }
 
-  async createByStatic(pseudos) {
+  async createByStatic(baseDataList) {
     const { helper, model } = this.ctx;
-    if (Array.isArray(pseudos) && pseudos.length > 0) {
-      const group = await model.Group.findById(pseudos[0].to, { name: 1, avatar: 1, _id: 0 });
+    if (Array.isArray(baseDataList) && baseDataList.length > 0) {
+      const group = await model.Group.findById(baseDataList[0].to, { name: 1, avatar: 1, _id: 0 });
       const roleDocuments = [];
-      pseudos.forEach(async item => {
+      baseDataList.forEach(async item => {
         const existed = await model.Timeline.exists({ _id: helper.generateTimelineId(item.from, item.to) });
         !existed && roleDocuments.push({
           _id: helper.generateTimelineId(item.from, item.to),
@@ -116,6 +116,10 @@ class TimelineService extends Service {
   async updateOneById(params) {
     const { _id, ...otherParams } = params;
     return await this.ctx.model.Timeline.updateOne({ _id }, { ...otherParams });
+  }
+
+  async updateAlias(toId, alias) {
+    return await this.ctx.model.Timeline.updateMany({ to: toId }, { alias });
   }
 }
 
