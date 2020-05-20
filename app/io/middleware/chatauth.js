@@ -39,6 +39,11 @@ module.exports = app => {
       }
     }
 
+    if (emitName === app.config.emitsheet.CHAT_TO_TYPING) {
+      const message = ctx.packet[1];
+      if (message.typeu === 2) return;
+    }
+
     await next();
   };
 };

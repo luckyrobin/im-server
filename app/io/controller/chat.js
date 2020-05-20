@@ -75,6 +75,24 @@ class ChatController extends Controller {
       }, 'success'));
     });
   }
+
+  async markTyping() {
+    const { app, service, socket, helper } = this.ctx;
+    const { userId } = socket.handshake.query;
+    const message = this.ctx.packet[1];
+
+    const toSocketIds = [];
+    const cooked = await service.io.client.getCooked(message.to);
+    Object.keys(cooked).forEach(item => {
+      toSocketIds.push(cooked[item]);
+    });
+    toSocketIds.forEach(socketId => {
+      app.gateway.CHAT_TO_TYPING(this.ctx, socketId, helper.parseIOMsg('CHAT_TO_TYPING', {
+        timelineId: helper.generateTimelineId(message.to, userId),
+        from: userId,
+      }, 'success'));
+    });
+  }
 }
 
 module.exports = ChatController;
