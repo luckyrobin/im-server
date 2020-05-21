@@ -5,10 +5,6 @@
 module.exports = app => {
   const { router, controller, middleware } = app;
 
-  router.post('/api/login', controller.login.login);
-  router.post('/api/sign_up', controller.login.sign_up);
-  router.get('/api/logout', middleware.login(), controller.login.logout);
-
   // 短信发送
   router.post('/api/sendSms', controller.sms.send);
 
@@ -22,7 +18,7 @@ module.exports = app => {
   router.get('/api/qrCode', controller.sms.qrCode);
 
   // 测试登录态
-  router.get('/api/test', middleware.login(), controller.sms.test);
+  router.get('/api/test', middleware.apiauth(), controller.sms.test);
 
   // 用户
   // router.post('/api/user', app.controller.user.add);

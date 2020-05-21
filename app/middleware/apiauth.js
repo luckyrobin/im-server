@@ -4,11 +4,10 @@ module.exports = () => {
   return async function apiauth(ctx, next) {
     const { helper, app } = ctx;
     try {
-      const authorization = ctx.request.header.authorization;
-      if (!authorization) throw new helper.HttpError(app.config.errorCode.RE_LOGIN);
-      const userId = await ctx.app.redis.get(authorization);
-      // if (!result) throw new helper.HttpError(app.config.errorCode.RE_LOGIN);
-      ctx.request.userId = userId || '5ec630211e0b3e1845b6ae06';
+      const token = ctx.request.header.authorization;
+      if (!token) throw new helper.HttpError(app.config.errorCode.RE_LOGIN);
+      const verify = ctx.jwtToken.check(token);
+      ctx.request.userId = verify.uid;
       await next();
     } catch (e) {
       ctx.body = {

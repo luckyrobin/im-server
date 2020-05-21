@@ -24,7 +24,6 @@ module.exports = appInfo => {
   // add your user config here
   const userConfig = {
     myAppName: 'im',
-    redisTokenKey: '',
     // mongoose
     mongoose: {
       url: 'mongodb://localhost:27017/im', // connect to other docker image port: 27017
@@ -72,12 +71,18 @@ module.exports = appInfo => {
         },
       },
     },
-    session: {
-      encrypt: false,
-      signed: false,
-      renew: true,
-      key: 'EGG_SESS',
-      maxAge: 24 * 3600 * 1000,
+    // session: {
+    //   encrypt: false,
+    //   signed: false,
+    //   renew: true,
+    //   key: 'EGG_SESS',
+    //   maxAge: 24 * 3600 * 1000,
+    // },
+    jwt: {
+      secret: config.keys,
+      options: {
+        expiresIn: 60, // JWT 过期时间
+      },
     },
     view: {
       defaultViewEngine: 'nunjucks',
@@ -86,18 +91,6 @@ module.exports = appInfo => {
       },
       cache: false,
     },
-    // redis: {
-    //   client: {
-    //     cluster: true,
-    //     nodes: [{
-    //       host: '127.0.0.1', // connect to other docker image port:
-    //       port: '6379',
-    //       family: 'user',
-    //       password: 'password',
-    //       db: 'db',
-    //     }],
-    //   },
-    // },
 
   };
 

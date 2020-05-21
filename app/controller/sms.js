@@ -1,7 +1,6 @@
 'use strict';
 const HttpController = require('./base/http');
 const Core = require('@alicloud/pop-core');
-const crypto = require('crypto');
 
 const client = new Core({
   accessKeyId: 'LTAI4Frk7UF5C4dupvaHfopQ',
@@ -86,22 +85,15 @@ class LoginController extends HttpController {
     // ctx.session.phone_number = body.phone_number;
 
     if (originCode === body.code) {
-      // 写入session
 
-      const secret = 'abcdefg';
-      const hash = crypto
-        .createHmac('sha256', secret)
-        .update(body.phone_number)
-        .digest('hex');
-
-      const token = hash.substring(0, 12);
-
-      await app.redis.set(token, body.phone_number);
-      await app.redis.expire(token, 60 * 60 * 24);
-
-      const userData = await ctx.model.User.find({
+      const userData = await ctx.model.User.findOne({
         phone_number: body.phone_number,
       });
+
+      const token = ctx.jwtToken.generate({ phone: body.phone_number, uid: `${userData._id}` });
+
+      // await app.redis.set(token, body.phone_number);
+      // await app.redis.expire(token, 60 * 60 * 24);
 
       this.success({
         msg: '登录成功',
@@ -125,15 +117,7 @@ class LoginController extends HttpController {
   }
 
   async qrCode() {
-
-
     const randomStr = getRandomStr();
-    // 以randomStr为标识， 与服务器建立socket连接
-    // socket代码补充
-
-    // await app.redis.set(randomStr);
-    // await app.redis.expire(randomStr, 120);
-    //
     this.success({
       data: {
         device_id: randomStr,
