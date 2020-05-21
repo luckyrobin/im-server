@@ -16,10 +16,11 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1584590197781_8973';
 
   // add your middleware config here
-  config.middleware = [ 'connection', 'errorhandle' ];
-  // config.multipart = {
-  //   mode: 'file'
-  // }
+  config.middleware = [ 'apiauth', 'errorhandle' ];
+
+  config.apiauth = {
+    match: '/api',
+  };
   // add your user config here
   const userConfig = {
     myAppName: 'im',
@@ -66,7 +67,7 @@ module.exports = appInfo => {
         },
         '/chat': {
           connectionMiddleware: [ 'chatconnection' ],
-          packetMiddleware: [ 'chatauth', 'chatcache' ],
+          packetMiddleware: [ 'chatfilter' ],
         },
       },
     },

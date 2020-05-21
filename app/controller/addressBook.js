@@ -6,7 +6,6 @@ class AddressController extends HttpController {
   async create() {
     const { ctx, service } = this;
     const body = ctx.request.body;
-    // console.log(body)
     try {
       let res;
       if (body.parent) {
@@ -34,7 +33,6 @@ class AddressController extends HttpController {
 
   async index() {
     const { ctx } = this;
-    console.log('xxxxxxxx');
     const res = await ctx.model.AddressBook.find({
       parent: {
         $exists: false,
@@ -48,7 +46,6 @@ class AddressController extends HttpController {
 
   async search() {
     const { ctx } = this;
-    // console.log('xxxxxxxx')
     const body = ctx.request.body;
 
     const userRes = await ctx.model.User.find({

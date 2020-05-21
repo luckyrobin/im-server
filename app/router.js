@@ -82,9 +82,9 @@ module.exports = app => {
   // group settings
   router.get('/api/group/:id', app.io.controller.group.show);
   router.post('/api/group', app.io.controller.group.create);
-  router.del('/api/group/:id', app.middleware.groupauth(), app.io.controller.group.destroy);
-  router.put('/api/group/:id', app.middleware.groupauth(), app.io.controller.group.update);
-  // router.resources('/api/group', app.middleware.groupauth(), app.io.controller.group);
+  router.del('/api/group/:id', app.middleware.groupfilter(), app.io.controller.group.destroy);
+  router.put('/api/group/:id', app.middleware.groupfilter(), app.io.controller.group.update);
+  // router.resources('/api/group', app.middleware.groupfilter(), app.io.controller.group);
 
   // timeline update
   router.put('/api/timeline/:id', app.io.controller.timeline.update);

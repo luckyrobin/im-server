@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = () => {
-  return async function connection(ctx, next) {
+  return async function apiauth(ctx, next) {
     const { helper, app } = ctx;
     try {
       const authorization = ctx.request.header.authorization;

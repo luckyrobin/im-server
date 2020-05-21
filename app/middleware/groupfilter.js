@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = () => {
-  return async function groupauth(ctx, next) {
+  return async function groupfilter(ctx, next) {
     try {
       const { params, service, request, helper } = ctx;
       const { body, userId } = request;
