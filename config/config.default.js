@@ -16,14 +16,15 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1584590197781_8973';
 
   // add your middleware config here
-  config.middleware = [ 'apiauth', 'errorhandle' ];
+  config.middleware = [ 'errorhandle' ];
+  // config.multipart = {
+  //   mode: 'file'
+  // }
 
-  config.apiauth = {
-    match: '/api',
-  };
   // add your user config here
   const userConfig = {
     myAppName: 'im',
+    redisTokenKey: '',
     // mongoose
     mongoose: {
       url: 'mongodb://localhost:27017/im', // connect to other docker image port: 27017
@@ -102,7 +103,7 @@ module.exports = appInfo => {
 
   // io emit cheatsheet config
   const ioConfig = {
-    globalchannel: 'globalchannel',
+    globalchannel: 'GLOBALCHANNEL',
     emitsheet: {
       /**
        * 通用 Error 事件
@@ -165,7 +166,7 @@ module.exports = appInfo => {
       */
       CHAT_TO_TYPING: 'to_typing',
     },
-    ROOMPREFIX: 'ROOM',
+    roomprefix: 'ROOM',
   };
 
   const statusCode = {

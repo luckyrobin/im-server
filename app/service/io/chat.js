@@ -122,7 +122,7 @@ class ChatService extends Service {
         break;
       }
       case 2: {
-        toSocketIds.push(`${app.config.ROOMPREFIX}${message.to}`);
+        toSocketIds.push(`${app.config.roomprefix}${message.to}`);
         break;
       }
       default:

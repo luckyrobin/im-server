@@ -10,7 +10,7 @@ class GroupService extends Service {
     const myGroupsArr = [];
 
     myGroups.forEach(item => {
-      myGroupsArr.push(`${app.config.ROOMPREFIX}${item._id}`);
+      myGroupsArr.push(`${app.config.roomprefix}${item._id}`);
     });
 
     return new Promise(resolve => {
@@ -29,7 +29,7 @@ class GroupService extends Service {
       return Object.keys(cooked).map(deviceType => {
         const socket = app.io.of('/chat').sockets[cooked[deviceType]];
         return new Promise(resolve => {
-          socket.join(`${app.config.ROOMPREFIX}${groupId}`, () => {
+          socket.join(`${app.config.roomprefix}${groupId}`, () => {
             resolve();
           });
         });
@@ -46,7 +46,7 @@ class GroupService extends Service {
       return Object.keys(cooked).map(deviceType => {
         const socket = app.io.of('/chat').sockets[cooked[deviceType]];
         return new Promise(resolve => {
-          socket.leave(`${app.config.ROOMPREFIX}${groupId}`, () => {
+          socket.leave(`${app.config.roomprefix}${groupId}`, () => {
             resolve();
           });
         });

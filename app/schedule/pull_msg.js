@@ -7,7 +7,7 @@ module.exports = {
   },
   async task(ctx) {
     try {
-      const mqmsg = await ctx.service.io.mq.pop('globalchannel');
+      const mqmsg = await ctx.service.io.mq.pop(ctx.app.config.globalchannel);
       if (typeof mqmsg !== 'object' || !Reflect.has(mqmsg, 'id')) return;
       // 1. 同步：消息存储库 -- 读扩散
       const savedmsg = await ctx.service.io.chat.save2Store(mqmsg);

@@ -21,7 +21,7 @@ class GroupController extends HttpController {
 
       app.gateway.CHAT_GROUP_NOTICE(
         this.ctx,
-        `${app.config.ROOMPREFIX}${res._id}`,
+        `${app.config.roomprefix}${res._id}`,
         helper.parseIOMsg('CHAT_GROUP_NOTICE', { type: 'create', whoami: userId, groupId: res._id, result: res }, 'success')
       );
 
@@ -44,7 +44,7 @@ class GroupController extends HttpController {
 
       app.gateway.CHAT_GROUP_NOTICE(
         this.ctx,
-        `${app.config.ROOMPREFIX}${res._id}`,
+        `${app.config.roomprefix}${res._id}`,
         helper.parseIOMsg('CHAT_GROUP_NOTICE', { type: 'destroy', whoami: userId, groupId: res._id }, 'success')
       );
 
@@ -101,7 +101,7 @@ class GroupController extends HttpController {
 
       app.gateway.CHAT_GROUP_NOTICE(
         this.ctx,
-        `${app.config.ROOMPREFIX}${res._id}`,
+        `${app.config.roomprefix}${res._id}`,
         helper.parseIOMsg('CHAT_GROUP_NOTICE', { type: 'update', whoami: userId, groupId: res._id, updateResult: updatedParams }, 'success')
       );
 

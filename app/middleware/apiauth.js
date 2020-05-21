@@ -6,9 +6,9 @@ module.exports = () => {
     try {
       const authorization = ctx.request.header.authorization;
       if (!authorization) throw new helper.HttpError(app.config.errorCode.RE_LOGIN);
-      const result = await ctx.app.redis.get(authorization);
+      const userId = await ctx.app.redis.get(authorization);
       // if (!result) throw new helper.HttpError(app.config.errorCode.RE_LOGIN);
-      ctx.request.userId = result || '5eba5dad2dded04bd7e37881';
+      ctx.request.userId = userId || '5ec630211e0b3e1845b6ae06';
       await next();
     } catch (e) {
       ctx.body = {

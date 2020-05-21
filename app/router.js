@@ -3,11 +3,11 @@
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  const { router, controller } = app;
+  const { router, controller, middleware } = app;
 
   router.post('/api/login', controller.login.login);
   router.post('/api/sign_up', controller.login.sign_up);
-  router.get('/api/logout', app.middleware.login(), controller.login.logout);
+  router.get('/api/logout', middleware.login(), controller.login.logout);
 
   // 短信发送
   router.post('/api/sendSms', controller.sms.send);
@@ -22,7 +22,7 @@ module.exports = app => {
   router.get('/api/qrCode', controller.sms.qrCode);
 
   // 测试登录态
-  router.get('/api/test', app.middleware.login(), controller.sms.test);
+  router.get('/api/test', middleware.login(), controller.sms.test);
 
   // 用户
   // router.post('/api/user', app.controller.user.add);
@@ -80,14 +80,14 @@ module.exports = app => {
   router.resources('/api/avatar/check', app.controller.avatarCheck);
 
   // group settings
-  router.get('/api/group/:id', app.io.controller.group.show);
-  router.post('/api/group', app.io.controller.group.create);
-  router.del('/api/group/:id', app.middleware.groupfilter(), app.io.controller.group.destroy);
-  router.put('/api/group/:id', app.middleware.groupfilter(), app.io.controller.group.update);
-  // router.resources('/api/group', app.middleware.groupfilter(), app.io.controller.group);
+  router.get('/api/group/:id', middleware.apiauth(), app.io.controller.group.show);
+  router.post('/api/group', middleware.apiauth(), app.io.controller.group.create);
+  router.del('/api/group/:id', middleware.apiauth(), middleware.groupfilter(), app.io.controller.group.destroy);
+  router.put('/api/group/:id', middleware.apiauth(), middleware.groupfilter(), app.io.controller.group.update);
+  // router.resources('/api/group', middleware.apiauth(), app.middleware.groupfilter(), app.io.controller.group);
 
   // timeline update
-  router.put('/api/timeline/:id', app.io.controller.timeline.update);
+  router.put('/api/timeline/:id', middleware.apiauth(), app.io.controller.timeline.update);
 
   router.get('*', controller.render.index);
 
