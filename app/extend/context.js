@@ -21,4 +21,22 @@ module.exports = {
     return this[ioSymbol];
   },
   HttpError,
+  emitError(socket, status, msg) {
+    const { app, logger, helper } = this;
+    const message = msg || status.msg;
+    logger.debug(
+      `[IMERROR] socketId: ${socket.id} code: ${status.code} msg: ${message}`
+    );
+    app.gateway.IMERROR(this, socket, helper.parseIOMsg('IMERROR', null, status.code, { msg: message }));
+  },
+  getSocketById(nsp, socketId) {
+    return this.app.io.of(nsp).sockets[socketId];
+  },
+  lazyCloseSocket(socket) {
+    setTimeout(() => {
+      if (socket && socket.connected) {
+        socket.disconnect(true);
+      }
+    }, 0);
+  },
 };

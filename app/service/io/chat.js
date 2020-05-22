@@ -45,8 +45,8 @@ class ChatService extends Service {
       const { helper, app } = this.ctx;
       const deviceType = helper.getDeviceType(message.requestQuery.deviceType);
       const cooked = await this.ctx.ioClient.getCooked(`${message.from}`);
-      const socket = helper.getSocketById('/chat', cooked[deviceType]);
-      helper.emitError(socket, app.config.errorCode.CHAT_FAILED, `[CHAT] failed: fp -> ${message.fp} isn't to be unique`);
+      const socket = this.ctx.getSocketById('/chat', cooked[deviceType]);
+      this.ctx.emitError(socket, app.config.errorCode.CHAT_FAILED, `[CHAT] failed: fp -> ${message.fp} isn't to be unique`);
       throw new Error(error);
     }
   }

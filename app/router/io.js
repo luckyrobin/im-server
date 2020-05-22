@@ -23,8 +23,8 @@ module.exports = {
     io.of('/chat').route(app.config.emitsheet.CHAT_TO_TYPING, app.io.controller.chat.markTyping);
   },
   gw_emit: {
-    IMERROR: (ctx, message) => {
-      const { app, socket } = ctx;
+    IMERROR: (ctx, socket, message) => {
+      const { app } = ctx;
       socket.emit(
         app.config.emitsheet.IMERROR,
         message

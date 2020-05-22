@@ -34,8 +34,8 @@ class IOClient {
         } else {
           try {
             const previousSocket = app.io.of('/chat').sockets[previousSocketId];
-            previousSocket && helper.emitError(previousSocket, app.config.errorCode.DUPLICATE_CLIENT);
-            previousSocket && helper.lazyCloseSocket(previousSocket);
+            previousSocket && this.ctx.emitError(previousSocket, app.config.errorCode.DUPLICATE_CLIENT);
+            previousSocket && this.ctx.lazyCloseSocket(previousSocket);
           } catch (e) {
             logger.error('[CHAT] previousSocket is not existed');
           }

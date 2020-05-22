@@ -3,12 +3,12 @@
 module.exports = app => {
   return async (ctx, next) => {
     // socket is interacting with browser clients
-    const { socket, logger, service, helper } = ctx;
+    const { socket, logger, service } = ctx;
     const { device_id } = socket.handshake.query;
 
     if (!device_id) {
-      helper.emitError(socket, app.config.errorCode.MISS_PARAMS, '[SSO] connect failed, missing device_id in query');
-      helper.lazyCloseSocket(socket);
+      ctx.emitError(socket, app.config.errorCode.MISS_PARAMS, '[SSO] connect failed, missing device_id in query');
+      ctx.lazyCloseSocket(socket);
       return;
     }
 

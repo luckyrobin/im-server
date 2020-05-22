@@ -8,12 +8,14 @@ module.exports = app => {
     const dt = helper.getDeviceType(deviceType);
 
     if (!token || !userId || !deviceType) {
-      helper.emitError(socket, app.config.errorCode.MISS_PARAMS, '[CHAT] connect failed, missing params in query');
+      ctx.emitError(socket, app.config.errorCode.MISS_PARAMS, '[CHAT] connect failed, missing params in query');
+      ctx.lazyCloseSocket(socket);
       return;
     }
 
     if (!dt) {
-      helper.emitError(socket, app.config.errorCode.MISS_PARAMS, '[CHAT] connect failed, current deviceType is not support');
+      ctx.emitError(socket, app.config.errorCode.MISS_PARAMS, '[CHAT] connect failed, current deviceType is not support');
+      ctx.lazyCloseSocket(socket);
       return;
     }
 
@@ -23,8 +25,8 @@ module.exports = app => {
     const authOK = await service.io.chat.checkAuthToken(token);
 
     if (!authOK) {
-      helper.emitError(socket, app.config.errorCode.AUTH_FAILED);
-      helper.lazyCloseSocket(socket);
+      ctx.emitError(socket, app.config.errorCode.AUTH_FAILED);
+      ctx.lazyCloseSocket(socket);
       return;
     }
     // push user to client list
