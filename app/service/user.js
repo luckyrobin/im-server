@@ -50,11 +50,12 @@ class UserService extends Service {
   }
 
   async getUser() {
-    const authorization = this.ctx.request.header.authorization;
-    const result = await this.ctx.app.redis.get(authorization);
+    const token = this.ctx.request.header.authorization;
+    // const result = await this.ctx.app.redis.get(authorization);
+    const payload = this.ctx.jwtToken.parse(token);
 
     const userData = await this.ctx.model.User.findOne({
-      phone_number: result,
+      phone_number: payload.phone,
     });
 
     return userData;

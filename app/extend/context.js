@@ -4,21 +4,21 @@ const JwtToken = require('./mount/jwttoken');
 const IOClient = require('./mount/ioclient');
 const HttpError = require('./mount/httperror');
 
-const jwtSymbol = Symbol('Context#JwtToken');
-const ioSymbol = Symbol('Context#IOClient');
+let jwtTokenInstance = null;
+let ioClientInstance = null;
 
 module.exports = {
   get jwtToken() {
-    if (!this[jwtSymbol]) {
-      this[jwtSymbol] = new JwtToken(this);
+    if (!jwtTokenInstance) {
+      jwtTokenInstance = new JwtToken(this);
     }
-    return this[jwtSymbol];
+    return jwtTokenInstance;
   },
   get ioClient() {
-    if (!this[ioSymbol]) {
-      this[ioSymbol] = new IOClient(this);
+    if (!ioClientInstance) {
+      ioClientInstance = new IOClient(this);
     }
-    return this[ioSymbol];
+    return ioClientInstance;
   },
   HttpError,
   emitError(socket, status, msg) {

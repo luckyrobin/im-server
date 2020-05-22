@@ -125,31 +125,21 @@ class LoginController extends HttpController {
     });
   }
 
-  // 1.device_id  2.token
+  // 1.device_id
   async qrLogin() {
     const { ctx, app } = this;
     const body = ctx.request.body;
 
     const device_id = body.device_id;
-    const token = body.token;
+    const token = ctx.request.header.authorization;
 
-    const res = await app.redis.get(token);
     const socketId = await app.redis.get(device_id);
 
-    if (res) {
-      // socket通知device_id端登录成功,并将token发送过去, 之后断开socket连接
-      app.gateway.SSO_QRLOGIN(ctx, socketId, ctx.helper.parseIOMsg('SSO_QRLOGIN', { token }, 'success'));
-      this.success({
-        msg: '登录成功',
-      });
-
-      //
-    } else {
-      app.gateway.SSO_QRLOGIN(ctx, socketId, ctx.helper.parseIOMsg('SSO_QRLOGIN', {}, 'fail'));
-      this.fail({
-        msg: '登录失败',
-      });
-    }
+    // socket通知device_id端登录成功,并将token发送过去, 之后断开socket连接
+    app.gateway.SSO_QRLOGIN(ctx, socketId, ctx.helper.parseIOMsg('SSO_QRLOGIN', { token }, 'success'));
+    this.success({
+      msg: '登录成功',
+    });
   }
 }
 
