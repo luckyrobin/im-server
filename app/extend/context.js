@@ -1,8 +1,11 @@
 'use strict';
 
-const JwtToken = require('./class/jwttoken');
+const JwtToken = require('./mount/jwttoken');
+const IOClient = require('./mount/ioclient');
+const HttpError = require('./mount/httperror');
 
-const jwtSymbol = Symbol('Context#jwtToken');
+const jwtSymbol = Symbol('Context#JwtToken');
+const ioSymbol = Symbol('Context#IOClient');
 
 module.exports = {
   get jwtToken() {
@@ -11,4 +14,11 @@ module.exports = {
     }
     return this[jwtSymbol];
   },
+  get ioClient() {
+    if (!this[ioSymbol]) {
+      this[ioSymbol] = new IOClient(this);
+    }
+    return this[ioSymbol];
+  },
+  HttpError,
 };

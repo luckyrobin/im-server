@@ -28,14 +28,14 @@ module.exports = app => {
       return;
     }
     // push user to client list
-    service.io.client.push(socket, userId, dt);
+    ctx.ioClient.push(socket, userId, dt);
 
     // socket.join group
     service.io.group.joinMineGroup(socket, userId);
 
     await next();
     // pop user to client list
-    service.io.client.pop(socket, userId, dt);
+    ctx.ioClient.pop(socket, userId, dt);
     console.log('disconnect');
   };
 };

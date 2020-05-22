@@ -44,7 +44,7 @@ class ChatService extends Service {
       // fp 唯一性校验不通过
       const { helper, app } = this.ctx;
       const deviceType = helper.getDeviceType(message.requestQuery.deviceType);
-      const cooked = await service.io.client.getCooked(`${message.from}`);
+      const cooked = await this.ctx.ioClient.getCooked(`${message.from}`);
       const socket = helper.getSocketById('/chat', cooked[deviceType]);
       helper.emitError(socket, app.config.errorCode.CHAT_FAILED, `[CHAT] failed: fp -> ${message.fp} isn't to be unique`);
       throw new Error(error);
@@ -103,7 +103,7 @@ class ChatService extends Service {
   }
 
   async to(savedmsg) {
-    const { helper, app, service } = this.ctx;
+    const { helper, app } = this.ctx;
     const message = savedmsg;
 
     // has handled through ackAndSync
@@ -115,7 +115,7 @@ class ChatService extends Service {
     const toSocketIds = [];
     switch (message.typeu) {
       case 1: {
-        const cooked = await service.io.client.getCooked(message.to);
+        const cooked = await this.ctx.ioClient.getCooked(message.to);
         Object.keys(cooked).forEach(item => {
           toSocketIds.push(cooked[item]);
         });
@@ -136,12 +136,12 @@ class ChatService extends Service {
 
   // ack & multiterminal synchronization
   async ackAndSync(mqmsg, savedmsg) {
-    const { service, helper, app } = this.ctx;
+    const { helper, app } = this.ctx;
     const cookedmsg = JSON.parse(mqmsg.message);
     // 1. get current deviceType
     const deviceType = helper.getDeviceType(cookedmsg.requestQuery.deviceType);
     // 2. get current signin device
-    const cooked = await service.io.client.getCooked(`${savedmsg.from}`);
+    const cooked = await this.ctx.ioClient.getCooked(`${savedmsg.from}`);
     // 3. get current device socket
     const currentDevice = Reflect.ownKeys(cooked).filter(item => item === deviceType).join('');
     // 4. ack to current device

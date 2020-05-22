@@ -61,7 +61,7 @@ class ChatController extends Controller {
     const storeMessage = await service.io.message.updateStoreMessageStatus(userId, message);
 
     const toSocketIds = [];
-    const cooked = await service.io.client.getCooked(message.from);
+    const cooked = await this.ctx.ioClient.getCooked(message.from);
     Object.keys(cooked).forEach(item => {
       toSocketIds.push(cooked[item]);
     });
@@ -77,12 +77,12 @@ class ChatController extends Controller {
   }
 
   async markTyping() {
-    const { app, service, socket, helper } = this.ctx;
+    const { app, socket, helper } = this.ctx;
     const { userId } = socket.handshake.query;
     const message = this.ctx.packet[1];
 
     const toSocketIds = [];
-    const cooked = await service.io.client.getCooked(message.to);
+    const cooked = await this.ctx.ioClient.getCooked(message.to);
     Object.keys(cooked).forEach(item => {
       toSocketIds.push(cooked[item]);
     });

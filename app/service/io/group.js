@@ -22,10 +22,10 @@ class GroupService extends Service {
 
   // create group and join room immediately
   async aggregationMembers(members, groupId) {
-    const { service, app } = this.ctx;
+    const { app } = this.ctx;
 
     return Promise.all(members.map(async userId => {
-      const cooked = await service.io.client.getCooked(userId);
+      const cooked = await this.ctx.ioClient.getCooked(userId);
       return Object.keys(cooked).map(deviceType => {
         const socket = app.io.of('/chat').sockets[cooked[deviceType]];
         return new Promise(resolve => {
@@ -39,10 +39,10 @@ class GroupService extends Service {
 
   // leave room and broadcast to all client
   async dissolveMembers(members, groupId) {
-    const { service, app } = this.ctx;
+    const { app } = this.ctx;
 
     return Promise.all(members.map(async userId => {
-      const cooked = await service.io.client.getCooked(userId);
+      const cooked = await this.ctx.ioClient.getCooked(userId);
       return Object.keys(cooked).map(deviceType => {
         const socket = app.io.of('/chat').sockets[cooked[deviceType]];
         return new Promise(resolve => {

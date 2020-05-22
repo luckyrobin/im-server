@@ -142,7 +142,7 @@ class MessageService extends Service {
   }
 
   async updateStoreMessageStatus(owner, msg) {
-    return await this.ctx.model.MessageStore.findByIdAndUpdate(msg._id, { $push: { readed: owner } }, { new: true });
+    return await this.ctx.model.MessageStore.findByIdAndUpdate(msg._id, { $addToSet: { readed: owner } }, { new: true });
   }
 
 }

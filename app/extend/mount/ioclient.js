@@ -1,8 +1,6 @@
 'use strict';
 
-const Service = require('egg').Service;
-
-const CLIENTLIST = 'clientlist';
+const CLIENTLIST = 'ioclient';
 
 const parseRaw = (raw, deviceType) => {
   if (deviceType) {
@@ -13,7 +11,10 @@ const parseRaw = (raw, deviceType) => {
 
 const stringify2Raw = cooked => JSON.stringify(cooked);
 
-class clientService extends Service {
+class IOClient {
+  constructor(ctx) {
+    this.ctx = ctx;
+  }
 
   async push(socket, userId, deviceType) {
     const { logger, helper, app } = this.ctx;
@@ -123,5 +124,4 @@ class clientService extends Service {
   }
 }
 
-module.exports = clientService;
-
+module.exports = IOClient;
