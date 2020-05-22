@@ -15,23 +15,23 @@ class JwtToken {
   }
 
   parse(token) {
-    const { app, helper } = this.ctx;
+    const { app, HttpError } = this.ctx;
     let payload = {};
     try {
       payload = app.jwt.decode(token);
     } catch (e) {
-      throw new helper.HttpError(app.config.errorCode.RE_LOGIN, e.message);
+      throw new HttpError(app.config.errorCode.RE_LOGIN, e.message);
     }
     return payload.data;
   }
 
   check(token) {
-    const { app, helper } = this.ctx;
+    const { app, HttpError } = this.ctx;
     let payload = {};
     try {
       payload = app.jwt.verify(token, app.config.jwt.secret);
     } catch (e) {
-      throw new helper.HttpError(app.config.errorCode.RE_LOGIN, e.message);
+      throw new HttpError(app.config.errorCode.RE_LOGIN, e.message);
     }
     return payload.data;
   }
