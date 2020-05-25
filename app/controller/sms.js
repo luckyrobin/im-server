@@ -3,7 +3,7 @@
 const HttpController = require('./base/http');
 const Core = require('@alicloud/pop-core');
 
-const client = new Core({
+const SmsClient = new Core({
   accessKeyId: 'LTAI4Frk7UF5C4dupvaHfopQ',
   accessKeySecret: '1FH7Bxe3lrYFmqrIXqWjM0x4VAHpXR',
   endpoint: 'https://dysmsapi.aliyuncs.com',
@@ -33,16 +33,16 @@ class LoginController extends HttpController {
       });
       if (!userData) throw new ctx.HttpError('该手机号码所在的用户不存在');
 
-      await client.request('SendSms', params, { method: 'POST' }).then(
+      await SmsClient.request('SendSms', params, { method: 'POST' }).then(
         () => {
           app.redis.set(body.phone_number, code);
           app.redis.expire(body.phone_number, 600);
           this.success({
-            msg: '短信发送成功',
+            msg: 'auth code send succeed',
           });
         },
         () => {
-          throw new ctx.HttpError('短信发送失败');
+          throw new ctx.HttpError('auth code send failed');
         }
       );
     } catch (e) {
@@ -59,7 +59,7 @@ class LoginController extends HttpController {
 
     try {
       const originCode = await app.redis.get(body.phone_number);
-      if (originCode !== body.code) throw new ctx.HttpError('验证码错误');
+      if (originCode !== body.code) throw new ctx.HttpError('auth code failed');
 
       const userData = await ctx.model.User.findOne({
         phone_number: body.phone_number,
@@ -72,13 +72,13 @@ class LoginController extends HttpController {
       if (cacheToken) {
         // TODO
         // duplicate 重复登录问题
-        console.log('duplicate login');
+        console.log('login duplicate');
       }
 
       const mobileToken = await ctx.jwtToken.generate({ phone: body.phone_number, uid: `${userData._id}`, dt });
 
       this.success({
-        msg: '登录成功',
+        msg: 'login succeed',
         data: {
           authorization: mobileToken,
           userData,
@@ -125,7 +125,7 @@ class LoginController extends HttpController {
       // socket 通知 device_id 端登录成功,并将 token 发送过去, 之后断开 socket 连接
       app.gateway.SSO_QRLOGIN(ctx, socketId, ctx.helper.parseIOMsg('SSO_QRLOGIN', { token: PCToken }, 'success'));
       this.success({
-        msg: '登录成功',
+        msg: 'login succeed',
       });
     } catch (e) {
       this.fail({
@@ -142,9 +142,11 @@ class LoginController extends HttpController {
       if (!token) throw new ctx.HttpError(app.config.errorCode.MISS_PARAMS, 'miss param `authorization`');
 
       const result = await ctx.jwtToken.removeToken(token);
-      if (!result) throw new ctx.HttpError('登出失败');
+      if (result === false) throw new ctx.HttpError('logout failed');
+      let msg = 'logout succeed';
+      if (result === 0) msg = 'logout duplicate';
       this.success({
-        msg: '登出成功',
+        msg,
       });
     } catch (e) {
       this.fail({
