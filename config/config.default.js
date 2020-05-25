@@ -21,6 +21,17 @@ module.exports = appInfo => {
   //   mode: 'file'
   // }
 
+  config.customLogger = {
+    scheduleLogger: {
+      consoleLevel: 'ERROR',
+      level: 'ERROR',
+    },
+  };
+
+  config.logrotator = {
+    filesRotateBySize: [ './egg-schedule.log', './im-server-web' ],
+  };
+
   // add your user config here
   const userConfig = {
     myAppName: 'im',
