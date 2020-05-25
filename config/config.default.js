@@ -38,7 +38,7 @@ module.exports = appInfo => {
       client: {
         port: 6379, // Redis port
         host: 'localhost', // Redis host
-        password: 'auth',
+        password: '',
         db: 0,
       },
     },
