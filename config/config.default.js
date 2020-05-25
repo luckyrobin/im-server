@@ -92,7 +92,7 @@ module.exports = appInfo => {
     jwt: {
       secret: config.keys,
       options: {
-        expiresIn: 60, // JWT 过期时间
+        expiresIn: 60*60*24, // JWT 过期时间
       },
     },
     view: {
