@@ -82,23 +82,16 @@ class LoginController extends HttpController {
     const body = ctx.request.body;
 
     const originCode = await app.redis.get(body.phone_number);
-    // ctx.session.phone_number = body.phone_number;
 
     if (originCode === body.code) {
-
       const userData = await ctx.model.User.findOne({
         phone_number: body.phone_number,
       });
-
-      const token = ctx.jwtToken.generate({ phone: body.phone_number, uid: `${userData._id}` });
-
-      // await app.redis.set(token, body.phone_number);
-      // await app.redis.expire(token, 60 * 60 * 24);
-
+      const mobileToken = await ctx.jwtToken.generate({ phone: body.phone_number, uid: `${userData._id}`, dt: ctx.helper.getDeviceType(body.deviceType) || 'MOBILE' });
       this.success({
         msg: '登录成功',
         data: {
-          authorization: token,
+          authorization: mobileToken,
           userData,
         },
       });
@@ -110,33 +103,41 @@ class LoginController extends HttpController {
   }
 
   async test() {
-
     this.success({
       msg: 'ok',
     });
   }
 
   async qrCode() {
-    const randomStr = getRandomStr();
+    const { helper } = this.ctx;
+    const uuid = helper.uuid(12);
     this.success({
       data: {
-        device_id: randomStr,
+        device_id: uuid,
       },
     });
   }
 
-  // 1.device_id
   async qrLogin() {
     const { ctx, app } = this;
     const body = ctx.request.body;
 
     const device_id = body.device_id;
     const token = ctx.request.header.authorization;
-
+    const data = ctx.jwtToken.parse(token);
     const socketId = await app.redis.get(device_id);
 
-    // socket通知device_id端登录成功,并将token发送过去, 之后断开socket连接
-    app.gateway.SSO_QRLOGIN(ctx, socketId, ctx.helper.parseIOMsg('SSO_QRLOGIN', { token }, 'success'));
+    if (!socketId) {
+      this.fail({
+        msg: '登录失败，请重试',
+      });
+      return;
+    }
+
+    const PCToken = await ctx.jwtToken.generate({ phone: data.phone, uid: data.uid, dt: ctx.helper.getDeviceType(body.deviceType) || 'DESKTOP' });
+
+    // socket 通知 device_id 端登录成功,并将 token发 送过去, 之后断开 socket 连接
+    app.gateway.SSO_QRLOGIN(ctx, socketId, ctx.helper.parseIOMsg('SSO_QRLOGIN', { token: PCToken }, 'success'));
     this.success({
       msg: '登录成功',
     });

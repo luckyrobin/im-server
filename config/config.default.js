@@ -35,6 +35,7 @@ module.exports = appInfo => {
   // add your user config here
   const userConfig = {
     myAppName: 'im',
+    redisTokenPrefix: 'rft:',
     // mongoose
     mongoose: {
       url: 'mongodb://localhost:27017/im', // connect to other docker image port: 27017
@@ -92,7 +93,8 @@ module.exports = appInfo => {
     jwt: {
       secret: config.keys,
       options: {
-        expiresIn: 60, // JWT 过期时间
+        expiresIn: 60 * 60, // JWT 过期时间
+        rftExpiresIn: 60 * 60 * 24, // Refresh Token 过期时间
       },
     },
     view: {

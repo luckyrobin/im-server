@@ -11,8 +11,11 @@ module.exports = app => {
   // app登录
   router.post('/api/smsLogin', controller.sms.check);
 
+  // 刷新 token
+  router.post('/api/refreshToken', middleware.rftauth());
+
   // 二维码， app确认登录
-  router.post('/api/qrCodeLogin', middleware.apiauth(), controller.sms.qrLogin);
+  router.post('/api/qrCodeLogin', controller.sms.qrLogin);
 
   // 获取二维码 device_id
   router.get('/api/qrCode', controller.sms.qrCode);

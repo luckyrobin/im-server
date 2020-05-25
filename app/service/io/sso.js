@@ -6,11 +6,16 @@ class SSOService extends Service {
   /**
    * save the device_id to redis
    * @param {string} deviceId
-   * @param {string} socketId
+   * @param {EventListenerOrEventListenerObject} socket
    */
-  async cacheSocket(deviceId, socketId) {
+  async cacheSocket(deviceId, socket) {
+    const self = this;
     const { app } = this;
-    await app.redis.set(deviceId, socketId);
+    await app.redis.set(deviceId, socket.id);
+    await app.redis.expire(deviceId, 60);
+    setTimeout(function() {
+      self.ctx.lazyCloseSocket(socket);
+    }, 1000 * 60);
   }
 
   /**

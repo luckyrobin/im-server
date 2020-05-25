@@ -12,7 +12,7 @@ module.exports = app => {
       return;
     }
 
-    service.io.sso.cacheSocket(device_id, socket.id);
+    service.io.sso.cacheSocket(device_id, socket);
     logger.info(`[SSO] SOCKET_ID: ${socket.id} with DEVICE_ID: ${device_id} has connection!`);
 
     await next();

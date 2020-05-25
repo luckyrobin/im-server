@@ -10,7 +10,6 @@ module.exports = {
     enable: true,
     package: 'egg-mongoose',
   },
-  // session: true,
   jwt: {
     enable: true,
     package: 'egg-jwt',
