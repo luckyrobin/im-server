@@ -69,6 +69,17 @@ class JwtToken {
     return result;
   }
 
+  async removeToken(token) {
+    const { app, HttpError } = this.ctx;
+    try {
+      const payload = app.jwt.decode(token);
+      if (payload === null || !Reflect.has(payload, 'data')) return false;
+      const data = payload.data;
+      return await app.redis.del(`${app.config.redisTokenPrefix}[${data.dt}]${data.uid}`);
+    } catch (e) {
+      throw new HttpError(e.message);
+    }
+  }
 }
 
 module.exports = JwtToken;

@@ -14,14 +14,17 @@ module.exports = app => {
   // 刷新 token
   router.post('/api/refreshToken', middleware.rftauth());
 
-  // 二维码， app确认登录
-  router.post('/api/qrCodeLogin', controller.sms.qrLogin);
-
   // 获取二维码 device_id
-  router.get('/api/qrCode', controller.sms.qrCode);
+  router.get('/api/qrCode', controller.sms.getDeviceId);
+
+  // 二维码， app确认登录
+  router.post('/api/qrCodeLogin', middleware.apiauth(), controller.sms.qrLogin);
 
   // 测试登录态
   router.get('/api/test', middleware.apiauth(), controller.sms.test);
+
+  // 登出
+  router.post('/api/logout', controller.sms.logout);
 
   // 用户
   // router.post('/api/user', app.controller.user.add);
