@@ -30,9 +30,9 @@ module.exports = app => {
 
   // 录入 联系人
   router.resources('/api/user', app.controller.user);
-  router.post('/api/user_delete', app.controller.user.destroy);
-  router.get('/api/user_info/:id', app.controller.user.getUser);
-  router.get('/api/user_info', app.controller.user.getCurrentUser);
+  router.post('/api/user_delete', middleware.apiauth(), app.controller.user.destroy);
+  router.get('/api/user_info/:id', middleware.apiauth(), app.controller.user.getUser);
+  router.get('/api/user_info', middleware.apiauth(), app.controller.user.getCurrentUser);
 
   // 通过部门查询user
   router.post('/api/address_user', app.controller.user.findUser);
