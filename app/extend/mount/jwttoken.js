@@ -18,6 +18,9 @@ class JwtToken {
     });
   }
 
+  // reference: https://hasura.io/blog/best-practices-of-using-jwt-with-graphql/
+  // reference: https://juejin.im/post/5cc702366fb9a0323a01c099
+  // reference: https://zhuanlan.zhihu.com/p/52300092
   async generateRefreshToken(data) {
     const { app } = this.ctx;
     const payload = {
