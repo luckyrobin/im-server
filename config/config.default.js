@@ -104,7 +104,6 @@ module.exports = appInfo => {
       },
       cache: false,
     },
-
   };
 
   // io emit cheatsheet config
