@@ -17,6 +17,7 @@ module.exports = () => {
         data: {
           token: newToken,
         },
+        code: 0,
       };
       await next();
     } catch (e) {
