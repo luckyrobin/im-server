@@ -12,9 +12,9 @@ const SmsClient = new Core({
 
 const randomCode = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 
-class LoginController extends HttpController {
+class SignInController extends HttpController {
 
-  async send() {
+  async sendSms() {
     const { ctx, app } = this;
     const body = ctx.request.body;
 
@@ -53,13 +53,18 @@ class LoginController extends HttpController {
     }
   }
 
-  async check() {
-    const { ctx, app } = this;
+  async checkSms(phone, code) {
+    const originCode = await this.app.redis.get(phone);
+    return `${originCode}` === `${code}`;
+  }
+
+  async login() {
+    const { ctx, app, logger } = this;
     const body = ctx.request.body;
 
     try {
-      const originCode = await app.redis.get(body.phone_number);
-      if (originCode !== body.code) throw new ctx.HttpError('auth code failed');
+      const isMatch = await this.checkSms(body.phone_number, body.code);
+      if (!isMatch) throw new ctx.HttpError('auth code failed');
 
       const userData = await ctx.model.User.findOne({
         phone_number: body.phone_number,
@@ -68,11 +73,10 @@ class LoginController extends HttpController {
 
       const dt = ctx.helper.getDeviceType(body.deviceType) || 'MOBILE';
       const cacheToken = await app.redis.get(`${app.config.redisTokenPrefix}[${dt}]${userData._id}`);
-
       if (cacheToken) {
         // TODO
         // duplicate 重复登录问题
-        console.log('login duplicate');
+        logger.info(`${app.config.redisTokenPrefix}[${dt}]${userData._id} duplicate login`);
       }
 
       const mobileToken = await ctx.jwtToken.generate({ phone: body.phone_number, uid: `${userData._id}`, dt });
@@ -98,7 +102,7 @@ class LoginController extends HttpController {
     });
   }
 
-  async getDeviceId() {
+  async generateDeviceId() {
     const { helper } = this.ctx;
     const uuid = helper.uuid(12);
     this.success({
@@ -157,4 +161,4 @@ class LoginController extends HttpController {
   }
 }
 
-module.exports = LoginController;
+module.exports = SignInController;

@@ -6,25 +6,25 @@ module.exports = app => {
   const { router, controller, middleware } = app;
 
   // 短信发送
-  router.post('/api/sendSms', controller.sms.send);
+  router.post('/api/sendSms', controller.signin.sendSms);
 
   // app登录
-  router.post('/api/smsLogin', controller.sms.check);
+  router.post('/api/smsLogin', controller.signin.login);
 
   // 刷新 token
   router.post('/api/refreshToken', middleware.rftauth());
 
   // 获取二维码 device_id
-  router.get('/api/qrCode', controller.sms.getDeviceId);
+  router.get('/api/qrCode', controller.signin.generateDeviceId);
 
   // 二维码， app确认登录
-  router.post('/api/qrCodeLogin', middleware.apiauth(), controller.sms.qrLogin);
+  router.post('/api/qrCodeLogin', middleware.apiauth(), controller.signin.qrLogin);
 
   // 测试登录态
-  router.get('/api/test', middleware.apiauth(), controller.sms.test);
+  router.get('/api/test', middleware.apiauth(), controller.signin.test);
 
   // 登出
-  router.post('/api/logout', controller.sms.logout);
+  router.post('/api/logout', controller.signin.logout);
 
   // 用户
   // router.post('/api/user', app.controller.user.add);
