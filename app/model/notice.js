@@ -7,9 +7,15 @@ module.exports = app => {
   const Schema = new mongoose.Schema(
     {
       image: String,
-      title: String, // 标题
+      title: {
+        type: String,
+        required: true,
+      }, // 标题
       abstract: String, // 摘要
-      content: String, // 内容
+      content: {
+        type: String,
+        required: true,
+      },
     },
     { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
   ); // 时间

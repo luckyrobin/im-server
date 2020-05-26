@@ -91,6 +91,9 @@ module.exports = app => {
   // timeline update
   router.put('/api/timeline/:id', middleware.apiauth(), app.io.controller.timeline.update);
 
+  // pull history message
+  router.post('/api/message', middleware.apiauth(), app.io.controller.chat.getHistoryMessage);
+
   router.get('*', controller.render.index);
 
   require('./router/io').gw_receive(app);

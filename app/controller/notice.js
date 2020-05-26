@@ -1,4 +1,5 @@
 'use strict';
+
 const HttpController = require('./base/http');
 const OSS = require('ali-oss');
 const path = require('path');
@@ -10,21 +11,21 @@ class NoticeController extends HttpController {
     const { ctx } = this;
     const body = ctx.request.body;
 
-    const instance = new ctx.model.Notice({
-      content: body.content,
-      image: body.image,
-      abstract: body.abstract,
-      title: body.title,
-    });
     try {
+      const instance = new ctx.model.Notice({
+        content: body.content,
+        image: body.image,
+        abstract: body.abstract,
+        title: body.title,
+      });
       const res = await instance.save();
-
       this.success({
         data: res,
       });
-    } catch (err) {
+    } catch (e) {
       this.fail({
-        data: err,
+        code: e.code,
+        msg: e.message,
       });
     }
   }
@@ -44,9 +45,10 @@ class NoticeController extends HttpController {
       this.success({
         data: res,
       });
-    } catch (err) {
+    } catch (e) {
       this.fail({
-        data: err,
+        code: e.code,
+        msg: e.message,
       });
     }
   }
@@ -60,24 +62,26 @@ class NoticeController extends HttpController {
           $regex: body.search || '',
         },
       }).count();
+
       const count = body.count || 20;
       const page = body.page || 1;
       const res = await ctx.model.Notice.find({
         content: {
           $regex: body.search || '',
         },
-      })
-        .skip(count * (page - 1))
+      }).skip(count * (page - 1))
         .limit(count);
+
       this.success({
         data: {
           list: res,
           count: dataLength,
         },
       });
-    } catch (err) {
+    } catch (e) {
       this.fail({
-        data: err,
+        code: e.code,
+        msg: e.message,
       });
     }
   }
@@ -85,14 +89,20 @@ class NoticeController extends HttpController {
   async show() {
     const { ctx } = this;
     const id = ctx.params.id;
+    try {
+      const res = await this.ctx.model.Notice.findOne({
+        _id: id,
+      });
 
-    const res = await this.ctx.model.Notice.findOne({
-      _id: id,
-    });
-
-    this.success({
-      data: res,
-    });
+      this.success({
+        data: res,
+      });
+    } catch (e) {
+      this.fail({
+        code: e.code,
+        msg: e.message,
+      });
+    }
   }
 
   async delete() {
@@ -118,15 +128,12 @@ class NoticeController extends HttpController {
 
   async index() {
     const { ctx } = this;
-    const dataLength = await this.ctx.model.Notice.find({}).count();
-    // console.log(ctx.query);
     const query = ctx.query;
-    // this.success({
-    //   data: res,
-    // });
 
-    const count = query.count || 20;
     const page = query.page || 1;
+    const count = query.count || 20;
+
+    const dataLength = await this.ctx.model.Notice.find({}).count();
 
     const res = await this.ctx.model.Notice.find({})
       .skip(count * (page - 1))

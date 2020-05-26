@@ -33,10 +33,31 @@ class ChatController extends Controller {
   }
 
   async getHistoryMessage() {
-    const { app, service, socket, helper } = this.ctx;
-    const { userId } = socket.handshake.query;
-    const params = this.ctx.packet[1];
+    const { app, socket, helper, request } = this.ctx;
+    let userId = '';
+    let params = {};
+    // 合并 socket 和 http 请求操作
+    if (socket.handshake) {
+      userId = socket.handshake.query.userId;
+      params = this.ctx.packet[1];
+      const messagesList = await this._getHistoryMessage.call(this, userId, params);
+      if (!messagesList) return;
+      app.gateway.CHAT_PULL_HISTORY_MESSAGE(this.ctx, socket.id, helper.parseIOMsg('CHAT_PULL_HISTORY_MESSAGE', messagesList, 'success'));
+    } else {
+      userId = request.userId;
+      params = request.body;
+      const messagesList = await this._getHistoryMessage.call(this, userId, params);
+      if (!messagesList) return;
+      this.ctx.body = {
+        code: 0,
+        data: messagesList,
+        msg: 'ok',
+      };
+    }
+  }
 
+  async _getHistoryMessage(userId, params) {
+    const { service } = this.ctx;
     let historyMessages = [];
     switch (params.typeu) {
       case 1: {
@@ -48,9 +69,9 @@ class ChatController extends Controller {
         break;
       }
       default:
-        return;
+        return false;
     }
-    app.gateway.CHAT_PULL_HISTORY_MESSAGE(this.ctx, socket.id, helper.parseIOMsg('CHAT_PULL_HISTORY_MESSAGE', historyMessages, 'success'));
+    return historyMessages;
   }
 
   async markReader() {
