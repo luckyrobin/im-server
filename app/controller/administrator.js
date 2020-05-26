@@ -2,7 +2,7 @@
 // const Controller = require('egg').Controller;
 const HttpController = require('./base/http');
 
-class AuthController extends HttpController {
+class AdministratorController extends HttpController {
   // phone1  phone2  code1 code2
   async check() {
     const { ctx } = this;
@@ -80,4 +80,4 @@ class AuthController extends HttpController {
   }
 }
 
-module.exports = AuthController;
+module.exports = AdministratorController;

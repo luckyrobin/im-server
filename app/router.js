@@ -71,10 +71,10 @@ module.exports = app => {
 
   // 超管
   // 验证码校验
-  router.post('/api/sms_check', app.controller.auth.check);
+  router.post('/api/sms_check', app.controller.administrator.check);
   // 菜单权限
-  router.post('/api/role/menu', app.controller.auth.setRole);
-  router.get('/api/menu', app.controller.auth.getMenu);
+  router.post('/api/role/menu', app.controller.administrator.setRole);
+  router.get('/api/menu', app.controller.administrator.getMenu);
 
   // router.get('/api/img', app.controller.notice.test);
 
