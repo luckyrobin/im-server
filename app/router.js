@@ -60,7 +60,6 @@ module.exports = app => {
   router.resources('/api/notice', app.controller.notice);
   // 公告 批量删除
   router.post('/api/notice/delete', app.controller.notice.delete);
-  router.post('/api/notice/find', app.controller.notice.find);
   // 公告 图片上传
   router.post('/api/notice/upload', app.controller.notice.upload);
 
