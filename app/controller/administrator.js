@@ -64,19 +64,16 @@ class AdministratorController extends HttpController {
   }
 
   async getMenu() {
-
-    const userData = await this.service.user.getUser();
-
-    if (userData.auth === 1) {
+    try {
+      const userData = await this.service.user.findRoleUser();
       this.success({
-        data: [ 1, 2, 3, 4 ],
+        data: userData,
       });
-    } else {
-      this.success({
-        data: userData.menuRole,
+    } catch (e) {
+      this.fail({
+        msg: e.message,
       });
     }
-
   }
 }
 

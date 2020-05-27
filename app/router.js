@@ -72,8 +72,8 @@ module.exports = app => {
   // 验证码校验
   router.post('/api/sms_check', app.controller.administrator.check);
   // 菜单权限
-  router.post('/api/role/menu', app.controller.administrator.setRole);
-  router.get('/api/menu', app.controller.administrator.getMenu);
+  router.post('/api/role/menu', middleware.apiauth(), app.controller.administrator.setRole);
+  router.get('/api/menu', middleware.apiauth(), app.controller.administrator.getMenu);
 
   // router.get('/api/img', app.controller.notice.test);
 
