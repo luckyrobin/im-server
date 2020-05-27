@@ -70,11 +70,7 @@ class UserService extends Service {
   }
 
   async findRoleUser() {
-    const result = await this.ctx.model.User.find({
-      menuRole: { $not: { $size: 0 } },
-    });
-
-    return result;
+    return await this.ctx.model.User.find({ 'menuRole.0': { $exists: true } });
   }
 
   async _handleAddress(id, ctx) {
