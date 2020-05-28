@@ -1,7 +1,6 @@
 'use strict';
 // const Controller = require('egg').Controller;
 const HttpController = require('./base/http');
-const OSS = require('ali-oss');
 // const sendToWormhole = require('stream-wormhole');
 const path = require('path');
 
@@ -146,98 +145,44 @@ class UserController extends HttpController {
 
   // 头像设置
   async setAvatar() {
-    const { ctx } = this;
+    const { ctx, app } = this;
+    const { request, HttpError } = ctx;
 
-    const userData = await this.service.user.getUser();
-    // console.log(userData)
-    const client = new OSS({
-      accessKeyId: 'LTAI4Fdg3EUT6ui43RDQhaUT',
-      accessKeySecret: 'RU7fdReSzGp64kxDnqvNtCP871Ngcm',
-      bucket: 'wh-qd-group',
-      // region: 'oss-cn-hangzhou',
-      endpoint: 'oss-cn-zhangjiakou.aliyuncs.com',
-    });
-
-    const stream = await this.ctx.getFileStream();
-    const imgName = `avatar/${
-      userData.name
-    }_${new Date().getTime()}_${path.basename(stream.filename)}`;
     try {
-      // console.log(this.ctx.request.files[0])
+      const userData = await this.service.user.findUser(request.userId);
+      const avatarData = await this.service.avatar.findByUserId(request.userId);
 
-      // console.log(stream.filename)
-      await client.put(imgName, stream);
-      const img_url = await client.signatureUrl(imgName, {
-        expires: 3600 * 24 * 30,
-      });
+      if (avatarData && avatarData.status === 0) throw new HttpError('您上次提交的修改正在审核中');
+
+      const stream = await this.ctx.getFileStream();
+      const imgName = `avatar/${userData.name}_${new Date().getTime()}_${path.basename(stream.filename)}`;
+      const result = await app.oss.instance.put(imgName, stream);
       this.service.user.update(
         {
           _id: userData._id,
         },
         {
-          avatar: img_url,
+          avatar: result.url,
         }
       );
 
-      // await this.ctx.model.AvatarCheck.fin
       const instance = new ctx.model.AvatarCheck({
         user_id: userData._id,
         name: userData.name,
-        avatar: img_url,
+        avatar: result.url,
         status: 0,
       });
 
       await instance.save();
       this.success({
-        data: img_url,
+        data: result.url,
       });
-    } catch (err) {
-      // console.log(err)
-      // await sendToWormhole(stream);
-
+    } catch (e) {
       this.fail({
-        data: err,
+        code: e.code,
+        msg: e.message,
       });
     }
-  }
-
-  async getAvatar() {
-    const { ctx } = this;
-
-    console.log(ctx.params.id);
-    const userData = await this.service.user.getUser();
-
-    let client = new OSS({
-      accessKeyId: 'LTAI4Fdg3EUT6ui43RDQhaUT',
-      accessKeySecret: 'RU7fdReSzGp64kxDnqvNtCP871Ngcm',
-      bucket: 'wh-qd-group',
-      // region: 'oss-cn-hangzhou',
-      endpoint: 'oss-cn-zhangjiakou.aliyuncs.com',
-    });
-
-    const avatarUrl = userData.avatar;
-
-    if (avatarUrl) {
-      // console.log(avatarUrl)
-      let resultStream = await client.signatureUrl(avatarUrl, {
-        expires: 3600 * 24 * 30,
-      });
-      // console.log('==========', resultStream)
-
-      this.success({
-        data: {
-          img_url: resultStream,
-        },
-      });
-    } else {
-      this.fail({
-        msg: '未上传头像',
-      });
-    }
-
-    // this.success({
-    //     data: ctx.params.id
-    // })
   }
 
   async getAddress() {

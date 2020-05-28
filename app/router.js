@@ -65,8 +65,7 @@ module.exports = app => {
 
   router.get('/api/test1', app.controller.addressBook.test);
   // 头像设置
-  router.post('/api/avatar', app.controller.user.setAvatar);
-  // router.get('/api/avatar', app.controller.user.getAvatar);
+  router.post('/api/avatar', middleware.apiauth(), app.controller.user.setAvatar);
 
   // 超管
   // 验证码校验

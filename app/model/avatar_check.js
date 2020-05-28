@@ -1,9 +1,7 @@
 'use strict';
 
 module.exports = app => {
-  // 课程类型
   const mongoose = app.mongoose;
-  // 创建了schema
   const Schema = new mongoose.Schema(
     {
       user_id: {
@@ -11,15 +9,17 @@ module.exports = app => {
         ref: 'user',
       },
       status: {
-        // 0 未审核  1. 通过 2. 拒绝  3. 已撤销
         type: Number,
+        enum: [ 0, 1, 2, 3 ], // 状态值 0: 未审核  1: 通过  2: 拒绝  3: 已撤销
         default: 0,
       },
       name: String,
-      avatar: String,
+      avatar: {
+        type: String,
+        required: true,
+      },
     },
     { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
-  ); // 时间
-
-  return mongoose.model('avatar_check', Schema); // 把model类return出去
+  );
+  return mongoose.model('avatar_check', Schema);
 };
