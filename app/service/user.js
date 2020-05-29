@@ -44,9 +44,25 @@ class UserService extends Service {
     );
   }
 
-  async update(...data) {
+  async update(query, params) {
     const { ctx } = this;
-    const res = await ctx.model.User.update(...data);
+    if (params.parent) {
+      const address_arr = await this._handleAddress(params.parent, this.ctx);
+
+      const address_str = address_arr
+        .map(res => {
+          return res.name;
+        })
+        .reverse()
+        .join('-');
+
+      const address_id_arr = address_arr.map(res => {
+        return res.address_id;
+      });
+      params.address_str = address_str;
+      params.address_id_arr = address_id_arr;
+    }
+    return await ctx.model.User.update(query, params);
   }
 
   async getUser() {
