@@ -77,7 +77,8 @@ module.exports = app => {
   // router.get('/api/img', app.controller.notice.test);
 
   // 批量审批头像
-  router.resources('/api/avatar/check', app.controller.avatarCheck);
+  router.put('/api/avatar/check', app.controller.avatarCheck.update);
+  router.get('/api/avatar/check', app.controller.avatarCheck.index);
 
   // group settings
   router.get('/api/group/:id', middleware.apiauth(), app.io.controller.group.show);

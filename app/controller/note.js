@@ -7,10 +7,11 @@ class NoteController extends HttpController {
     const { ctx } = this;
     const body = ctx.request.body;
 
-    const instance = new ctx.model.Note({
-      content: body.content,
-    });
     try {
+      const instance = new ctx.model.Note({
+        content: body.content,
+      });
+
       const res = await instance.save();
 
       this.success({
