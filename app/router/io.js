@@ -21,6 +21,8 @@ module.exports = {
     io.of('/chat').route(app.config.emitsheet.CHAT_TO_READED, app.io.controller.chat.markReader);
 
     io.of('/chat').route(app.config.emitsheet.CHAT_TO_TYPING, app.io.controller.chat.markTyping);
+
+    io.of('/chat').route(app.config.emitsheet.CHAT_TO_UNDO, app.io.controller.chat.undo);
   },
   gw_emit: {
     IMERROR: (ctx, socket, message) => {

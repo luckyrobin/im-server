@@ -114,6 +114,14 @@ class ChatController extends Controller {
       }, 'success'));
     });
   }
+
+  async undo() {
+    const { socket, service } = this.ctx;
+    const { userId } = socket.handshake.query;
+    const message = this.ctx.packet[1];
+    const recalledMessage = await service.io.message.recallStoreMessageByFp(userId, message.fp);
+    service.io.chat.to(recalledMessage);
+  }
 }
 
 module.exports = ChatController;

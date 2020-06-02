@@ -145,6 +145,9 @@ class MessageService extends Service {
     return await this.ctx.model.MessageStore.findByIdAndUpdate(msg._id, { $addToSet: { readed: owner } }, { new: true });
   }
 
+  async recallStoreMessageByFp(owner, fp) {
+    return await this.ctx.model.MessageStore.findOneAndUpdate({ fp }, { content: `${owner} recalled a message`, type: 10 }, { new: true });
+  }
 }
 
 module.exports = MessageService;
