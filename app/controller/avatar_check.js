@@ -4,7 +4,7 @@ const HttpController = require('./base/http');
 class AvatarCheckController extends HttpController {
   // 批量审批
   async update() {
-    const { ctx } = this;
+    const {ctx} = this;
     const body = ctx.request.body;
 
     const res = await ctx.model.AvatarCheck.update(
@@ -31,23 +31,25 @@ class AvatarCheckController extends HttpController {
   }
 
   async index() {
-    const { ctx } = this;
+    const {ctx} = this;
     const query = ctx.query;
 
     const page = query.page || 1;
     const count = query.count || 20;
+    const status = Number(query.status)
+    const queries = {
+      name: {
+        $regex: query.search || '',
+      },
+    }
+    if (!Number.isNaN(status)) {
+      queries.status = status;
+    }
     try {
-      const dataLength = await this.ctx.model.AvatarCheck.find({
-        name: {
-          $regex: query.search || '',
-        },
-      }).count();
-
-      const res = await this.ctx.model.AvatarCheck.find({
-        name: {
-          $regex: query.search || '',
-        },
-      })
+      const resultPromise = this.ctx.model.AvatarCheck.find(queries)
+      const allRes = await resultPromise
+      const dataLength = allRes.length;
+      const res = await resultPromise
         .skip(count * (page - 1))
         .limit(parseInt(count));
 
