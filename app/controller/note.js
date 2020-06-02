@@ -135,6 +135,25 @@ class NoteController extends HttpController {
       });
     }
   }
+
+  async recall() {
+    const { ctx } = this;
+    const id = ctx.params.id;
+    try {
+      // TODO
+      const res = await this.ctx.model.Note.findOne({
+        _id: id,
+      });
+      this.success({
+        data: res,
+      });
+    } catch (e) {
+      this.fail({
+        code: e.code,
+        msg: e.message,
+      });
+    }
+  }
 }
 
 module.exports = NoteController;

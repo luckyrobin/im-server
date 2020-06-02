@@ -5,6 +5,11 @@ module.exports = app => {
   const Schema = new mongoose.Schema(
     {
       content: String,
+      status: {
+        type: Number,
+        enum: [ 0, 1 ], // 状态值 0: 已推送  1: 已撤回
+        default: 0,
+      },
     },
     { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
   );
