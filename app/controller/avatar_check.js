@@ -4,12 +4,12 @@ const HttpController = require('./base/http');
 class AvatarCheckController extends HttpController {
   // 批量审批
   async update() {
-    const {ctx} = this;
+    const { ctx } = this;
     const body = ctx.request.body;
 
     const res = await ctx.model.AvatarCheck.update(
       {
-        user_id: body.user_arr,
+        _id: body.check_arr,
       },
       {
         status: body.status,
