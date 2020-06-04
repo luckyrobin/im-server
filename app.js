@@ -11,7 +11,7 @@ class AppBootHook {
 
   async didLoad() {
     // doc: https://github.com/smrchy/rsmq
-    this.app.mq = new RedisSMQ({ client: supportioredis(this.app.redis) });
+    this.app.mq = new RedisSMQ({ client: supportioredis(this.app.redis), realtime: true });
     this.app.gateway = gateway;
   }
 

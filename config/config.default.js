@@ -36,6 +36,9 @@ module.exports = appInfo => {
   const userConfig = {
     myAppName: 'im',
     redisTokenPrefix: 'rft:',
+    customAgents: {
+      AGENT_TO: 'agent_to',
+    },
     // mongoose
     mongoose: {
       url: 'mongodb://localhost:27017/im', // connect to other docker image port: 27017
@@ -53,6 +56,7 @@ module.exports = appInfo => {
         password: '',
         db: 0,
       },
+      agent: true,
     },
 
     security: {
