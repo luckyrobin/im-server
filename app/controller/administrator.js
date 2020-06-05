@@ -48,10 +48,11 @@ class AdministratorController extends HttpController {
   async setRole() {
     const { ctx } = this;
     const body = ctx.request.body;
-
     const res = await this.service.user.update(
       {
-        _id: body.user_id,
+        _id: {
+          $in: body.user_arr,
+        },
       },
       {
         menuRole: body.role_arr,
