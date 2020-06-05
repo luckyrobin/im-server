@@ -2,7 +2,7 @@
 
 const Service = require('egg').Service;
 
-const MsgType = {
+const MSG_TYPE = {
   3: {
     alias: '系统消息',
     avatar: '',
@@ -86,8 +86,8 @@ class TimelineService extends Service {
             owner,
             to: params.to,
             typeu: params.typeu,
-            alias: MsgType[params.typeu].alias,
-            avatar: MsgType[params.typeu].avatar,
+            alias: MSG_TYPE[params.typeu].alias,
+            avatar: MSG_TYPE[params.typeu].avatar,
             message: params._id,
           });
         } else {
@@ -108,17 +108,20 @@ class TimelineService extends Service {
     if (Array.isArray(baseDataList) && baseDataList.length > 0) {
       const group = await model.Group.findById(baseDataList[0].to, { name: 1, avatar: 1, _id: 0 });
       const roleDocuments = [];
-      baseDataList.forEach(async item => {
+      await Promise.all(baseDataList.map(async item => {
         const existed = await model.Timeline.exists({ _id: helper.generateTimelineId(item.from, item.to) });
-        !existed && roleDocuments.push({
-          _id: helper.generateTimelineId(item.from, item.to),
-          owner: item.from,
-          to: item.to,
-          typeu: item.typeu,
-          alias: group.name,
-          avatar: group.avatar,
+        return new Promise(resolve => {
+          !existed && roleDocuments.push({
+            _id: helper.generateTimelineId(item.from, item.to),
+            owner: item.from,
+            to: item.to,
+            typeu: item.typeu,
+            alias: group.name,
+            avatar: group.avatar,
+          });
+          resolve();
         });
-      });
+      }));
       return await model.Timeline.insertMany(roleDocuments);
     }
   }
