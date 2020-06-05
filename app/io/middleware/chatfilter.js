@@ -28,6 +28,7 @@ module.exports = app => {
 
     if (emitName === app.config.emitsheet.CHAT_TO_READED) {
       const message = ctx.packet[1];
+      if (!message) return;
       const { userId } = socket.handshake.query;
       if (userId === message.from) return;
     }
@@ -49,13 +50,20 @@ module.exports = app => {
 
     if (emitName === app.config.emitsheet.CHAT_TO_TYPING) {
       const message = ctx.packet[1];
+      if (!message) return;
       if (!NORMAL_TYPEU.includes(message.typeu)) return;
       if (!Reflect.has(message, 'typeu') || message.typeu !== 1) return;
     }
 
     if (emitName === app.config.emitsheet.CHAT_TO_UNDO) {
       const message = ctx.packet[1];
+      if (!message) return;
       if (!NORMAL_TYPEU.includes(message.typeu)) return;
+    }
+
+    if (emitName === app.config.emitsheet.CHAT_MESSAGE_ACK) {
+      const message = ctx.packet[1];
+      if (!message) return;
     }
 
     await next();

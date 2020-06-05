@@ -55,14 +55,16 @@ class MessageService extends Service {
     // 1. 如果 msg 是数组，表示离线消息推送成功，并且用户确认收到消息
     // 2. msg 非数组，表示单条在线消息推送成功，并且用户确认收到消息
     if (Array.isArray(msg) && msg.length > 0) {
-      const interior = msg.map(item => ({ timelineId: item.message.timelineId, message: item.message._id }));
+      // const interior = msg.filter(i => i.message).map(item => ({ timelineId: item.message.timelineId, message: item.message._id }));
+      const interior = msg.map(item => ({ _id: item._id }));
+      if (interior.length === 0) return;
       const query = {
         owner,
         $or: [ ...interior ],
       };
       return await this.ctx.model.MessageSync.updateMany(query, { delivered: true });
     }
-    return await this.ctx.model.MessageSync.updateOne({ owner, timelineId: msg.timelineId, message: msg._id }, { delivered: true });
+    return await this.ctx.model.MessageSync.updateOne({ owner, _id: msg._id }, { delivered: true });
   }
 
   async findOwnerHistoryMessages(owner, params) {
