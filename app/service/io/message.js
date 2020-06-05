@@ -64,7 +64,7 @@ class MessageService extends Service {
       };
       return await this.ctx.model.MessageSync.updateMany(query, { delivered: true });
     }
-    return await this.ctx.model.MessageSync.updateOne({ owner, _id: msg._id }, { delivered: true });
+    return await this.ctx.model.MessageSync.updateOne({ owner, timelineId: msg.timelineId, message: msg._id }, { delivered: true });
   }
 
   async findOwnerHistoryMessages(owner, params) {
