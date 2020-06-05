@@ -48,7 +48,7 @@ class AdministratorController extends HttpController {
   async setRole() {
     const { ctx } = this;
     const body = ctx.request.body;
-    const res = await this.service.user.update(
+    const res = await this.ctx.model.User.updateMany(
       {
         _id: {
           $in: body.user_arr,
