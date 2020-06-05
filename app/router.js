@@ -51,18 +51,18 @@ module.exports = app => {
   router.get('/api/remark/:id', app.controller.remark.findOne);
 
   // 系统消息
-  router.resources('/api/note', app.controller.note);
-  router.post('/api/note/find', app.controller.note.find);
+  router.resources('/api/note', middleware.apiauth(), app.controller.note);
+  router.post('/api/note/find', middleware.apiauth(), app.controller.note.find);
   // 系统消息批量删除
-  router.post('/api/note/delete', app.controller.note.delete);
-  router.put('/api/note/recall/:id', app.controller.note.recall);
+  router.post('/api/note/delete', middleware.apiauth(), app.controller.note.delete);
+  router.put('/api/note/recall/:id', middleware.apiauth(), app.controller.note.recall);
 
   // 公告
-  router.resources('/api/notice', app.controller.notice);
+  router.resources('/api/notice', middleware.apiauth(), app.controller.notice);
   // 公告 批量删除
-  router.post('/api/notice/delete', app.controller.notice.delete);
+  router.post('/api/notice/delete', middleware.apiauth(), app.controller.notice.delete);
   // 公告 图片上传
-  router.post('/api/notice/upload', app.controller.notice.upload);
+  router.post('/api/notice/upload', middleware.apiauth(), app.controller.notice.upload);
 
   router.get('/api/test1', app.controller.addressBook.test);
   // 头像设置
@@ -75,7 +75,6 @@ module.exports = app => {
   router.post('/api/role/menu', middleware.apiauth(), app.controller.administrator.setRole);
   router.get('/api/menu', middleware.apiauth(), app.controller.administrator.getMenu);
 
-  // router.get('/api/img', app.controller.notice.test);
 
   // 批量审批头像
   router.put('/api/avatar/check', app.controller.avatarCheck.update);
