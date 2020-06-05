@@ -16,7 +16,9 @@ class NoteController extends HttpController {
 
       const res = await instance.save();
       const savemsg = { _id: res._id, content: res.content, creator: res.creator };
-      service.io.sysmessage.task(savemsg);
+      const mqmsg = service.io.globalmessage.fakeNoteMsg(savemsg);
+
+      service.io.globalmessage.task(mqmsg);
 
       this.success({
         data: res,

@@ -102,5 +102,12 @@ module.exports = {
         message
       );
     },
+    CHAT_MESSAGE_ALL: (ctx, message) => {
+      const { app } = ctx;
+      app.io.of('/chat').emit(
+        app.config.emitsheet.CHAT_MESSAGE,
+        message
+      );
+    },
   },
 };

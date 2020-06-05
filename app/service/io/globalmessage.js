@@ -2,11 +2,10 @@
 
 const Service = require('egg').Service;
 
-class SysMessageService extends Service {
-  async task(msg) {
+class GlobalMessageService extends Service {
+  async task(mqmsg) {
     try {
-      const { service } = this.ctx;
-      const mqmsg = this.fakeMqmsg(msg);
+      const { service, app, helper } = this.ctx;
       // 1. 同步：消息存储库 -- 读扩散
       const savedmsg = await service.io.chat.save2Store(mqmsg);
       if (typeof savedmsg !== 'object' || !Reflect.has(savedmsg, '_id')) return;
@@ -14,12 +13,14 @@ class SysMessageService extends Service {
       service.io.chat.save2Timeline(savedmsg);
       // 3. 同步：消息同步库 -- 写扩散
       await service.io.chat.save2Sync(savedmsg);
+      // 4. 异步：发送消息
+      app.gateway.CHAT_MESSAGE_ALL(this.ctx, helper.parseIOMsg('CHAT_MESSAGE', savedmsg, 'success'));
     } catch (e) {
       console.error(e);
     }
   }
 
-  fakeMqmsg(savemsg) {
+  fakeNoteMsg(savemsg) {
     const { helper, app } = this.ctx;
     const { _id, ...other } = savemsg;
     const message = {
@@ -38,4 +39,4 @@ class SysMessageService extends Service {
   }
 }
 
-module.exports = SysMessageService;
+module.exports = GlobalMessageService;
