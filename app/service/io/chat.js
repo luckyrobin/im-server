@@ -43,10 +43,12 @@ class ChatService extends Service {
     } catch (error) {
       // fp 唯一性校验不通过
       const { helper, app } = this.ctx;
-      const deviceType = helper.getDeviceType(message.requestQuery.deviceType);
-      const cooked = await this.ctx.ioClient.getCooked(`${message.from}`);
-      const socket = this.ctx.getSocketById('/chat', cooked[deviceType]);
-      this.ctx.emitError(socket, app.config.errorCode.CHAT_FAILED, `[CHAT] failed: fp -> ${message.fp} isn't to be unique`);
+      if (Reflect.has(message, 'requestQuery')) {
+        const deviceType = helper.getDeviceType(message.requestQuery.deviceType);
+        const cooked = await this.ctx.ioClient.getCooked(`${message.from}`);
+        const socket = this.ctx.getSocketById('/chat', cooked[deviceType]);
+        this.ctx.emitError(socket, app.config.errorCode.CHAT_FAILED, `[CHAT] failed: ${error}`);
+      }
       throw new Error(error);
     }
   }
@@ -63,16 +65,22 @@ class ChatService extends Service {
         const filterSenderMembers = groupMembers.members.filter(item => `${item}` !== `${savedmsg.from}`);
         return service.io.message.saveCache(savedmsg, filterSenderMembers);
       }
+      case 3: {
+        const wholeUser = await service.user.findAllUser({ _id: 1 });
+        if (!wholeUser) return false;
+        const wholeUserIds = wholeUser.map(item => item._id);
+        return service.io.message.saveCache(savedmsg, wholeUserIds);
+      }
       default:
         return;
     }
   }
 
   async save2Timeline(savedmsg) {
-    const { service, model, helper } = this.ctx;
+    const { service, helper } = this.ctx;
     switch (savedmsg.typeu) {
       case 1: {
-        const hasCreated = await model.Timeline.findById(helper.generateTimelineId(savedmsg.from, savedmsg.to));
+        const hasCreated = await service.io.timeline.findById(helper.generateTimelineId(savedmsg.from, savedmsg.to));
         if (!hasCreated) {
           service.io.timeline.create(savedmsg);
         } else {
@@ -85,7 +93,7 @@ class ChatService extends Service {
         return;
       }
       case 2: {
-        const hasCreated = await model.Timeline.findById(helper.generateTimelineId(savedmsg.from, savedmsg.to));
+        const hasCreated = await service.io.timeline.findById(helper.generateTimelineId(savedmsg.from, savedmsg.to));
         if (!hasCreated) {
           service.io.timeline.createBatch(savedmsg);
         } else {
@@ -95,6 +103,10 @@ class ChatService extends Service {
           };
           pool.get(savedmsg.timelineId, debounce(fn, 10000))(savedmsg);
         }
+        return;
+      }
+      case 3: {
+        service.io.timeline.merge4Whole(savedmsg);
         return;
       }
       default:

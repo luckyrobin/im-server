@@ -10,6 +10,10 @@ module.exports = app => {
         enum: [ 0, 1 ], // 状态值 0: 已推送  1: 已撤回
         default: 0,
       },
+      creator: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
     },
     { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
   );

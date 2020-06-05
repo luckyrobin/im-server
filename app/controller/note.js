@@ -4,22 +4,27 @@ const HttpController = require('./base/http');
 // 通知（短）
 class NoteController extends HttpController {
   async create() {
-    const { ctx } = this;
+    const { ctx, service } = this;
     const body = ctx.request.body;
+    const userId = ctx.request.userId;
 
     try {
       const instance = new ctx.model.Note({
         content: body.content,
+        creator: userId,
       });
 
       const res = await instance.save();
+      const savemsg = { _id: res._id, content: res.content, creator: res.creator };
+      service.io.sysmessage.task(savemsg);
 
       this.success({
         data: res,
       });
-    } catch (err) {
+    } catch (e) {
       this.fail({
-        data: err,
+        code: e.code,
+        msg: e.message,
       });
     }
   }

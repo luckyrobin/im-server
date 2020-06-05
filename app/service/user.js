@@ -89,6 +89,10 @@ class UserService extends Service {
     return await this.ctx.model.User.find({ 'menuRole.0': { $exists: true } });
   }
 
+  async findAllUser(projection = {}) {
+    return await this.ctx.model.User.find({}, projection);
+  }
+
   async _handleAddress(id, ctx) {
     const arr = [];
     await this._findAddress(id, ctx, arr);

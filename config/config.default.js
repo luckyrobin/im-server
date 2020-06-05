@@ -34,11 +34,13 @@ module.exports = appInfo => {
 
   // add your user config here
   const userConfig = {
-    myAppName: 'im',
-    redisTokenPrefix: 'rft:',
+    myAppName: 'im', // 应用名称
+    redisTokenPrefix: 'rft:', // refresh token 前缀字符
+    globalchannel: 'GLOBALCHANNEL', // redis 消息队列名称
     customAgents: {
-      AGENT_TO: 'agent_to',
+      AGENT_TO: 'agent_to', // 发送消息定时任务名称
     },
+    systemMessgeObjectId: 'STSTEM__MSGS',
     // mongoose
     mongoose: {
       url: 'mongodb://localhost:27017/im', // connect to other docker image port: 27017
@@ -112,7 +114,6 @@ module.exports = appInfo => {
 
   // io emit cheatsheet config
   const ioConfig = {
-    globalchannel: 'GLOBALCHANNEL',
     emitsheet: {
       /**
        * 通用 Error 事件

@@ -2,6 +2,17 @@
 
 const Service = require('egg').Service;
 
+const MsgType = {
+  3: {
+    alias: '系统消息',
+    avatar: '',
+  },
+  4: {
+    alias: '公告',
+    avatar: '',
+  },
+};
+
 class TimelineService extends Service {
 
   async create(params) {
@@ -58,6 +69,40 @@ class TimelineService extends Service {
     return await model.Timeline.insertMany(roleDocuments);
   }
 
+  async merge4Whole(params) {
+    const { helper, service, model } = this.ctx;
+
+    const wholeUser = await service.user.findAllUser();
+    const roleDocuments = [];
+    const updateDocuments = [];
+
+    await Promise.all(wholeUser.map(async item => {
+      const owner = item._id;
+      const hasCreated = await service.io.timeline.findById(helper.generateTimelineId(owner, params.to));
+      return new Promise(resolve => {
+        if (!hasCreated) {
+          roleDocuments.push({
+            _id: helper.generateTimelineId(owner, params.to),
+            owner,
+            to: params.to,
+            typeu: params.typeu,
+            alias: MsgType[params.typeu].alias,
+            avatar: MsgType[params.typeu].avatar,
+            message: params._id,
+          });
+        } else {
+          updateDocuments.push({
+            _id: helper.generateTimelineId(owner, params.to),
+          });
+        }
+        resolve();
+      });
+    }));
+
+    roleDocuments.length > 0 && await model.Timeline.insertMany(roleDocuments);
+    updateDocuments.length > 0 && await model.Timeline.updateMany({ $or: updateDocuments }, { message: params._id });
+  }
+
   async createByStatic(baseDataList) {
     const { helper, model } = this.ctx;
     if (Array.isArray(baseDataList) && baseDataList.length > 0) {
@@ -111,6 +156,10 @@ class TimelineService extends Service {
 
   async findOwnerConversations(owner) {
     return await this.ctx.model.Timeline.find({ owner });
+  }
+
+  async findById(id) {
+    return await this.ctx.model.Timeline.findById(id);
   }
 
   async updateOneById(params) {

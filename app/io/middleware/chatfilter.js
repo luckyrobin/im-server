@@ -16,6 +16,8 @@ module.exports = app => {
           return;
         }
       }
+      // 系统消息和公告消息直接丢弃
+      if (message.typeu === 3 || message.typeu === 4) return;
     }
 
     if (emitName === app.config.emitsheet.CHAT_TO_READED) {
