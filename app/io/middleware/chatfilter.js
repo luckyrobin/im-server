@@ -1,5 +1,11 @@
 'use strict';
 
+/**
+ * 常规 typeu 字段 -> 1: c2c 消息 2: c2g 消息 3: 系统消息 4: 公告消息
+ * 非 1 或 2 则为非常规消息类型，例如系统消息和公告消息
+ */
+const NORMAL_TYPEU = [ 1, 2 ];
+
 module.exports = app => {
   return async (ctx, next) => {
     const { socket, service } = ctx;
@@ -16,8 +22,8 @@ module.exports = app => {
           return;
         }
       }
-      // 系统消息和公告消息直接丢弃
-      if (message.typeu === 3 || message.typeu === 4) return;
+      // 非常规消息直接丢弃
+      if (!NORMAL_TYPEU.includes(message.typeu)) return;
     }
 
     if (emitName === app.config.emitsheet.CHAT_TO_READED) {
@@ -43,7 +49,13 @@ module.exports = app => {
 
     if (emitName === app.config.emitsheet.CHAT_TO_TYPING) {
       const message = ctx.packet[1];
+      if (!NORMAL_TYPEU.includes(message.typeu)) return;
       if (!Reflect.has(message, 'typeu') || message.typeu !== 1) return;
+    }
+
+    if (emitName === app.config.emitsheet.CHAT_TO_UNDO) {
+      const message = ctx.packet[1];
+      if (!NORMAL_TYPEU.includes(message.typeu)) return;
     }
 
     await next();

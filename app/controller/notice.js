@@ -7,8 +7,9 @@ const path = require('path');
 // 通知（公告）
 class NoticeController extends HttpController {
   async create() {
-    const { ctx } = this;
+    const { ctx, service } = this;
     const body = ctx.request.body;
+    const userId = ctx.request.userId;
 
     try {
       const instance = new ctx.model.Notice({
@@ -16,8 +17,21 @@ class NoticeController extends HttpController {
         image: body.image,
         abstract: body.abstract,
         title: body.title,
+        creator: userId,
       });
       const res = await instance.save();
+      const savemsg = {
+        _id: res._id,
+        content: res.content,
+        image: res.image,
+        abstract: res.abstract,
+        title: res.title,
+        creator: res.creator,
+      };
+      const mqmsg = service.io.globalmessage.fakeNoticeMsg(savemsg);
+
+      service.io.globalmessage.task(mqmsg);
+
       this.success({
         data: res,
       });

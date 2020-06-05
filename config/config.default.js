@@ -40,7 +40,8 @@ module.exports = appInfo => {
     customAgents: {
       AGENT_TO: 'agent_to', // 发送消息定时任务名称
     },
-    systemMessgeObjectId: 'STSTEM__MSGS',
+    noteMessgeObjectId: 'NOTE_MESSAGE',
+    noticeMessgeObjectId: 'NOTICE___MSG',
     // mongoose
     mongoose: {
       url: 'mongodb://localhost:27017/im', // connect to other docker image port: 27017
@@ -175,10 +176,6 @@ module.exports = appInfo => {
        * 客户端标记输入中状态
       */
       CHAT_TO_TYPING: 'to_typing',
-      /**
-       * 服务端系统消息
-      */
-      CHAT_SYSTEM_NOTICE: 'sys_notice',
       /**
        * 客户端撤回消息
       */

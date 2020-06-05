@@ -25,10 +25,28 @@ class GlobalMessageService extends Service {
     const { _id, ...other } = savemsg;
     const message = {
       from: other.creator,
-      to: app.mongoose.Types.ObjectId(app.config.systemMessgeObjectId),
+      to: app.mongoose.Types.ObjectId(app.config.noteMessgeObjectId),
       type: 1,
       content: JSON.stringify(other),
       typeu: 3,
+      fp: helper.uuid(30),
+    };
+    return {
+      id: _id,
+      message: JSON.stringify(message),
+      sent: _id.getTimestamp().valueOf().toFixed(3),
+    };
+  }
+
+  fakeNoticeMsg(savemsg) {
+    const { helper, app } = this.ctx;
+    const { _id, ...other } = savemsg;
+    const message = {
+      from: other.creator,
+      to: app.mongoose.Types.ObjectId(app.config.noticeMessgeObjectId),
+      type: 1,
+      content: JSON.stringify(other),
+      typeu: 4,
       fp: helper.uuid(30),
     };
     return {

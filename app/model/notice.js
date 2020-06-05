@@ -16,6 +16,10 @@ module.exports = app => {
         type: String,
         required: true,
       },
+      creator: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
     },
     { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
   ); // 时间

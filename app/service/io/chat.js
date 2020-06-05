@@ -65,7 +65,8 @@ class ChatService extends Service {
         const filterSenderMembers = groupMembers.members.filter(item => `${item}` !== `${savedmsg.from}`);
         return service.io.message.saveCache(savedmsg, filterSenderMembers);
       }
-      case 3: {
+      case 3: // eslint-disable-next-line no-fallthrough
+      case 4: {
         const wholeUser = await service.user.findAllUser({ _id: 1 });
         if (!wholeUser) return false;
         const wholeUserIds = wholeUser.map(item => item._id);
@@ -105,7 +106,8 @@ class ChatService extends Service {
         }
         return;
       }
-      case 3: {
+      case 3: // eslint-disable-next-line no-fallthrough
+      case 4: {
         service.io.timeline.merge4Whole(savedmsg);
         return;
       }
