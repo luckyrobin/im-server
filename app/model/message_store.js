@@ -28,13 +28,18 @@ module.exports = app => {
     type: {
       type: Number,
       enum: [ 1, 2, 3, 10 ], // 消息类型 1: 文本消息 2: 图片消息 3: 语音消息 10: 被撤回的消息
+      required: true,
     },
     content: String,
     typeu: {
       type: Number,
-      enum: [ 1, 2 ], // 1: c2c 消息 2: c2g 消息
+      enum: [ 1, 2, 3 ], // 1: c2c 消息 2: c2g 消息 3: 系统消息
+      required: true,
     },
-    sequenceId: String,
+    sequenceId: {
+      type: String,
+      required: true,
+    },
     readed: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -42,6 +47,7 @@ module.exports = app => {
     fp: {
       type: String,
       unique: true,
+      required: true,
     },
   }, { timestamps: { createdAt: 'send_time', updatedAt: 'update_time' } });
 

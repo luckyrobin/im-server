@@ -21,7 +21,8 @@ module.exports = app => {
     },
     typeu: {
       type: Number,
-      enum: [ 1, 2 ], // 1: c2c 消息 2: c2g 消息
+      enum: [ 1, 2, 3 ], // 1: c2c 消息 2: c2g 消息 3: 系统消息
+      required: true,
     },
     alias: String,
     avatar: String,
