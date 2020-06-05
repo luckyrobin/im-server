@@ -10,6 +10,7 @@ class NoticeController extends HttpController {
     const { ctx, service } = this;
     const body = ctx.request.body;
     const userId = ctx.request.userId;
+    const self = this;
 
     try {
       const instance = new ctx.model.Notice({
@@ -22,15 +23,17 @@ class NoticeController extends HttpController {
       const res = await instance.save();
       const savemsg = {
         _id: res._id,
-        content: res.content,
-        image: res.image,
-        abstract: res.abstract,
         title: res.title,
+        abstract: res.abstract,
+        image: res.image,
+        content: res.content,
         creator: res.creator,
       };
       const mqmsg = service.io.globalmessage.fakeNoticeMsg(savemsg);
 
-      service.io.globalmessage.task(mqmsg);
+      service.io.globalmessage.task(mqmsg, savedmsg => {
+        self._updateById(res._id, { message: savedmsg._id });
+      });
 
       this.success({
         data: res,
@@ -150,6 +153,10 @@ class NoticeController extends HttpController {
         msg: e.message,
       });
     }
+  }
+
+  async _updateById(id, params) {
+    return await this.ctx.model.Notice.update({ _id: id }, { ...params });
   }
 }
 
