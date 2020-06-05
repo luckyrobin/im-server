@@ -7,7 +7,7 @@ class NoteController extends HttpController {
     const { ctx, service } = this;
     const body = ctx.request.body;
     const userId = ctx.request.userId;
-
+    const self = this;
     try {
       const instance = new ctx.model.Note({
         content: body.content,
@@ -18,7 +18,9 @@ class NoteController extends HttpController {
       const savemsg = { _id: res._id, content: res.content, creator: res.creator };
       const mqmsg = service.io.globalmessage.fakeNoteMsg(savemsg);
 
-      service.io.globalmessage.task(mqmsg);
+      service.io.globalmessage.task(mqmsg, savedmsg => {
+        self._updateById(res._id, { message: savedmsg._id });
+      });
 
       this.success({
         data: res,
@@ -127,11 +129,11 @@ class NoteController extends HttpController {
     const body = ctx.request.body;
 
     try {
-      const res = await ctx.model.Note.remove({
-        _id: {
-          $in: body.note_arr,
-        },
-      });
+      // const ids = await ctx.model.Note.find({ _id: { $in: body.note_arr } }, { message: 1, _id: 0 });
+      const res = await ctx.model.Note.deleteMany({ _id: { $in: body.note_arr } });
+
+      // 副作用，同时删除创建的 message
+      // await ctx.service.io.message.removeStoreMessageByIds(ids.map(i => i.message));
 
       this.success({
         data: res,
@@ -160,6 +162,10 @@ class NoteController extends HttpController {
         msg: e.message,
       });
     }
+  }
+
+  async _updateById(id, params) {
+    return await this.ctx.model.Note.update({ _id: id }, { ...params });
   }
 }
 

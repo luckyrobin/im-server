@@ -3,7 +3,7 @@
 const Service = require('egg').Service;
 
 class GlobalMessageService extends Service {
-  async task(mqmsg) {
+  async task(mqmsg, cb = () => {}) {
     try {
       const { service, app, helper } = this.ctx;
       // 1. 同步：消息存储库 -- 读扩散
@@ -15,8 +15,10 @@ class GlobalMessageService extends Service {
       await service.io.chat.save2Sync(savedmsg);
       // 4. 异步：发送消息
       app.gateway.CHAT_MESSAGE_ALL(this.ctx, helper.parseIOMsg('CHAT_MESSAGE', savedmsg, 'success'));
+      // 5. 同步：回填 messageId
+      typeof cb === 'function' && cb(savedmsg);
     } catch (e) {
-      console.error(e);
+      this.ctx.logger.error(`[GLOBALMESSAGE] custom message task: ${e}`);
     }
   }
 

@@ -20,6 +20,10 @@ module.exports = app => {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
       },
+      message: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'MessageStore',
+      },
     },
     { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
   ); // 时间
