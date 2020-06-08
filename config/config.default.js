@@ -91,18 +91,11 @@ module.exports = appInfo => {
         },
       },
     },
-    // session: {
-    //   encrypt: false,
-    //   signed: false,
-    //   renew: true,
-    //   key: 'EGG_SESS',
-    //   maxAge: 24 * 3600 * 1000,
-    // },
     jwt: {
       secret: config.keys,
       options: {
-        expiresIn: 60 * 60, // JWT 过期时间
-        rftExpiresIn: 60 * 60 * 24, // Refresh Token 过期时间
+        expiresIn: 60 * 60 * 5, // Access Token 过期时间
+        rftExpiresIn: 60 * 60 * 24 * 7, // Refresh Token 过期时间
       },
     },
     view: {
