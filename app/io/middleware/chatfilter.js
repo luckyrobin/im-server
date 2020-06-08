@@ -59,6 +59,16 @@ module.exports = app => {
       const message = ctx.packet[1];
       if (!message) return;
       if (!NORMAL_TYPEU.includes(message.typeu)) return;
+
+      const currentMessage = await service.io.message.findStoreMessage({ fp: message.fp });
+      if (currentMessage.type === 10) {
+        ctx.emitError(socket, app.config.errorCode.CHAT_FAILED, '[CHAT] duplicate to recall');
+        return;
+      }
+      if (((Date.now() - Date.parse(currentMessage.send_time)) / 1000) > app.config.recallExpiresIn) {
+        ctx.emitError(socket, app.config.errorCode.CHAT_FAILED, '[CHAT] message exceed 2min');
+        return;
+      }
     }
 
     if (emitName === app.config.emitsheet.CHAT_MESSAGE_ACK) {

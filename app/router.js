@@ -52,7 +52,6 @@ module.exports = app => {
 
   // 系统消息
   router.resources('/api/note', middleware.apiauth(), app.controller.note);
-  router.post('/api/note/find', middleware.apiauth(), app.controller.note.find);
   // 系统消息批量删除
   router.post('/api/note/delete', middleware.apiauth(), app.controller.note.delete);
   router.put('/api/note/recall/:id', middleware.apiauth(), app.controller.note.recall);

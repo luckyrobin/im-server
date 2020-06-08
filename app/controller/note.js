@@ -33,37 +33,6 @@ class NoteController extends HttpController {
     }
   }
 
-  async find() {
-    const { ctx } = this;
-    const body = ctx.request.body;
-    try {
-      const dataLength = await ctx.model.Note.find({
-        content: {
-          $regex: body.search || '',
-        },
-      }).count();
-      const count = body.count || 20;
-      const page = body.page || 1;
-      const res = await ctx.model.Note.find({
-        content: {
-          $regex: body.search || '',
-        },
-      })
-        .skip(count * (page - 1))
-        .limit(count);
-      this.success({
-        data: {
-          list: res,
-          count: dataLength,
-        },
-      });
-    } catch (err) {
-      this.fail({
-        data: err,
-      });
-    }
-  }
-
   async update() {
     const { ctx } = this;
     const body = ctx.request.body;
@@ -146,13 +115,17 @@ class NoteController extends HttpController {
   }
 
   async recall() {
-    const { ctx } = this;
+    const { ctx, app } = this;
     const id = ctx.params.id;
     try {
-      // TODO
-      const res = await this.ctx.model.Note.findOne({
-        _id: id,
-      });
+      const currentNote = await ctx.model.Note.findById(id);
+      if (currentNote.status === 1) {
+        throw new ctx.HttpError('[NOTE] current note has recalled');
+      }
+      if (((Date.now() - Date.parse(currentNote.create_time)) / 1000) > app.config.recallExpiresIn) {
+        throw new ctx.HttpError('[NOTE] current note exceed 2min');
+      }
+      const res = await ctx.model.Note.update({ _id: id }, { status: 1 });
       this.success({
         data: res,
       });

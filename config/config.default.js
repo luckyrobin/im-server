@@ -42,6 +42,7 @@ module.exports = appInfo => {
     },
     noteMessgeObjectId: 'NOTE_MESSAGE',
     noticeMessgeObjectId: 'NOTICE___MSG',
+    recallExpiresIn: 60 * 2, // 消息撤回时效
     // mongoose
     mongoose: {
       url: 'mongodb://localhost:27017/im', // connect to other docker image port: 27017
