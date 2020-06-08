@@ -42,6 +42,7 @@ module.exports = appInfo => {
     },
     noteMessgeObjectId: 'NOTE_MESSAGE',
     noticeMessgeObjectId: 'NOTICE___MSG',
+    recallExpiresIn: 60 * 2, // 消息撤回时效
     // mongoose
     mongoose: {
       url: 'mongodb://localhost:27017/im', // connect to other docker image port: 27017
@@ -90,18 +91,11 @@ module.exports = appInfo => {
         },
       },
     },
-    // session: {
-    //   encrypt: false,
-    //   signed: false,
-    //   renew: true,
-    //   key: 'EGG_SESS',
-    //   maxAge: 24 * 3600 * 1000,
-    // },
     jwt: {
       secret: config.keys,
       options: {
-        expiresIn: 60 * 60, // JWT 过期时间
-        rftExpiresIn: 60 * 60 * 24, // Refresh Token 过期时间
+        expiresIn: 60 * 60 * 5, // Access Token 过期时间
+        rftExpiresIn: 60 * 60 * 24 * 7, // Refresh Token 过期时间
       },
     },
     view: {

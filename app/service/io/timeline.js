@@ -5,11 +5,11 @@ const Service = require('egg').Service;
 const MSG_TYPE = {
   3: {
     alias: '系统消息',
-    avatar: '',
+    avatar: '//wh-qd-group.oss-cn-zhangjiakou.aliyuncs.com/avatar/note.png',
   },
   4: {
     alias: '公告',
-    avatar: '',
+    avatar: '//wh-qd-group.oss-cn-zhangjiakou.aliyuncs.com/avatar/notice.png',
   },
 };
 

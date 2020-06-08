@@ -151,6 +151,10 @@ class MessageService extends Service {
     return await this.ctx.model.MessageStore.findOneAndUpdate({ fp }, { content: `${owner} recalled a message`, type: 10 }, { new: true });
   }
 
+  async findStoreMessage(conditions) {
+    return await this.ctx.model.MessageStore.findOne(conditions);
+  }
+
   async removeStoreMessageByIds(ids) {
     return await this.ctx.model.MessageStore.deleteMany({ _id: { $in: ids } });
   }
