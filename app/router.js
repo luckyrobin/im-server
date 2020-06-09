@@ -97,5 +97,8 @@ module.exports = app => {
 
   router.get('*', controller.render.index);
 
+  // chat files(images, audio) message
+  router.post('/api/message/upload', middleware.apiauth(), app.io.controller.chat.upload);
+
   require('./router/io').gw_receive(app);
 };

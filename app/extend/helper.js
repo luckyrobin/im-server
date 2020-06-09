@@ -78,4 +78,14 @@ module.exports = {
       to: temp[1],
     };
   },
+  genMessageTypeField(stream, upload, type = 2) {
+    if (type === 2) {
+      return {
+        origin: `${upload.url}?x-oss-process=image/format,jpg`,
+        thumb: `${upload.url}?x-oss-process=image/format,jpg/quality,q_10/resize,p_10`,
+        filename: upload.name,
+        tag: upload.res.headers.etag,
+      };
+    }
+  },
 };

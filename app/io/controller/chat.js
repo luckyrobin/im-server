@@ -4,9 +4,9 @@ const Controller = require('egg').Controller;
 
 class ChatController extends Controller {
   async to() {
-    const { app, service, socket, helper } = this.ctx;
+    const { app, service, socket } = this.ctx;
     const message = this.ctx.packet[1];
-    const escapeMessage = { ...message, ...{ content: helper.escapeString(message.content) } };
+    const escapeMessage = { ...message, ...{ content: message.content } };
     escapeMessage.requestQuery = socket.handshake.query;
     return service.io.mq.send(app.config.globalchannel, JSON.stringify(escapeMessage));
   }
@@ -121,6 +121,26 @@ class ChatController extends Controller {
     const message = this.ctx.packet[1];
     const recalledMessage = await service.io.message.recallStoreMessageByFp(userId, message.fp);
     service.io.chat.to(recalledMessage);
+  }
+
+  async upload() {
+    const { app, request, helper } = this.ctx;
+    const { userId } = request;
+    try {
+      const stream = await this.ctx.getFileStream();
+      const filename = `chat/${userId}/${new Date().getTime()}_.pic`;
+      const result = await app.oss.instance.put(filename, stream);
+      this.ctx.body = {
+        code: 0,
+        msg: 'ok',
+        data: helper.genMessageTypeField(stream, result),
+      };
+    } catch (e) {
+      this.ctx.body = {
+        code: e.code || 1,
+        msg: e.message,
+      };
+    }
   }
 }
 

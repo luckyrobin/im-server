@@ -17,9 +17,11 @@ module.exports = appInfo => {
 
   // add your middleware config here
   config.middleware = [ 'errorhandle' ];
-  // config.multipart = {
-  //   mode: 'file'
-  // }
+  config.multipart = {
+    fileSize: '10mb',
+    mode: 'stream',
+    whitelist: [ '.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp' ],
+  };
 
   config.customLogger = {
     scheduleLogger: {
