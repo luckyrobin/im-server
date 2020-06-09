@@ -26,6 +26,9 @@ module.exports = app => {
   // 登出
   router.post('/api/logout', controller.signin.logout);
 
+  // 桌面端登出
+  router.post('/api/logout/desktop', controller.signin.logout4Desktop);
+
   // 用户
   // router.post('/api/user', app.controller.user.add);
 

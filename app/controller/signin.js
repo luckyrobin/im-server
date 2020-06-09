@@ -159,6 +159,23 @@ class SignInController extends HttpController {
       });
     }
   }
+
+  async logout4Desktop() {
+    const { ctx, app } = this;
+    try {
+      const token = ctx.request.header.authorization;
+      if (!token) throw new ctx.HttpError(app.config.errorCode.MISS_PARAMS, 'miss param `authorization`');
+      const msg = 'logout desktop succeed';
+      this.success({
+        msg,
+      });
+    } catch (e) {
+      this.fail({
+        code: e.code,
+        msg: e.message,
+      });
+    }
+  }
 }
 
 module.exports = SignInController;
