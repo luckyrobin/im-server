@@ -33,9 +33,9 @@ module.exports = app => {
   // router.post('/api/user', app.controller.user.add);
 
   // 通讯录管理
-  router.resources('/api/address', app.controller.addressBook);
+  router.resources('/api/address', middleware.apiauth(), app.controller.addressBook);
   // 通讯录模糊查询
-  router.post('/api/address_search', app.controller.addressBook.search);
+  router.post('/api/address_search', middleware.apiauth(), app.controller.addressBook.search);
 
   // 录入 联系人
   router.resources('/api/user', app.controller.user);
@@ -44,14 +44,14 @@ module.exports = app => {
   router.get('/api/user_info', middleware.apiauth(), app.controller.user.getCurrentUser);
 
   // 通过部门查询user
-  router.post('/api/address_user', app.controller.user.findUser);
+  router.post('/api/address_user', middleware.apiauth(), app.controller.user.findUser);
 
   // router.get('/api/user_address', app.controller.user.getAddress);
 
   // 备注管理
-  router.post('/api/remark', app.controller.remark.setRemark);
-  router.get('/api/remark', app.controller.remark.list);
-  router.get('/api/remark/:id', app.controller.remark.findOne);
+  router.post('/api/remark', middleware.apiauth(), app.controller.remark.setRemark);
+  router.get('/api/remark', middleware.apiauth(), app.controller.remark.list);
+  router.get('/api/remark/:id', middleware.apiauth(), app.controller.remark.findOne);
 
   // 系统消息
   router.resources('/api/note', middleware.apiauth(), app.controller.note);
@@ -79,8 +79,8 @@ module.exports = app => {
 
 
   // 批量审批头像
-  router.put('/api/avatar/check', app.controller.avatarCheck.update);
-  router.get('/api/avatar/check', app.controller.avatarCheck.index);
+  router.put('/api/avatar/check', middleware.apiauth(), app.controller.avatarCheck.update);
+  router.get('/api/avatar/check', middleware.apiauth(), app.controller.avatarCheck.index);
 
   // group settings
   router.get('/api/group/:id', middleware.apiauth(), app.io.controller.group.show);
