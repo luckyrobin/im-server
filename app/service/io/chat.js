@@ -116,12 +116,22 @@ class ChatService extends Service {
     }
   }
 
-  async to(savedmsg) {
+  async to(savedmsg, requestQuery) {
     const { helper, app } = this.ctx;
     const message = savedmsg;
 
     // has handled through ackAndSync
     if (`${message.from}` === `${message.to}`) return;
+
+    let currentDeviceSocketId;
+    if (typeof requestQuery === 'object' && message.typeu === 2) {
+      // 1. get current deviceType
+      const deviceType = helper.getDeviceType(requestQuery.deviceType);
+      // 2. get current signin device
+      const cooked = await this.ctx.ioClient.getCooked(`${message.from}`);
+      // 3. get current device socket
+      currentDeviceSocketId = cooked[deviceType];
+    }
 
     // typeu is identify field
     // 1: c2c get socketId from redis
@@ -144,22 +154,21 @@ class ChatService extends Service {
     }
 
     toSocketIds.forEach(socketId => {
-      app.gateway.CHAT_MESSAGE(this.ctx, socketId, helper.parseIOMsg('CHAT_MESSAGE', message, 'success'));
+      app.gateway.CHAT_MESSAGE(this.ctx, socketId, helper.parseIOMsg('CHAT_MESSAGE', message, 'success'), currentDeviceSocketId);
     });
   }
 
   // ack & multiterminal synchronization
-  async ackAndSync(mqmsg, savedmsg) {
+  async ackAndSync(savedmsg, requestQuery) {
     const { helper, app } = this.ctx;
-    const cookedmsg = JSON.parse(mqmsg.message);
     // 1. get current deviceType
-    const deviceType = helper.getDeviceType(cookedmsg.requestQuery.deviceType);
+    const deviceType = helper.getDeviceType(requestQuery.deviceType);
     // 2. get current signin device
     const cooked = await this.ctx.ioClient.getCooked(`${savedmsg.from}`);
     // 3. get current device socket
-    const currentDevice = Reflect.ownKeys(cooked).filter(item => item === deviceType).join('');
+    const currentDeviceSocketId = cooked[deviceType];
     // 4. ack to current device
-    app.gateway.CHAT_TO_ACK(this.ctx, cooked[currentDevice], helper.parseIOMsg('CHAT_TO_ACK', savedmsg, 'success'));
+    app.gateway.CHAT_TO_ACK(this.ctx, currentDeviceSocketId, helper.parseIOMsg('CHAT_TO_ACK', savedmsg, 'success'));
 
     // 同步 c2c 消息到其他设备，由于 c2g 消息是广播类型，所以不需要同步
     if (savedmsg.typeu === 1) {
@@ -169,6 +178,10 @@ class ChatService extends Service {
     }
   }
 
+  _takeRequestQuery(mqmsg) {
+    const cookedmsg = JSON.parse(mqmsg.message);
+    return cookedmsg.requestQuery;
+  }
 }
 
 module.exports = ChatService;

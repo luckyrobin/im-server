@@ -39,8 +39,17 @@ module.exports = {
         message
       );
     },
-    CHAT_MESSAGE: (ctx, socketId, message) => {
+    CHAT_MESSAGE: (ctx, socketId, message, senderSocketId) => {
       const { app } = ctx;
+      // 如果有发送者的 socketId，则直接用发送者的 socket 发送，否则 nsp 直接发送
+      if (senderSocketId) {
+        const socket = ctx.getSocketById('/chat', senderSocketId);
+        socket.to(socketId).emit(
+          app.config.emitsheet.CHAT_MESSAGE,
+          message
+        );
+        return;
+      }
       app.io.of('/chat').to(socketId).emit(
         app.config.emitsheet.CHAT_MESSAGE,
         message

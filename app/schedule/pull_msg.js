@@ -20,9 +20,9 @@ module.exports = app => (
         // 3. 同步：消息同步库 -- 写扩散
         await service.io.chat.save2Sync(savedmsg);
         // 4. 异步：应答消息 & 同步到其他登录终端
-        service.io.chat.ackAndSync(mqmsg, savedmsg);
+        service.io.chat.ackAndSync(savedmsg, service.io.chat._takeRequestQuery(mqmsg));
         // 5. 异步：发送消息
-        service.io.chat.to(savedmsg);
+        service.io.chat.to(savedmsg, service.io.chat._takeRequestQuery(mqmsg));
       } catch (error) {
         this.ctx.logger.error(`[CHAT] globalchannel MQ consumer -> schedule task: ${error}`);
       }

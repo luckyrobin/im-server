@@ -33,7 +33,7 @@ module.exports = app => {
   // router.post('/api/user', app.controller.user.add);
 
   // 通讯录管理
-  router.resources('/api/address', middleware.apiauth(), app.controller.addressBook);
+  router.resources('/api/address', app.controller.addressBook);
   // 通讯录模糊查询
   router.post('/api/address_search', middleware.apiauth(), app.controller.addressBook.search);
 
