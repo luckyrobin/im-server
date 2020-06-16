@@ -81,6 +81,7 @@ class NoteController extends HttpController {
       data: {
         list: res,
         count: dataLength,
+        timestamp: +new Date(),
       },
     });
   }
