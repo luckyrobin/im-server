@@ -61,16 +61,16 @@ class NoteController extends HttpController {
     const query = ctx.query;
     const count = query.count || 20;
     const page = query.page || 1;
+    const status = Number(query.status);
     const queries = {
-      name: {
+      content: {
         $regex: query.search || '',
       },
-    }
-    const status = Number(query.status)
+    };
     if (!Number.isNaN(status)) {
       queries.status = status;
     }
-    const resultPromise = this.ctx.model.AvatarCheck.find(queries)
+    const resultPromise = this.ctx.model.Note.find(queries)
     const allRes = await resultPromise
     const dataLength = allRes.length;
     const res = await resultPromise
