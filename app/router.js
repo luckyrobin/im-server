@@ -95,10 +95,13 @@ module.exports = app => {
   // pull history message
   router.post('/api/message', middleware.apiauth(), app.io.controller.chat.getHistoryMessage);
 
-  router.get('*', controller.render.index);
-
   // chat files(images, audio) message
   router.post('/api/message/upload', middleware.apiauth(), app.io.controller.chat.upload);
 
+  // favorites
+  router.resources('/api/favorites', middleware.apiauth(), app.io.controller.favorites);
+
   require('./router/io').gw_receive(app);
+
+  router.get('*', controller.render.index);
 };

@@ -9,7 +9,7 @@ class GroupController extends HttpController {
     const { userId } = request;
 
     try {
-      const res = await this.service.io.group.create({
+      const resp = await this.service.io.group.create({
         name: body.name,
         members: body.members,
         owner: body.owner,
@@ -17,16 +17,16 @@ class GroupController extends HttpController {
       });
 
       // create group and join room immediately
-      await this.service.io.group.aggregationMembers(res.members, res._id);
+      await this.service.io.group.aggregationMembers(resp.members, resp._id);
 
       app.gateway.CHAT_GROUP_NOTICE(
         this.ctx,
-        `${app.config.roomprefix}${res._id}`,
-        helper.parseIOMsg('CHAT_GROUP_NOTICE', { type: 'create', whoami: userId, groupId: res._id, result: res }, 'success')
+        `${app.config.roomprefix}${resp._id}`,
+        helper.parseIOMsg('CHAT_GROUP_NOTICE', { type: 'create', whoami: userId, groupId: resp._id, result: resp }, 'success')
       );
 
       this.success({
-        data: res,
+        data: resp,
       });
     } catch (e) {
       this.fail({
@@ -40,20 +40,20 @@ class GroupController extends HttpController {
     const { userId } = request;
 
     try {
-      const res = await this.service.io.group.delete(params.id);
+      const resp = await this.service.io.group.delete(params.id);
 
       app.gateway.CHAT_GROUP_NOTICE(
         this.ctx,
-        `${app.config.roomprefix}${res._id}`,
-        helper.parseIOMsg('CHAT_GROUP_NOTICE', { type: 'destroy', whoami: userId, groupId: res._id }, 'success')
+        `${app.config.roomprefix}${resp._id}`,
+        helper.parseIOMsg('CHAT_GROUP_NOTICE', { type: 'destroy', whoami: userId, groupId: resp._id }, 'success')
       );
 
       // leave room and broadcast to all client
-      await this.service.io.group.dissolveMembers(res.members, res._id);
+      await this.service.io.group.dissolveMembers(resp.members, resp._id);
 
       this.success({
         data: {
-          _id: res._id,
+          _id: resp._id,
         },
       });
     } catch (e) {
@@ -66,9 +66,9 @@ class GroupController extends HttpController {
   async show() {
     const { params } = this.ctx;
     try {
-      const res = await this.service.io.group.find(params.id);
+      const resp = await this.service.io.group.find(params.id);
       this.success({
-        data: res,
+        data: resp,
       });
     } catch (e) {
       this.fail({
@@ -90,23 +90,23 @@ class GroupController extends HttpController {
     Reflect.has(body, 'membersUpdate') && (updatedParams.membersUpdate = body.membersUpdate);
 
     try {
-      const res = await service.io.group.updateOneById({
+      const resp = await service.io.group.updateOneById({
         ...{ _id: params.id },
         ...updatedParams,
       });
 
       if (Reflect.has(updatedParams, 'membersUpdate')) {
-        await this._handleMemberUpdate(updatedParams.membersUpdate, res._id);
+        await this._handleMemberUpdate(updatedParams.membersUpdate, resp._id);
       }
 
       app.gateway.CHAT_GROUP_NOTICE(
         this.ctx,
-        `${app.config.roomprefix}${res._id}`,
-        helper.parseIOMsg('CHAT_GROUP_NOTICE', { type: 'update', whoami: userId, groupId: res._id, updateResult: updatedParams }, 'success')
+        `${app.config.roomprefix}${resp._id}`,
+        helper.parseIOMsg('CHAT_GROUP_NOTICE', { type: 'update', whoami: userId, groupId: resp._id, updateResult: updatedParams }, 'success')
       );
 
       this.success({
-        data: res,
+        data: resp,
       });
     } catch (e) {
       this.fail({
