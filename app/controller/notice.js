@@ -127,6 +127,7 @@ class NoticeController extends HttpController {
         $regex: query.search || '',
       },
     })
+      .sort({ create_time: -1 })
       .skip(count * (page - 1))
       .limit(parseInt(count));
 
