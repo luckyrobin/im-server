@@ -58,17 +58,23 @@ class NoteController extends HttpController {
 
   async index() {
     const { ctx } = this;
-    const dataLength = await this.ctx.model.Note.find({}).count();
-    // console.log(ctx.query);
     const query = ctx.query;
-    // this.success({
-    //   data: res,
-    // });
-
     const count = query.count || 20;
     const page = query.page || 1;
-
-    const res = await this.ctx.model.Note.find({})
+    const status = Number(query.status);
+    const queries = {
+      content: {
+        $regex: query.search || '',
+      },
+    };
+    if (!Number.isNaN(status)) {
+      queries.status = status;
+    }
+    const resultPromise = this.ctx.model.Note.find(queries)
+    const allRes = await resultPromise
+    const dataLength = allRes.length;
+    const res = await resultPromise
+      .sort({ create_time: -1 })
       .skip(count * (page - 1))
       .limit(parseInt(count));
 
@@ -76,6 +82,7 @@ class NoteController extends HttpController {
       data: {
         list: res,
         count: dataLength,
+        timestamp: +new Date(),
       },
     });
   }

@@ -113,7 +113,7 @@ class UserController extends HttpController {
       name: {
         $regex: body.search_name || '',
       },
-    })
+    }).sort({ create_time: -1 })
       .skip(count * (page - 1))
       .limit(parseInt(count));
 
