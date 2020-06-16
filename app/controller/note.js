@@ -74,6 +74,7 @@ class NoteController extends HttpController {
     const allRes = await resultPromise
     const dataLength = allRes.length;
     const res = await resultPromise
+      .sort({ create_time: -1 })
       .skip(count * (page - 1))
       .limit(parseInt(count));
 
