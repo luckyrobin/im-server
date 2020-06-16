@@ -161,6 +161,10 @@ class TimelineService extends Service {
     return await this.ctx.model.Timeline.find({ owner });
   }
 
+  async findOwnerSavedConversations(owner) {
+    return await this.ctx.model.Timeline.find({ owner, saved: true });
+  }
+
   async findById(id) {
     return await this.ctx.model.Timeline.findById(id);
   }

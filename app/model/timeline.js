@@ -34,6 +34,10 @@ module.exports = app => {
       type: Boolean,
       default: false,
     },
+    saved: {
+      type: Boolean,
+      default: false,
+    },
     message: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'MessageStore',
@@ -43,7 +47,7 @@ module.exports = app => {
   });
 
   Schema.pre('find', function(next) {
-    this.select('_id top mute owner to typeu alias avatar message update_time')
+    this.select('_id top mute owner saved to typeu alias avatar message update_time')
       .populate({ path: 'message', select: '_id timelineId from to type typeu content sequenceId send_time readed fp' });
     next();
   });

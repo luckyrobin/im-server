@@ -90,7 +90,8 @@ module.exports = app => {
   // router.resources('/api/group', middleware.apiauth(), app.middleware.groupfilter(), app.io.controller.group);
 
   // timeline update
-  router.put('/api/timeline/:id', middleware.apiauth(), app.io.controller.timeline.update);
+  router.put('/api/timeline/:id', middleware.apiauth(), middleware.timelinefilter(), app.io.controller.timeline.update);
+  router.get('/api/timeline', middleware.apiauth(), app.io.controller.timeline.index);
 
   // pull history message
   router.post('/api/message', middleware.apiauth(), app.io.controller.chat.getHistoryMessage);
