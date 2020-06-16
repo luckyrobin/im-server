@@ -58,17 +58,22 @@ class NoteController extends HttpController {
 
   async index() {
     const { ctx } = this;
-    const dataLength = await this.ctx.model.Note.find({}).count();
-    // console.log(ctx.query);
     const query = ctx.query;
-    // this.success({
-    //   data: res,
-    // });
-
     const count = query.count || 20;
     const page = query.page || 1;
-
-    const res = await this.ctx.model.Note.find({})
+    const queries = {
+      name: {
+        $regex: query.search || '',
+      },
+    }
+    const status = Number(query.status)
+    if (!Number.isNaN(status)) {
+      queries.status = status;
+    }
+    const resultPromise = this.ctx.model.AvatarCheck.find(queries)
+    const allRes = await resultPromise
+    const dataLength = allRes.length;
+    const res = await resultPromise
       .skip(count * (page - 1))
       .limit(parseInt(count));
 
