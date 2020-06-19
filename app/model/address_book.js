@@ -11,7 +11,11 @@ module.exports = app => {
   // 创建了schema
   const Schema = new mongoose.Schema(
     {
-      name: String,
+      name: {
+        type: String,
+        unique: true,
+        required: true,
+      },
       parent: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'address_book',

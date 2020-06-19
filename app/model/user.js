@@ -5,10 +5,24 @@ module.exports = app => {
   // 创建了schema
   const Schema = new mongoose.Schema(
     {
-      name: { type: String, unique: true },
-      phone_number: { type: String, unique: true },
-      sex: { type: Number },
-      email: { type: String },
+      name: {
+        type: String,
+        unique: true,
+        required: true,
+      },
+      phone_number: {
+        type: String,
+        unique: true,
+        required: true,
+      },
+      sex: {
+        type: Number,
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+      },
       auth: {
         type: Number,
         default: 2,
