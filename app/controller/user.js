@@ -8,61 +8,7 @@ class UserController extends HttpController {
   async create() {
     const { ctx } = this;
     const body = ctx.request.body;
-    const { name, phone_number, sex, email, parent, job } = body;
-    if (!name) {
-      this.fail({
-        code: 1,
-        msg: '请填写姓名',
-      });
-      return;
-    }
-    if (!sex) {
-      this.fail({
-        code: 1,
-        msg: '请填写性别',
-      });
-      return;
-    }
-    if (!parent) {
-      this.fail({
-        code: 1,
-        msg: '请填写部门',
-      });
-      return;
-    }
-    if (!job) {
-      this.fail({
-        code: 1,
-        msg: '请填写职位',
-      });
-      return;
-    }
-    if (!phone_number) {
-      this.fail({
-        code: 1,
-        msg: '请填写手机号',
-      });
-      return;
-    } else if (await ctx.model.User.findOne({ phone_number })) {
-      this.fail({
-        code: 1,
-        msg: '手机号已存在',
-      });
-      return;
-    }
-    if (!email) {
-      this.fail({
-        code: 1,
-        msg: '请填写邮箱',
-      });
-      return;
-    } else if (await ctx.model.User.findOne({ email })) {
-      this.fail({
-        code: 1,
-        msg: '邮箱已存在',
-      });
-      return;
-    }
+
     try {
       const res = await this.service.user.add({
         name: body.name,
