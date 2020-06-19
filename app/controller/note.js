@@ -70,8 +70,8 @@ class NoteController extends HttpController {
     if (!Number.isNaN(status)) {
       queries.status = status;
     }
-    const resultPromise = this.ctx.model.Note.find(queries)
-    const allRes = await resultPromise
+    const resultPromise = this.ctx.model.Note.find(queries);
+    const allRes = await resultPromise;
     const dataLength = allRes.length;
     const res = await resultPromise
       .sort({ create_time: -1 })

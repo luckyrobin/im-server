@@ -49,9 +49,10 @@ class UserController extends HttpController {
         msg: '修改成功',
         data: res,
       });
-    } catch (err) {
+    } catch (e) {
       this.fail({
-        data: err,
+        code: e.code,
+        msg: e.message,
       });
     }
   }
@@ -98,29 +99,26 @@ class UserController extends HttpController {
     const { ctx } = this;
     const body = ctx.request.body;
 
-    const userLength = await ctx.model.User.find({
-      address_id_arr: body.address_id,
-      name: {
-        $regex: body.search_name || '',
-      },
-    }).count();
+    const queryParams = {};
+    Reflect.has(body, 'address_id') && (queryParams.address_id_arr = body.address_id);
+    Reflect.has(body, 'search_name') && (queryParams.name = { $regex: body.search_name || '' });
 
-    const count = body.count || 20;
+    const resultPromise = this.ctx.model.User.find(queryParams);
+
+    const _count = await resultPromise;
+
+    const size = body.count || 20;
     const page = body.page || 1;
 
-    const res = await ctx.model.User.find({
-      address_id_arr: body.address_id,
-      name: {
-        $regex: body.search_name || '',
-      },
-    }).sort({ create_time: -1 })
-      .skip(count * (page - 1))
-      .limit(parseInt(count));
+    const resp = await resultPromise
+      .sort({ create_time: -1 })
+      .skip(size * (page - 1))
+      .limit(parseInt(size));
 
     this.success({
       data: {
-        userList: res,
-        count: userLength,
+        userList: resp,
+        count: _count.length,
       },
     });
   }
