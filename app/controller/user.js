@@ -101,7 +101,7 @@ class UserController extends HttpController {
 
     const queryParams = {};
     Reflect.has(body, 'address_id') && (queryParams.address_id_arr = body.address_id);
-    Reflect.has(body, 'search_name') && (queryParams.name = { $regex: body.search_name || '' });
+    Reflect.has(body, 'search_name') && (queryParams.$or = [{ name: { $regex: body.search_name } }, { phone_number: { $regex: body.search_name } }]);
 
     const resultPromise = this.ctx.model.User.find(queryParams);
 
