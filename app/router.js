@@ -38,8 +38,8 @@ module.exports = app => {
   router.post('/api/address_search', middleware.apiauth(), app.controller.addressBook.search);
 
   // 录入 联系人
-  router.resources('/api/user', app.controller.user);
-  router.post('/api/user_delete', middleware.apiauth(), app.controller.user.destroy);
+  router.resources('/api/user', middleware.apiauth(), middleware.adminauth(1), app.controller.user);
+  router.post('/api/user_delete', middleware.apiauth(), middleware.adminauth(1), app.controller.user.destroy);
   router.get('/api/user_info/:id', middleware.apiauth(), app.controller.user.getUser);
   router.get('/api/user_info', middleware.apiauth(), app.controller.user.getCurrentUser);
 
