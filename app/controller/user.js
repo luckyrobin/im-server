@@ -183,25 +183,32 @@ class UserController extends HttpController {
     }
   }
 
-  async getAddress() {
-    // const authorization = this.ctx.request.header.authorization;
-    // const result = await this.ctx.app.redis.get('105a6a3b146d');
+  async checkSms(phone, code) {
+    const originCode = await this.app.redis.get(phone);
+    return `${originCode}` === `${code}`;
+  }
 
-    const { ctx } = this;
-    const body = ctx.request.body;
+  async setPhone() {
+    const { app, ctx, service } = this;
+    const { request, HttpError } = ctx;
+    const { phone_number, code } = request.body;
 
-    // const userRes = ctx.model.User.find({
-    //     _id: body.user_id
-    // });
+    if (!phone_number || !code) throw new HttpError(app.config.errorCode.MISS_PARAMS);
 
-    const addrssArr = await this._handleAddress(
-      '5e8c4aae9026ca0cca4336aa',
-      ctx
-    );
+    try {
+      const isMatch = await this.checkSms(phone_number, code);
+      if (!isMatch) throw new HttpError('auth code failed');
 
-    this.success({
-      data: addrssArr.reverse().join('-'),
-    });
+      const resp = await service.user.update({ _id: request.userId }, { phone_number });
+      this.success({
+        data: resp,
+      });
+    } catch (e) {
+      this.fail({
+        code: e.code,
+        msg: e.message,
+      });
+    }
   }
 
 }

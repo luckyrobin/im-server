@@ -62,6 +62,8 @@ class SignInController extends HttpController {
     const { ctx, app, logger } = this;
     const body = ctx.request.body;
 
+    if (!body.phone_number || !body.code) throw new ctx.HttpError(app.config.errorCode.MISS_PARAMS);
+
     try {
       const isMatch = await this.checkSms(body.phone_number, body.code);
       if (!isMatch) throw new ctx.HttpError('auth code failed');

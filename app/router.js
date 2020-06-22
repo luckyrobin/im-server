@@ -46,8 +46,6 @@ module.exports = app => {
   // 通过部门查询user
   router.post('/api/address_user', middleware.apiauth(), app.controller.user.findUser);
 
-  // router.get('/api/user_address', app.controller.user.getAddress);
-
   // 备注管理
   router.post('/api/remark', middleware.apiauth(), app.controller.remark.setRemark);
   router.get('/api/remark', middleware.apiauth(), app.controller.remark.list);
@@ -69,6 +67,8 @@ module.exports = app => {
   router.get('/api/test1', app.controller.addressBook.test);
   // 头像设置
   router.post('/api/avatar', middleware.apiauth(), app.controller.user.setAvatar);
+  // 修改手机号
+  router.put('/api/phone', middleware.apiauth(), app.controller.user.setPhone);
 
   // 超管
   // 验证码校验
