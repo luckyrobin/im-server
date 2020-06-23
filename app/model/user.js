@@ -1,5 +1,7 @@
 'use strict';
 
+const uniqueValidator = require('mongoose-unique-validator');
+
 module.exports = app => {
   const mongoose = app.mongoose;
   // 创建了schema
@@ -7,7 +9,6 @@ module.exports = app => {
     {
       name: {
         type: String,
-        unique: true,
         required: true,
       },
       phone_number: {
@@ -21,6 +22,7 @@ module.exports = app => {
       },
       email: {
         type: String,
+        unique: true,
         required: true,
       },
       auth: {
@@ -44,6 +46,8 @@ module.exports = app => {
     },
     { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
   );
+
+  Schema.plugin(uniqueValidator);
 
   return mongoose.model('user', Schema); // 把model类return出去
 };

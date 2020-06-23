@@ -40,16 +40,16 @@ class ChatService extends Service {
         readed: savemsg.readed,
         fp: savemsg.fp,
       };
-    } catch (error) {
+    } catch (e) {
       // fp 唯一性校验不通过
       const { helper, app } = this.ctx;
       if (Reflect.has(message, 'requestQuery')) {
         const deviceType = helper.getDeviceType(message.requestQuery.deviceType);
         const cooked = await this.ctx.ioClient.getCooked(`${message.from}`);
         const socket = this.ctx.getSocketById('/chat', cooked[deviceType]);
-        this.ctx.emitError(socket, app.config.errorCode.CHAT_FAILED, `[CHAT] failed: ${error}`);
+        this.ctx.emitError(socket, app.config.errorCode.DB_VALID_FAILED, `[CHAT] failed: ${e.message}`);
       }
-      throw new Error(error);
+      throw new Error(e);
     }
   }
 

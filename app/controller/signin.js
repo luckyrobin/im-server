@@ -31,7 +31,7 @@ class SignInController extends HttpController {
       const userData = await ctx.model.User.findOne({
         phone_number: body.phone_number,
       });
-      if (!userData) throw new ctx.HttpError('该手机号码所在的用户不存在');
+      if (!userData) throw new ctx.HttpError(app.config.errorCode.USER_NOT_EXIST);
 
       await SmsClient.request('SendSms', params, { method: 'POST' }).then(
         () => {
@@ -66,12 +66,12 @@ class SignInController extends HttpController {
 
     try {
       const isMatch = await this.checkSms(body.phone_number, body.code);
-      if (!isMatch) throw new ctx.HttpError('auth code failed');
+      if (!isMatch) throw new ctx.HttpError(app.config.errorCode.CODE_VALID_FAILED);
 
       const userData = await ctx.model.User.findOne({
         phone_number: body.phone_number,
       });
-      if (!userData) throw new ctx.HttpError('该手机号码所在的用户不存在');
+      if (!userData) throw new ctx.HttpError(app.config.errorCode.USER_NOT_EXIST);
 
       const dt = ctx.helper.getDeviceType(body.deviceType) || 'MOBILE';
       const cacheToken = await app.redis.get(`${app.config.redisTokenPrefix}[${dt}]${userData._id}`);
@@ -125,7 +125,7 @@ class SignInController extends HttpController {
       const socketId = await app.redis.get(device_id);
 
       if (!socketId) {
-        throw new ctx.HttpError('deviceId is Expired');
+        throw new ctx.HttpError(app.config.errorCode.CODE_EXPIRED, 'deviceId is Expired');
       }
       const PCToken = await ctx.jwtToken.generate({ phone: data.phone, uid: data.uid, dt: ctx.helper.getDeviceType(body.deviceType) || 'DESKTOP' });
       // socket 通知 device_id 端登录成功,并将 token 发送过去, 之后断开 socket 连接

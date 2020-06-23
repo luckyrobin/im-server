@@ -187,12 +187,16 @@ module.exports = appInfo => {
         msg: 'Re login',
       },
       AUTH_FAILED: {
-        code: 20001,
+        code: 403,
         msg: 'Auth failed',
       },
       MISS_PARAMS: {
-        code: 20002,
+        code: 10002,
         msg: 'Parameter absent',
+      },
+      DB_VALID_FAILED: {
+        code: 10003,
+        msg: 'DB Valid failed',
       },
       CHAT_FAILED: {
         code: 20003,
@@ -201,6 +205,18 @@ module.exports = appInfo => {
       DUPLICATE_CLIENT: {
         code: 20004,
         msg: 'you are sign in on other device',
+      },
+      USER_NOT_EXIST: {
+        code: 20005,
+        msg: 'User does not exists',
+      },
+      CODE_EXPIRED: {
+        code: 20006,
+        msg: 'Expired code',
+      },
+      CODE_VALID_FAILED: {
+        code: 20007,
+        msg: 'Valid failed',
       },
     },
   };

@@ -5,7 +5,6 @@ const Service = require('egg').Service;
 class UserService extends Service {
   async add(data) {
     // 生成部门信息
-    // console.log(this._handleAddress)
     const address_arr = await this._handleAddress(data.parent, this.ctx);
 
     const address_str = address_arr
@@ -19,50 +18,58 @@ class UserService extends Service {
       return res.address_id;
     });
 
-    const userInstance = new this.ctx.model.User({
-      name: data.name,
-      phone_number: data.phone_number,
-      sex: data.sex,
-      email: data.email,
-      parent: data.parent,
-      job: data.job,
-      address_str,
-      address_id_arr,
-    });
+    try {
+      const userInstance = new this.ctx.model.User({
+        name: data.name,
+        phone_number: data.phone_number,
+        sex: data.sex,
+        email: data.email,
+        parent: data.parent,
+        job: data.job,
+        address_str,
+        address_id_arr,
+      });
 
-    const res = await userInstance.save();
-    // console.log('res', res);
-    return await this.ctx.model.AddressBook.update(
-      {
-        _id: data.parent,
-      },
-      {
-        $push: {
-          child_user: res._id,
+      const resp = await userInstance.save();
+      await this.ctx.model.AddressBook.update(
+        {
+          _id: data.parent,
         },
-      }
-    );
+        {
+          $push: {
+            child_user: resp._id,
+          },
+        }
+      );
+      return resp;
+    } catch (e) {
+      throw new this.ctx.HttpError(this.app.config.errorCode.DB_VALID_FAILED, e.message);
+    }
   }
 
   async update(query, params) {
     const { ctx } = this;
-    if (params.parent) {
-      const address_arr = await this._handleAddress(params.parent, this.ctx);
+    try {
+      if (params.parent) {
+        const address_arr = await this._handleAddress(params.parent, this.ctx);
 
-      const address_str = address_arr
-        .map(res => {
-          return res.name;
-        })
-        .reverse()
-        .join('-');
+        const address_str = address_arr
+          .map(res => {
+            return res.name;
+          })
+          .reverse()
+          .join('-');
 
-      const address_id_arr = address_arr.map(res => {
-        return res.address_id;
-      });
-      params.address_str = address_str;
-      params.address_id_arr = address_id_arr;
+        const address_id_arr = address_arr.map(res => {
+          return res.address_id;
+        });
+        params.address_str = address_str;
+        params.address_id_arr = address_id_arr;
+      }
+      return await ctx.model.User.update(query, params);
+    } catch (e) {
+      throw new this.ctx.HttpError(this.app.config.errorCode.DB_VALID_FAILED, e.message);
     }
-    return await ctx.model.User.update(query, params);
   }
 
   async getUser() {

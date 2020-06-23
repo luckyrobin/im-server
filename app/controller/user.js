@@ -22,10 +22,10 @@ class UserController extends HttpController {
       this.success({
         data: res,
       });
-    } catch (err) {
+    } catch (e) {
       this.fail({
-        msg: '添加失败',
-        data: err,
+        code: e.code,
+        msg: e.message,
       });
     }
   }
@@ -71,8 +71,6 @@ class UserController extends HttpController {
         },
       });
 
-      // console.log('======',  res)
-
       const res2 = await ctx.model.AddressBook.update(
         {
           _id: body.address_id,
@@ -87,9 +85,10 @@ class UserController extends HttpController {
       this.success({
         data: res2,
       });
-    } catch (err) {
+    } catch (e) {
       this.fail({
-        data: err,
+        code: e.code,
+        msg: e.message,
       });
     }
   }
@@ -197,7 +196,7 @@ class UserController extends HttpController {
 
     try {
       const isMatch = await this.checkSms(phone_number, code);
-      if (!isMatch) throw new HttpError('auth code failed');
+      if (!isMatch) throw new HttpError(app.config.errorCode.CODE_VALID_FAILED);
 
       const resp = await service.user.update({ _id: request.userId }, { phone_number });
       this.success({
