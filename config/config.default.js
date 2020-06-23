@@ -216,11 +216,11 @@ module.exports = appInfo => {
       },
       CODE_EXPIRED: {
         code: 20006,
-        msg: 'Expired code',
+        msg: 'Code Expired',
       },
       CODE_VALID_FAILED: {
         code: 20007,
-        msg: 'Valid failed',
+        msg: 'Code valid failed',
       },
     },
   };
