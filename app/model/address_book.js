@@ -13,7 +13,7 @@ module.exports = app => {
     {
       name: {
         type: String,
-        unique: true,
+        index: true,
         required: true,
       },
       parent: {

@@ -198,6 +198,10 @@ module.exports = appInfo => {
         code: 10003,
         msg: 'DB Valid failed',
       },
+      DUPLICATE_VALUE: {
+        code: 10004,
+        msg: 'Duplicate value',
+      },
       CHAT_FAILED: {
         code: 20003,
         msg: 'Send message failed',

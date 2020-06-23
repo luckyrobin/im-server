@@ -7,6 +7,8 @@ class AddressController extends HttpController {
     const { ctx, service } = this;
     const body = ctx.request.body;
     try {
+      const hasFind = await service.address.findByParent(body);
+      if (hasFind) throw new ctx.HttpError(this.app.config.errorCode.DUPLICATE_VALUE, 'address is duplicate');
       let res;
       if (body.parent) {
         res = await service.address.addChildAddress({
@@ -23,10 +25,10 @@ class AddressController extends HttpController {
         msg: '部门创建成功',
         data: res,
       });
-    } catch (err) {
-      console.log(err);
+    } catch (e) {
       this.fail({
-        data: err,
+        code: e.code,
+        msg: e.message,
       });
     }
   }
@@ -72,7 +74,6 @@ class AddressController extends HttpController {
     const { ctx } = this;
     const body = ctx.request.body;
     const id = ctx.params.id;
-    console.log('-----------');
     try {
       const res = await ctx.model.AddressBook.update(
         {
@@ -86,9 +87,10 @@ class AddressController extends HttpController {
       this.success({
         data: res,
       });
-    } catch (err) {
+    } catch (e) {
       this.fail({
-        data: err,
+        code: e.code,
+        msg: e.message,
       });
     }
   }
@@ -128,16 +130,6 @@ class AddressController extends HttpController {
 
     this.success({
       msg: '删除成功',
-    });
-  }
-
-  async test() {
-    const res = await this.ctx.model.AddressBook.find({
-      _id: '5e8c4aae9026ca0cca4336aa',
-    });
-
-    this.success({
-      data: res,
     });
   }
 }

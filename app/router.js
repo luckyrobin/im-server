@@ -64,7 +64,6 @@ module.exports = app => {
   // 公告 图片上传
   router.post('/api/notice/upload', middleware.apiauth(), app.controller.notice.upload);
 
-  router.get('/api/test1', app.controller.addressBook.test);
   // 头像设置
   router.post('/api/avatar', middleware.apiauth(), app.controller.user.setAvatar);
   // 修改手机号
