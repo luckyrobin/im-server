@@ -8,39 +8,43 @@ class AdministratorController extends HttpController {
     const { ctx } = this;
     const body = ctx.request.body;
 
-    const code1 = await this.app.redis.get(body.phone1);
-    const code2 = await this.app.redis.get(body.phone2);
+    try {
+      const code1 = await this.app.redis.get(body.phone1);
+      const code2 = await this.app.redis.get(body.phone2);
 
-    if (code1 === body.code1 && code2 === body.code2) {
-      const userData = await this.service.user.getUser();
-      const newUser = await ctx.model.User.findOne({
-        phone_number: body.phone2,
-      });
+      if (code1 === body.code1 && code2 === body.code2) {
+        const userData = await this.service.user.getUser();
+        const newUser = await ctx.model.User.findOne({
+          phone_number: body.phone2,
+        });
 
-      await this.service.user.update(
-        {
-          _id: userData._id,
-        },
-        {
-          auth: 2,
-        }
-      );
+        await this.service.user.update(
+          {
+            _id: userData._id,
+          },
+          {
+            auth: 2,
+          }
+        );
 
-      const res2 = await this.service.user.update(
-        {
-          _id: newUser._id,
-        },
-        {
-          auth: 1,
-        }
-      );
-
-      this.success({
-        data: res2,
-      });
-    } else {
+        const res2 = await this.service.user.update(
+          {
+            _id: newUser._id,
+          },
+          {
+            auth: 1,
+          }
+        );
+        this.success({
+          data: res2,
+        });
+      } else {
+        throw new ctx.HttpError(this.app.config.errorCode.CODE_VALID_FAILED);
+      }
+    } catch (e) {
       this.fail({
-        msg: '验证码错误',
+        code: e.code,
+        msg: e.message,
       });
     }
   }

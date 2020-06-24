@@ -14,6 +14,7 @@ module.exports = app => {
       phone_number: {
         type: String,
         unique: true,
+        background: true,
         required: true,
       },
       sex: {
@@ -23,6 +24,7 @@ module.exports = app => {
       email: {
         type: String,
         unique: true,
+        background: true,
         required: true,
       },
       auth: {
