@@ -27,10 +27,13 @@ class FavoritesController extends HttpController {
 
   async index() {
     const { request } = this.ctx;
-    const { userId } = request;
-
+    const { userId, query } = request;
+    const indexParams = {
+      pageSize: query.pageSize || 100,
+      current: query.current || 1,
+    };
     try {
-      const resp = await this.service.io.favorites.findByOwner(userId);
+      const resp = await this.service.io.favorites.findByOwner(userId, indexParams);
       this.success({
         data: resp,
       });

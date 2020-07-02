@@ -13,8 +13,9 @@ class FavoritesService extends Service {
     return await document.save();
   }
 
-  async findByOwner(owner) {
-    return await this.ctx.model.Favorites.find({ owner });
+  async findByOwner(owner, params) {
+    const { pageSize, current } = params;
+    return await this.ctx.model.Favorites.find({ owner }).skip(pageSize * (current - 1)).limit(parseInt(pageSize));
   }
 
   async delete(id) {
