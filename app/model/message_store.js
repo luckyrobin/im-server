@@ -27,7 +27,7 @@ module.exports = app => {
     },
     type: {
       type: Number,
-      enum: [ 1, 2, 3, 10 ], // 消息类型 1: 文本消息 2: 图片消息 3: 语音消息 10: 被撤回的消息
+      enum: [ 1, 2, 3, 10, 11 ], // 消息类型 1: 文本消息 2: 图片消息 3: 语音消息 10: 被撤回的消息  11: 合并的消息
       required: true,
     },
     content: String,
