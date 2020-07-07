@@ -120,6 +120,7 @@ class ChatController extends Controller {
     const { userId } = socket.handshake.query;
     const message = this.ctx.packet[1];
     const recalledMessage = await service.io.message.recallStoreMessageByFp(userId, message.fp);
+    service.io.chat.ackAndSync(recalledMessage, socket.handshake.query);
     service.io.chat.to(recalledMessage, socket.handshake.query);
   }
 
