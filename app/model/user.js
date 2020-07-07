@@ -51,5 +51,5 @@ module.exports = app => {
 
   Schema.plugin(uniqueValidator);
 
-  return mongoose.model('user', Schema); // 把model类return出去
+  return mongoose.model('User', Schema); // 把model类return出去
 };

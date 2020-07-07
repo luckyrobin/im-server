@@ -6,7 +6,7 @@ module.exports = app => {
     {
       user_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'User',
       },
       status: {
         type: Number,

@@ -27,8 +27,8 @@ module.exports = app => {
 
   Schema.pre('find', function(next) {
     this.select('owner timeline messages create_time')
-      .populate({ path: 'timeline', select: '_id' })
-      .populate({ path: 'messages', select: '_id' });
+      .populate({ path: 'timeline', select: '_id alias avatar typeu -message' })
+      .populate({ path: 'messages', populate: { path: 'from', select: '_id name avatar' } });
     next();
   });
 

@@ -8,11 +8,11 @@ module.exports = app => {
     {
       master: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'User',
       },
       guest: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'User',
       },
       name: String,
     },
