@@ -119,7 +119,12 @@ class ChatController extends Controller {
     const { socket, service } = this.ctx;
     const { userId } = socket.handshake.query;
     const message = this.ctx.packet[1];
-    const recalledMessage = await service.io.message.recallStoreMessageByFp(userId, message.fp);
+
+    // Hard coded 为了保证 App 端能够区分普通消息和合并消息
+    // type === 11 就是合并消息, 所以返回的撤回消息 type === 21
+    const recallType = message.type === 11 ? 21 : 10;
+
+    const recalledMessage = await service.io.message.recallStoreMessageByFp(userId, message.fp, recallType);
     service.io.chat.ackAndSync(recalledMessage, socket.handshake.query);
     service.io.chat.to(recalledMessage, socket.handshake.query);
   }

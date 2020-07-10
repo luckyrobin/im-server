@@ -61,7 +61,7 @@ module.exports = app => {
       if (!NORMAL_TYPEU.includes(message.typeu)) return;
 
       const currentMessage = await service.io.message.findStoreMessage({ fp: message.fp });
-      if (currentMessage.type === 10) {
+      if (currentMessage.type === 10 || currentMessage.type === 21) {
         ctx.emitError(socket, app.config.errorCode.CHAT_FAILED, '[CHAT] duplicate to recall');
         return;
       }
