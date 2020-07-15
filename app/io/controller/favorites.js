@@ -31,6 +31,7 @@ class FavoritesController extends HttpController {
     const indexParams = {
       pageSize: query.pageSize || 100,
       current: query.current || 1,
+      search: query.search || '',
     };
     try {
       const resp = await this.service.io.favorites.findByOwner(userId, indexParams);

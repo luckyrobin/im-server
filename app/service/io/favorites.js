@@ -14,8 +14,18 @@ class FavoritesService extends Service {
   }
 
   async findByOwner(owner, params) {
-    const { pageSize, current } = params;
-    return await this.ctx.model.Favorites.find({ owner }).skip(pageSize * (current - 1)).limit(parseInt(pageSize));
+    const { pageSize, current, search } = params;
+    let result = await this.ctx.model.Favorites.find({ owner }).skip(pageSize * (current - 1)).limit(parseInt(pageSize));
+    if (search !== '') {
+      const reg = new RegExp(`\\${search}`, 'ig');
+      result = result.filter(item => {
+        const matched = item.messages.some(msg => {
+          return reg.test(msg.content) || reg.test(msg.from.name);
+        });
+        return reg.test(item.timeline.alias) || matched;
+      });
+    }
+    return result;
   }
 
   async delete(id) {
