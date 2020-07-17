@@ -130,16 +130,18 @@ class ChatController extends Controller {
   }
 
   async upload() {
-    const { app, request, helper } = this.ctx;
+    const { app, request, helper, HttpError } = this.ctx;
     const { userId } = request;
     try {
       const stream = await this.ctx.getFileStream();
-      const filename = `chat/${userId}/${new Date().getTime()}_.pic`;
+      const type = helper.parseFileMimeType(stream);
+      if (!type) throw new HttpError(this.app.config.errorCode.FILE_ERROR, 'file type unidentification');
+      const filename = `chat/${userId}/${new Date().getTime()}_.${type === 2 ? 'pic' : ''}${type === 3 ? 'audio' : ''}`;
       const result = await app.oss.instance.put(filename, stream);
       this.ctx.body = {
         code: 0,
         msg: 'ok',
-        data: helper.genMessageTypeField(stream, result),
+        data: await helper.genMessageTypeField(stream, result, type),
       };
     } catch (e) {
       this.ctx.body = {

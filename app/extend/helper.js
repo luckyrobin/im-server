@@ -78,11 +78,31 @@ module.exports = {
       to: temp[1],
     };
   },
-  genMessageTypeField(stream, upload, type = 2) {
+  parseFileMimeType(stream) {
+    const mimeType = stream.mimeType;
+    if (/image*/.test(mimeType)) {
+      return 2;
+    }
+
+    if (/audio*/.test(mimeType)) {
+      return 3;
+    }
+
+    return false;
+  },
+  async genMessageTypeField(stream, upload, type) {
     if (type === 2) {
       return {
         origin: `${upload.url}?x-oss-process=image/format,jpg`,
         thumb: `${upload.url}?x-oss-process=image/format,jpg/quality,q_10/resize,p_10`,
+        filename: upload.name,
+        tag: upload.res.headers.etag,
+      };
+    }
+    if (type === 3) {
+      return {
+        origin: `${upload.url}`,
+        duration: '',
         filename: upload.name,
         tag: upload.res.headers.etag,
       };

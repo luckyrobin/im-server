@@ -20,7 +20,7 @@ module.exports = appInfo => {
   config.multipart = {
     fileSize: '10mb',
     mode: 'stream',
-    whitelist: [ '.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp' ],
+    whitelist: [ '.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp', '.wav' ],
   };
 
   config.customLogger = {
@@ -221,6 +221,10 @@ module.exports = appInfo => {
       CODE_VALID_FAILED: {
         code: 20007,
         msg: 'Code valid failed',
+      },
+      FILE_ERROR: {
+        code: 20008,
+        msg: 'Upload File failed',
       },
     },
   };
