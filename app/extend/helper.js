@@ -79,16 +79,12 @@ module.exports = {
     };
   },
   parseFileMimeType(stream) {
-    const mimeType = stream.mimeType;
-    if (/image*/.test(mimeType)) {
-      return 2;
-    }
-
-    if (/audio*/.test(mimeType)) {
-      return 3;
-    }
-
-    return false;
+    const { whitelist } = this.app.config.multipart;
+    const filename = stream.filename;
+    const reg = /(\.[a-z]+$)/ig;
+    const matchExtension = filename.match(reg)[0];
+    if (!whitelist.includes(matchExtension)) return false;
+    return matchExtension === '.wav' ? 3 : 2;
   },
   async genMessageTypeField(stream, upload, type) {
     if (type === 2) {
