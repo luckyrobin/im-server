@@ -98,7 +98,7 @@ module.exports = {
     if (type === 3) {
       return {
         origin: `${upload.url}`,
-        duration: '',
+        duration: stream.fields.length,
         filename: upload.name,
         tag: upload.res.headers.etag,
       };
