@@ -136,7 +136,7 @@ class ChatController extends Controller {
       const stream = await this.ctx.getFileStream();
       const type = helper.parseFileMimeType(stream);
       if (!type) throw new HttpError(this.app.config.errorCode.FILE_ERROR, 'file type unidentification');
-      const filename = `chat/${userId}/${new Date().getTime()}_.${type === 2 ? 'pic' : ''}${type === 3 ? 'audio' : ''}`;
+      const filename = `chat/${userId}/${new Date().getTime()}_.${type === 2 ? 'pic' : ''}${type === 3 ? 'wav' : ''}`;
       const result = await app.oss.instance.put(filename, stream);
       this.ctx.body = {
         code: 0,
