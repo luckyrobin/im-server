@@ -90,9 +90,9 @@ module.exports = {
     if (type === 2) {
       return {
         origin: `${upload.url}?x-oss-process=image/format,jpg`,
-        thumb: `${upload.url}?x-oss-process=image/format,jpg/quality,q_10/resize,p_10`,
+        thumb: `${upload.url}?x-oss-process=image/format,jpg/quality,q_10`,
         filename: upload.name,
-        tag: upload.res.headers.etag,
+        tag: upload.res.headers.etag.replace(/"/g, ''),
       };
     }
     if (type === 3) {
@@ -100,7 +100,7 @@ module.exports = {
         origin: `${upload.url}`,
         duration: stream.fields.length,
         filename: upload.name,
-        tag: upload.res.headers.etag,
+        tag: upload.res.headers.etag.replace(/"/g, ''),
       };
     }
   },
