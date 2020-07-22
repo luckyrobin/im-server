@@ -92,6 +92,12 @@ module.exports = appInfo => {
           packetMiddleware: [ 'chatfilter' ],
         },
       },
+      redis: {
+        host: 'localhost',
+        port: 6379,
+        auth_pass: '',
+        db: 0,
+      },
     },
     jwt: {
       secret: config.keys,
