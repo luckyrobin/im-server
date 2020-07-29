@@ -122,8 +122,9 @@ class NoteController extends HttpController {
   }
 
   async recall() {
-    const { ctx, app } = this;
+    const { ctx, app, service } = this;
     const id = ctx.params.id;
+    const userId = ctx.request.userId;
     try {
       const currentNote = await ctx.model.Note.findById(id);
       if (currentNote.status === 1) {
@@ -132,9 +133,14 @@ class NoteController extends HttpController {
       if (((Date.now() - Date.parse(currentNote.create_time)) / 1000) > app.config.recallExpiresIn) {
         throw new ctx.HttpError('[NOTE] current note exceed 2min');
       }
-      const res = await ctx.model.Note.update({ _id: id }, { status: 1 });
+      const resp = await ctx.model.Note.findOneAndUpdate({ _id: id }, { status: 1 }, { new: true });
+      // TODO undo note
+      const recalledMessage = await service.io.message.recallStoreMessageById(userId, resp.message);
+
+      app.gateway.CHAT_MESSAGE_ALL(ctx, ctx.helper.parseIOMsg('CHAT_MESSAGE', recalledMessage, 'success'));
+
       this.success({
-        data: res,
+        data: resp,
       });
     } catch (e) {
       this.fail({
