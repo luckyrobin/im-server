@@ -28,7 +28,11 @@ class ChatController extends Controller {
   async clientHasReceived() {
     const { socket, service } = this.ctx;
     const { userId } = socket.handshake.query;
-    const messages = this.ctx.packet[1];
+    let messages = this.ctx.packet[1];
+    // 由于 flutter 无法直接发送数组类型数据，所以约定把结果包在 { data: [] } 里
+    if (Reflect.has(messages, 'data')) {
+      messages = messages.data;
+    }
     await service.io.message.updateSyncMessageStatus(userId, messages);
   }
 
