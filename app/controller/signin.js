@@ -178,6 +178,21 @@ class SignInController extends HttpController {
       });
     }
   }
+
+  async setPushDeviceId() {
+    const { request, pushClient } = this.ctx;
+    const body = request.body;
+    const { userId } = request;
+    try {
+      pushClient.push(userId, body.pushDeviceId);
+      this.success();
+    } catch (e) {
+      this.fail({
+        code: e.code,
+        msg: e.message,
+      });
+    }
+  }
 }
 
 module.exports = SignInController;

@@ -3,9 +3,11 @@
 const JwtToken = require('./mount/jwttoken');
 const IOClient = require('./mount/ioclient');
 const HttpError = require('./mount/httperror');
+const PushClient = require('./mount/pushclient');
 
 let jwtTokenInstance = null;
 let ioClientInstance = null;
+let pushClientInstance = null;
 
 module.exports = {
   get jwtToken() {
@@ -19,6 +21,12 @@ module.exports = {
       ioClientInstance = new IOClient(this);
     }
     return ioClientInstance;
+  },
+  get pushClient() {
+    if (!pushClientInstance) {
+      pushClientInstance = new PushClient(this);
+    }
+    return pushClientInstance;
   },
   HttpError,
   emitError(socket, status, msg) {

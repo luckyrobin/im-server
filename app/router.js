@@ -101,6 +101,9 @@ module.exports = app => {
   // favorites
   router.resources('/api/favorites', middleware.apiauth(), app.io.controller.favorites);
 
+  // deviceId
+  router.post('/api/pushdeviceid', middleware.apiauth(), app.controller.signin.setPushDeviceId);
+
   require('./router/io').gw_receive(app);
 
   router.get('*', controller.render.index);
