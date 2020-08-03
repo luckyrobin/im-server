@@ -155,6 +155,7 @@ class ChatService extends Service {
 
     await this.toPush(savedmsg, savedmsg.to);
 
+
     toSocketIds.forEach(socketId => {
       app.gateway.CHAT_MESSAGE(this.ctx, socketId, helper.parseIOMsg('CHAT_MESSAGE', message, 'success'), currentDeviceSocketId);
     });
