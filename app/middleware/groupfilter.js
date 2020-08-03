@@ -8,6 +8,11 @@ module.exports = () => {
 
       const groupInfo = await service.io.group.find(params.id);
 
+      const inGroup = await service.io.chat.checkUserInGroup(userId, params.id);
+      if (!inGroup) {
+        throw new HttpError(`[Group] group is dissolved or you are not members of group ${params.id}`);
+      }
+
       if (!groupInfo) throw new HttpError(`[GROUP] current groupId ${params.id} is not exist`);
 
       if (groupInfo && groupInfo.onlyOwner && userId !== `${groupInfo.owner}`) {
