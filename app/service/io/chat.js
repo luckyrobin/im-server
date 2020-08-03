@@ -164,7 +164,8 @@ class ChatService extends Service {
   async toPush(savedmsg, userId) {
     const { app, pushClient } = this.ctx;
     const pushDeviceId = await pushClient.get(userId);
-    app.pushService.pushNotice(pushDeviceId, '哈哈哈', savedmsg.content, savedmsg);
+    if (!pushDeviceId) return;
+    app.pushService.pushNotice(pushDeviceId, '我是谁', savedmsg.content, savedmsg);
   }
 
   // ack & multiterminal synchronization
