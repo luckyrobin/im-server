@@ -153,9 +153,17 @@ class ChatService extends Service {
         return;
     }
 
+    await this.toPush(savedmsg, savedmsg.to);
+
     toSocketIds.forEach(socketId => {
       app.gateway.CHAT_MESSAGE(this.ctx, socketId, helper.parseIOMsg('CHAT_MESSAGE', message, 'success'), currentDeviceSocketId);
     });
+  }
+
+  async toPush(savedmsg, userId) {
+    const { app, pushClient } = this.ctx;
+    const pushDeviceId = await pushClient.get(userId);
+    app.pushService.pushNotice(pushDeviceId, '哈哈哈', savedmsg.content, savedmsg);
   }
 
   // ack & multiterminal synchronization

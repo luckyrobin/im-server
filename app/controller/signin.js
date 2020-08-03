@@ -184,7 +184,7 @@ class SignInController extends HttpController {
     const body = request.body;
     const { userId } = request;
     try {
-      pushClient.push(userId, body.pushDeviceId);
+      await pushClient.push(userId, body.pushDeviceId);
       this.success();
     } catch (e) {
       this.fail({
