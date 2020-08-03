@@ -148,20 +148,11 @@ class UserController extends HttpController {
     try {
       const userData = await this.service.user.findUser(request.userId);
       const avatarData = await this.service.avatar.findByUserId(request.userId);
-
       if (avatarData && avatarData.status === 0) throw new HttpError('您上次提交的修改正在审核中');
 
       const stream = await this.ctx.getFileStream();
       const imgName = `avatar/${userData.name}_${new Date().getTime()}_${path.basename(stream.filename)}`;
       const result = await app.oss.instance.put(imgName, stream);
-      this.service.user.update(
-        {
-          _id: userData._id,
-        },
-        {
-          avatar: result.url,
-        }
-      );
 
       const instance = new ctx.model.AvatarCheck({
         user_id: userData._id,

@@ -6,6 +6,7 @@ class AvatarService extends Service {
   async findByUserId(userId) {
     return await this.ctx.model.AvatarCheck.findOne({
       user_id: userId,
+      status: 0,
     });
   }
 }
