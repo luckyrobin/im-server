@@ -91,6 +91,8 @@ module.exports = {
       return {
         origin: `${upload.url}?x-oss-process=image/format,jpg`,
         thumb: `${upload.url}?x-oss-process=image/format,jpg/quality,q_10`,
+        width: stream.fields.width,
+        height: stream.fields.height,
         filename: upload.name,
         tag: upload.res.headers.etag.replace(/"/g, ''),
       };
