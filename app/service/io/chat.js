@@ -10,7 +10,14 @@ const pool = new ObjectPool({
 
 class ChatService extends Service {
 
-  async checkAuthToken() {
+  async checkAuthToken(token) {
+    const { logger } = this.ctx;
+    try {
+      this.app.jwt.verify(token, this.app.config.jwt.secret);
+    } catch (e) {
+      logger.debug(`[CHAT checkAuthToken]: ${e.message}`);
+      return false;
+    }
     return true;
   }
 

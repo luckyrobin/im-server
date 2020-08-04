@@ -19,13 +19,12 @@ module.exports = app => {
       return;
     }
 
-    logger.info(`[CHAT] SOCKET_ID: ${socket.id} with token: ${token} has connection!`);
-    logger.info('[CHAT] now authentication the token');
+    logger.info(`[CHAT] SOCKET_ID: ${socket.id} with useId: ${userId} has connection!`);
 
     const authOK = await service.io.chat.checkAuthToken(token);
 
     if (!authOK) {
-      ctx.emitError(socket, app.config.errorCode.AUTH_FAILED);
+      ctx.emitError(socket, app.config.errorCode.AUTH_FAILED, 'token is invalid or expired');
       ctx.lazyCloseSocket(socket);
       return;
     }
