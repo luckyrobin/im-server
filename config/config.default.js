@@ -47,8 +47,9 @@ module.exports = appInfo => {
     recallExpiresIn: 60 * 2, // 消息撤回时效
     // mongoose
     mongoose: {
-      url: 'mongodb://localhost:27017/im', // connect to other docker image port: 27017
+      url: `mongodb://root:123456@${process.env.docker_db}`, // connect to other docker image port: 27017
       options: {
+        dbName: 'im',
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
@@ -58,8 +59,8 @@ module.exports = appInfo => {
     redis: {
       client: {
         port: 6379, // Redis port
-        host: 'localhost', // Redis host
-        password: '',
+        host: process.env.docker_redis, // Redis host
+        password: '123456',
         db: 0,
       },
       agent: true,
@@ -91,12 +92,6 @@ module.exports = appInfo => {
           connectionMiddleware: [ 'chatconnection' ],
           packetMiddleware: [ 'chatfilter' ],
         },
-      },
-      redis: {
-        host: 'localhost',
-        port: 6379,
-        auth_pass: '',
-        db: 0,
       },
     },
     jwt: {

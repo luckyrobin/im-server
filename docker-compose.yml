@@ -1,27 +1,44 @@
-version: '2'
+version: '3'
 
 services:
 
-  im-server:
+  im:
     build: .
-    networks:
-      - mybridge
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - ./:/usr/src/project
+    environment:
+      - NODE_ENV=production
+      - EGG_SERVER_ENV=production
+      - docker_db=db
+      - docker_redis=redis
     ports:
       - "7001:7001"
+    restart: always  
 
-  redis-im:
+  redis:
     image: redis
-    networks: 
-      - mybridge
+    volumes:
+      - ./data/redis:/data
+    command: redis-server --requirepass 123456
     ports:
-      - "6379:6379"    
+      - "6379:6379"  
+    restart: always    
     
-  mongo-im:
-    image: mongo
-    networks:
-      - mybridge
+  db:
+    image: mongo # 镜像:版本
+    volumes:
+      - ./data/db:/data/db
+      - ./patch/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root # 默认开启授权，并创建超管用户 mongo -u godis -p godis@admin --authenticationDatabase admin
+      - MONGO_INITDB_ROOT_PASSWORD=123456 # 超管密码
+      - MONGO_INITDB_DATABASE=im
     ports:
       - "27017:27017"
+    restart: always
   # nginx:
   #   image: nginx
   #   networks:
@@ -30,6 +47,3 @@ services:
   #     - ./docker-config/nginx.conf:/etc/nginx/nginx.conf
   #   ports:
   #     - "80:80"
-
-networks:
-  mybridge:

@@ -38,7 +38,7 @@
   "scripts": {
     "start": "egg-scripts start --title=im-server --sticky",
     "stop": "egg-scripts stop --title=im-server",
-    "dev": "egg-bin dev --sticky",
+    "dev": "docker_redis=localhost docker_db=localhost:27017 egg-bin dev --sticky",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",
