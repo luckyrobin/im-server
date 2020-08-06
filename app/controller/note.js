@@ -137,7 +137,7 @@ class NoteController extends HttpController {
       // TODO undo note
       const recalledMessage = await service.io.message.recallStoreMessageById(userId, resp.message);
 
-      app.gateway.CHAT_MESSAGE_ALL(ctx, ctx.helper.parseIOMsg('CHAT_MESSAGE', recalledMessage, 'success'));
+      service.io.chat.toAll(recalledMessage);
 
       this.success({
         data: resp,

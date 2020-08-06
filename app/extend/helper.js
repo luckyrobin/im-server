@@ -112,7 +112,7 @@ module.exports = {
       if (typeu === 1) {
         const { from } = this.parseTimelineId(timelineId);
         chatId = from;
-      } else if (typeu === 2) {
+      } else {
         const { to } = this.parseTimelineId(timelineId);
         chatId = to;
       }

@@ -150,15 +150,10 @@ class ChatService extends Service {
         Object.keys(cooked).forEach(item => {
           toSocketIds.push(cooked[item]);
         });
-        // 如果用户不在线，走推送机制
-        if (toSocketIds.length === 0) {
-          return this.toPush(savedmsg);
-        }
         break;
       }
       case 2: {
         toSocketIds.push(`${app.config.roomprefix}${message.to}`);
-        this.toPush(savedmsg);
         break;
       }
       default:
@@ -168,35 +163,78 @@ class ChatService extends Service {
     toSocketIds.forEach(socketId => {
       app.gateway.CHAT_MESSAGE(this.ctx, socketId, helper.parseIOMsg('CHAT_MESSAGE', message, 'success'), currentDeviceSocketId);
     });
+
+    // 如果用户不在线，走推送机制
+    this.toPush(savedmsg);
   }
 
   async toPush(savedmsg) {
-    const { app, pushClient, helper, service } = this.ctx;
+    const { app, ioClient, pushClient, helper, service } = this.ctx;
     const message = savedmsg;
 
-    const pushDeviceIds = [];
+    let pushDeviceIds = [];
     let title = '黑马云聊';
+    let content = '';
+    let target;
     switch (message.typeu) {
       case 1: {
+        // 如果需要推送的用户在线，已经通过 socket 推送，中断推送流程
+        if (await ioClient.isOnline(message.to)) return false;
         const sender = await service.user.findUser(message.from);
         title = sender.name;
+        content = helper.mapPushContent(message);
         pushDeviceIds.push(await pushClient.get(message.to));
         break;
       }
       case 2: {
         const group = await service.io.group.find(message.to);
         title = group.name;
-        await Promise.all(group.members.map(async item => {
-          return pushDeviceIds.push(await pushClient.get(item));
+        content = helper.mapPushContent(message);
+        await Promise.all(group.members.filter(i => `${i}` !== `${message.from}`).map(async item => {
+          // 如果需要推送的用户在线，已经通过 socket 推送，中断推送流程
+          if (await ioClient.isOnline(item)) return await false;
+          return await pushDeviceIds.push(await pushClient.get(item));
         }));
+        break;
+      }
+      case 3: {
+        title = '系统消息';
+        if (message.type === 1) {
+          const parsedContent = JSON.parse(message.content);
+          content = parsedContent.content;
+        } else {
+          content = message.content;
+        }
+        target = 'ALL';
+        pushDeviceIds.push('ALL');
+        break;
+      }
+      case 4: {
+        title = '公告';
+        if (message.type === 1) {
+          const parsedContent = JSON.parse(message.content);
+          content = parsedContent.title;
+        } else {
+          content = message.content;
+        }
+        target = 'ALL';
+        pushDeviceIds.push('ALL');
         break;
       }
       default:
         return;
     }
 
+    // 过滤没有 deviceID 的用户
+    pushDeviceIds = pushDeviceIds.filter(i => i);
     if (pushDeviceIds.length === 0) return;
-    app.pushService.pushNotice(pushDeviceIds.join(','), title, helper.mapPushContent(message), helper.generatePushExt(message));
+    app.pushService.pushNotice(pushDeviceIds.join(','), title, content, helper.generatePushExt(message), target);
+  }
+
+  async toAll(savedmsg) {
+    const { helper, app } = this.ctx;
+    app.gateway.CHAT_MESSAGE_ALL(this.ctx, helper.parseIOMsg('CHAT_MESSAGE', savedmsg, 'success'));
+    this.toPush(savedmsg);
   }
 
   // ack & multiterminal synchronization
