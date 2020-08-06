@@ -150,29 +150,53 @@ class ChatService extends Service {
         Object.keys(cooked).forEach(item => {
           toSocketIds.push(cooked[item]);
         });
+        // 如果用户不在线，走推送机制
+        if (toSocketIds.length === 0) {
+          return this.toPush(savedmsg);
+        }
         break;
       }
       case 2: {
         toSocketIds.push(`${app.config.roomprefix}${message.to}`);
+        this.toPush(savedmsg);
         break;
       }
       default:
         return;
     }
 
-    await this.toPush(savedmsg, savedmsg.to);
-
-
     toSocketIds.forEach(socketId => {
       app.gateway.CHAT_MESSAGE(this.ctx, socketId, helper.parseIOMsg('CHAT_MESSAGE', message, 'success'), currentDeviceSocketId);
     });
   }
 
-  async toPush(savedmsg, userId) {
-    const { app, pushClient } = this.ctx;
-    const pushDeviceId = await pushClient.get(userId);
-    if (!pushDeviceId) return;
-    app.pushService.pushNotice(pushDeviceId, '我是谁', savedmsg.content, savedmsg);
+  async toPush(savedmsg) {
+    const { app, pushClient, helper, service } = this.ctx;
+    const message = savedmsg;
+
+    const pushDeviceIds = [];
+    let title = '黑马云聊';
+    switch (message.typeu) {
+      case 1: {
+        const sender = await service.user.findUser(message.from);
+        title = sender.name;
+        pushDeviceIds.push(await pushClient.get(message.to));
+        break;
+      }
+      case 2: {
+        const group = await service.io.group.find(message.to);
+        title = group.name;
+        await Promise.all(group.members.map(async item => {
+          return pushDeviceIds.push(await pushClient.get(item));
+        }));
+        break;
+      }
+      default:
+        return;
+    }
+
+    if (pushDeviceIds.length === 0) return;
+    app.pushService.pushNotice(pushDeviceIds.join(','), title, helper.mapPushContent(message), helper.generatePushExt(message));
   }
 
   // ack & multiterminal synchronization

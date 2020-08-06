@@ -106,4 +106,42 @@ module.exports = {
       };
     }
   },
+  generatePushExt(message) {
+    const timelineId2ChatId = (timelineId, typeu) => {
+      let chatId = '';
+      if (typeu === 1) {
+        const { from } = this.parseTimelineId(timelineId);
+        chatId = from;
+      } else if (typeu === 2) {
+        const { to } = this.parseTimelineId(timelineId);
+        chatId = to;
+      }
+      return chatId;
+    };
+    const ext = {
+      content: message,
+      chatId: timelineId2ChatId(message.timelineId, message.typeu),
+    };
+    return JSON.stringify(ext);
+  },
+  mapPushContent(message) {
+    const maxLen = 20;
+    const content = message.content;
+    switch (message.type) {
+      case 1: {
+        return `${content.substr(0, maxLen)}${content.length > maxLen ? '...' : ''}`;
+      }
+      case 2: {
+        return '[图片]';
+      }
+      case 3: {
+        return '[语音]';
+      }
+      case 11: {
+        return '[历史消息]';
+      }
+      default:
+        return `${content.substr(0, maxLen)}${content.length > maxLen ? '...' : ''}`;
+    }
+  },
 };
