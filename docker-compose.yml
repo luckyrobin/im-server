@@ -2,11 +2,12 @@ version: '3'
 
 services:
 
-  im:
+  app:
     build: .
     depends_on:
       - redis
       - db
+      - nginx
     volumes:
       - ./:/usr/src/project
     environment:
@@ -39,11 +40,11 @@ services:
     ports:
       - "27017:27017"
     restart: always
-  # nginx:
-  #   image: nginx
-  #   networks:
-  #     - mybridge
-  #   volumes:
-  #     - ./docker-config/nginx.conf:/etc/nginx/nginx.conf
-  #   ports:
-  #     - "80:80"
+
+  nginx:
+    image: nginx
+    volumes:
+      - ./docker-config/conf.d/:/etc/nginx/conf.d/:ro
+    ports:
+      - "80:80"
+    restart: always
