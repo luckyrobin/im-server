@@ -1,7 +1,6 @@
 'use strict';
-// const Controller = require('egg').Controller;
+
 const HttpController = require('./base/http');
-// const sendToWormhole = require('stream-wormhole');
 const path = require('path');
 
 class UserController extends HttpController {
@@ -65,13 +64,13 @@ class UserController extends HttpController {
     // console.log('======', body.user_arr)
 
     try {
-      const res = await ctx.model.User.remove({
+      const resp = await ctx.model.User.remove({
         _id: {
           $in: body.user_arr,
         },
       });
 
-      const res2 = await ctx.model.AddressBook.update(
+      await ctx.model.AddressBook.update(
         {
           _id: body.address_id,
         },
@@ -83,7 +82,7 @@ class UserController extends HttpController {
       );
 
       this.success({
-        data: res2,
+        data: resp,
       });
     } catch (e) {
       this.fail({

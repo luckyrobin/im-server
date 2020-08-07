@@ -41,6 +41,17 @@ services:
       - "27017:27017"
     restart: always
 
+  adminmongo:
+    image: mrvautin/adminmongo
+    depends_on:
+      - db
+    volumes:
+      - ./docker-config/adminmongo.json:/app/user/config/app.json
+      - ./data/backups:/app/user/backups
+    ports:
+      - "1234:1234"
+    restart: always
+
   nginx:
     image: nginx
     volumes:
