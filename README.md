@@ -38,6 +38,13 @@ $ open http://localhost:7001/
 $ docker-compose up -d
 ```
 
+**mongoDB replSet**
+
+```bash
+# run mongodb
+$ docker run --name im-mongo -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=123456 -e MONGO_INITDB_DATABASE=admin -v $PWD/data/db:/data/db -d -p 27017:27017 mongo --replSet "rs0" --keyFile ./docker-config/auth.key
+```
+
 ### npm scripts
 
 - Use `npm run lint` to check code style.
