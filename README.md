@@ -13,7 +13,7 @@ see [egg docs][egg] for more detail.
 when you are first start, run mongodb and redis
 ```bash
 # run mongodb
-$ docker run --name im-mongo -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=123456 -e MONGO_INITDB_DATABASE=im -v $PWD/data/db:/data/db -v $PWD/patch/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro -d -p 27017:27017 mongo
+$ docker run --name im-mongo -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=123456 -e MONGO_INITDB_DATABASE=admin -v $PWD/data/db:/data/db -v $PWD/docker-config/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro -v $PWD/docker-config/mongo.conf:/etc/mongo.conf -d -p 27017:27017 mongo
 ```
 
 ```bash

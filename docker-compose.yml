@@ -32,11 +32,12 @@ services:
     image: mongo # 镜像:版本
     volumes:
       - ./data/db:/data/db
-      - ./patch/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./docker-config/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    command: mongod --replSet rs0
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root # 默认开启授权，并创建超管用户 mongo -u godis -p godis@admin --authenticationDatabase admin
       - MONGO_INITDB_ROOT_PASSWORD=123456 # 超管密码
-      - MONGO_INITDB_DATABASE=im
+      - MONGO_INITDB_DATABASE=admin
     ports:
       - "27017:27017"
     restart: always
