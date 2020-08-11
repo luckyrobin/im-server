@@ -1,6 +1,7 @@
 /* eslint valid-jsdoc: "off" */
 
 'use strict';
+const path = require('path');
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
@@ -28,6 +29,10 @@ module.exports = appInfo => {
       consoleLevel: 'ERROR',
       level: 'ERROR',
     },
+  };
+
+  config.logger = {
+    dir: path.join(appInfo.baseDir, 'logs', appInfo.name),
   };
 
   config.logrotator = {
@@ -83,8 +88,6 @@ module.exports = appInfo => {
       init: {
         path: '/ws',
         origins: '*:*',
-        pingInterval: 1000,
-        pingTimeout: 10000,
       },
       namespace: {
         '/sso': {
