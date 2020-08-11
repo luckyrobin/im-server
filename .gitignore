@@ -13,5 +13,6 @@ run/
 typings/
 .nyc_output/
 
+.github/
 data/
 docker-config/keyfile
