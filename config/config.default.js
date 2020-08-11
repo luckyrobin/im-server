@@ -83,8 +83,8 @@ module.exports = appInfo => {
       init: {
         path: '/ws',
         origins: '*:*',
-        pingInterval: '1000',
-        pingTimeout: '10000',
+        pingInterval: 1000,
+        pingTimeout: 10000,
       },
       namespace: {
         '/sso': {
