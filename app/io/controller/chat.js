@@ -90,14 +90,20 @@ class ChatController extends Controller {
     Object.keys(cooked).forEach(item => {
       toSocketIds.push(cooked[item]);
     });
+    const willSend = {
+      _id: storeMessage._id,
+      timelineId: storeMessage.timelineId,
+      typeu: storeMessage.typeu,
+      readed: storeMessage.readed,
+      fp: message.fp,
+    };
+    // 如果推送已读状态时，接收方不在线，就将已读回执缓存起来
+    if (toSocketIds.length === 0) {
+      const { redis, config } = app;
+      await redis.rpush(`${config.readedListPrefix}${message.from}`, JSON.stringify(willSend));
+    }
     toSocketIds.forEach(socketId => {
-      app.gateway.CHAT_TO_READED(this.ctx, socketId, helper.parseIOMsg('CHAT_TO_READED', {
-        _id: storeMessage._id,
-        timelineId: storeMessage.timelineId,
-        typeu: storeMessage.typeu,
-        readed: storeMessage.readed,
-        fp: message.fp,
-      }, 'success'));
+      app.gateway.CHAT_TO_READED(this.ctx, socketId, helper.parseIOMsg('CHAT_TO_READED', [ willSend ], 'success'));
     });
   }
 
@@ -153,6 +159,15 @@ class ChatController extends Controller {
         msg: e.message,
       };
     }
+  }
+
+  async getReadedList() {
+    const { app, socket, helper } = this.ctx;
+    const { userId } = socket.handshake.query;
+    const { redis } = app;
+    const existedList = await redis.lrange(`${app.config.readedListPrefix}${userId}`, 0, -1);
+    app.gateway.CHAT_TO_READED(this.ctx, socket.id, helper.parseIOMsg('CHAT_TO_READED', existedList.map(i => JSON.parse(i)), 'success'));
+    await redis.del(`${app.config.readedListPrefix}${userId}`);
   }
 }
 

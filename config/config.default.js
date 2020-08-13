@@ -44,6 +44,7 @@ module.exports = appInfo => {
     myAppName: 'im', // 应用名称
     redisTokenPrefix: 'rft:', // refresh token 前缀字符
     globalchannel: 'GLOBALCHANNEL', // redis 消息队列名称
+    readedListPrefix: 'readedList:',
     customAgents: {
       AGENT_TO: 'agent_to', // 发送消息定时任务名称
     },
@@ -188,6 +189,10 @@ module.exports = appInfo => {
        * 客户端撤回消息
       */
       CHAT_TO_UNDO: 'to_undo',
+      /**
+       * 服务端推送已读消息
+      */
+      CHAT_PULL_READED_MESSAGE: 'readed_message',
     },
     roomprefix: 'ROOM',
   };
