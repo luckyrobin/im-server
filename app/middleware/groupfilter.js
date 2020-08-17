@@ -25,6 +25,17 @@ module.exports = () => {
         }
       }
 
+      if (Reflect.has(body, 'membersUpdate')) {
+        const addReg = /^\+/g;
+        const removeReg = /^\-/g;
+        const membersUpdate = body.membersUpdate;
+        await Promise.all(membersUpdate.map(async member => {
+          const existed = await service.io.chat.checkUserInGroup(member.substr(1), params.id);
+          if (addReg.test(member) && existed) throw new HttpError(`${member.substr(1)}已存在群组中，请勿重复更新`);
+          if (removeReg.test(member) && !existed) throw new HttpError(`${member.substr(1)}已经不在群组中，请勿重复更新`);
+        }));
+      }
+
       ctx.groupInfo = groupInfo;
       await next();
     } catch (e) {
