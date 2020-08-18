@@ -9,21 +9,21 @@ class AddressController extends HttpController {
     try {
       const hasFind = await service.address.findByParent(body);
       if (hasFind) throw new ctx.HttpError(this.app.config.errorCode.DUPLICATE_VALUE, 'address is duplicate');
-      let res;
+      let resp;
       if (body.parent) {
-        res = await service.address.addChildAddress({
+        resp = await service.address.addChildAddress({
           parent: body.parent,
           name: body.name,
         });
       } else {
-        res = await service.address.addTopAddress({
+        resp = await service.address.addTopAddress({
           name: body.name,
         });
       }
 
       this.success({
         msg: '部门创建成功',
-        data: res,
+        data: resp,
       });
     } catch (e) {
       this.fail({
@@ -35,14 +35,38 @@ class AddressController extends HttpController {
 
   async index() {
     const { ctx } = this;
-    const res = await ctx.model.AddressBook.find({
-      parent: {
-        $exists: false,
+    const { query } = ctx;
+    const size = query.count || 20;
+    const page = query.page || 1;
+    let conditions = {
+      name: {
+        $regex: query.search || '',
       },
-    });
+    };
+    if (!query.search) {
+      conditions = {
+        ...conditions,
+        parent: {
+          $exists: false,
+        },
+      };
+    }
+    const resp = await ctx.model.AddressBook.find(conditions)
+      .skip(size * (page - 1))
+      .limit(parseInt(size));
 
     this.success({
-      data: res,
+      data: resp,
+    });
+  }
+
+  async show() {
+    const { ctx } = this;
+    const { params } = ctx;
+    const resp = await ctx.model.AddressBook.findById(params.id);
+
+    this.success({
+      data: resp,
     });
   }
 

@@ -33,18 +33,17 @@ module.exports = app => {
   // router.post('/api/user', app.controller.user.add);
 
   // 通讯录管理
-  router.resources('/api/address', app.controller.addressBook);
+  router.resources('/api/address', middleware.apiauth(), app.controller.addressBook);
   // 通讯录模糊查询
-  router.post('/api/address_search', middleware.apiauth(), app.controller.addressBook.search);
+  // router.post('/api/address_search', middleware.apiauth(), app.controller.addressBook.search);
+  // 通过部门查询 user
+  router.post('/api/address_user', middleware.apiauth(), app.controller.user.findUser);
 
   // 录入 联系人
   router.resources('/api/user', middleware.apiauth(), middleware.adminauth(1), app.controller.user);
   router.post('/api/user_delete', middleware.apiauth(), middleware.adminauth(1), app.controller.user.destroy);
   router.get('/api/user_info/:id', middleware.apiauth(), app.controller.user.getUser);
   router.get('/api/user_info', middleware.apiauth(), app.controller.user.getCurrentUser);
-
-  // 通过部门查询user
-  router.post('/api/address_user', middleware.apiauth(), app.controller.user.findUser);
 
   // 备注管理
   router.post('/api/remark', middleware.apiauth(), app.controller.remark.setRemark);
