@@ -37,6 +37,15 @@ module.exports = {
     );
     app.gateway.IMERROR(this, socket, helper.parseIOMsg('IMERROR', null, status.code, { msg: message }));
   },
+  pushError(deviceId, status, msg) {
+    const { app, logger } = this;
+    const title = '通知';
+    const message = msg || status.msg;
+    logger.debug(
+      `[PUSHERROR] deviceId: ${deviceId} code: ${status.code} msg: ${message}`
+    );
+    app.pushService.pushNotice(deviceId, title, message, JSON.stringify(status));
+  },
   getSocketById(nsp, socketId) {
     return this.app.io.of(nsp).sockets[socketId];
   },

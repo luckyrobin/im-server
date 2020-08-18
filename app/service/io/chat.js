@@ -173,7 +173,7 @@ class ChatService extends Service {
     const message = savedmsg;
 
     let pushDeviceIds = [];
-    let title = '黑马云聊';
+    let title = '';
     let content = '';
     let target;
     switch (message.typeu) {

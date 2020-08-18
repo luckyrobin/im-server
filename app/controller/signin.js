@@ -180,10 +180,14 @@ class SignInController extends HttpController {
   }
 
   async setPushDeviceId() {
-    const { request, pushClient } = this.ctx;
+    const { request, pushClient, app } = this.ctx;
     const body = request.body;
     const { userId } = request;
     try {
+      const previousDeviceId = await pushClient.get(userId);
+      if (previousDeviceId && (previousDeviceId !== body.pushDeviceId)) {
+        this.ctx.pushError(previousDeviceId, app.config.errorCode.DUPLICATE_CLIENT, '您已经在另一台设备上登录');
+      }
       await pushClient.push(userId, body.pushDeviceId);
       this.success();
     } catch (e) {
