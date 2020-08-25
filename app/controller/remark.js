@@ -2,44 +2,18 @@
 const HttpController = require('./base/http');
 
 class RemarkController extends HttpController {
-  async setRemark() {
+  async create() {
     const { ctx } = this;
+    const { request } = ctx;
+    const { userId } = request;
     const body = ctx.request.body;
-    const userData = await this.service.user.getUser();
 
     try {
-      const findRes = await ctx.model.Remark.find({
-        master: userData._id,
-        guest: body.guest,
+      const resp = await ctx.model.Remark.update({ master: userId, guest: body.guest }, { name: body.name }, { new: true, upsert: true });
+
+      this.success({
+        data: resp,
       });
-
-      if (findRes.lenght) {
-        const res = await ctx.model.Remark.update(
-          {
-            master: userData._id,
-            guest: body.guest,
-          },
-          {
-            name: body.name,
-          }
-        );
-
-        this.success({
-          data: res,
-        });
-      } else {
-        // 如果没有设置备注，则创建
-        const instance = new ctx.model.Remark({
-          master: userData._id,
-          guest: body.guest,
-          name: body.name,
-        });
-
-        const res = await instance.save();
-        this.success({
-          data: res,
-        });
-      }
     } catch (err) {
       this.fail({
         msg: err,
@@ -47,32 +21,33 @@ class RemarkController extends HttpController {
     }
   }
 
-  async list() {
+  async index() {
     const { ctx } = this;
-    const userData = await this.service.user.getUser();
+    const { request } = ctx;
+    const { userId } = request;
 
-    const res = await ctx.model.Remark.find({
-      master: userData._id,
+    const resp = await ctx.model.Remark.find({
+      master: userId,
     });
 
     this.success({
-      data: res,
+      data: resp,
     });
   }
 
-  async findOne() {
+  async show() {
     const { ctx } = this;
-    const userData = await this.service.user.getUser();
-    const id = ctx.params.id;
+    const { params, request } = ctx;
+    const { userId } = request;
 
     try {
-      const res = await ctx.model.Remark.findOne({
-        master: userData._id,
-        guest: id,
+      const resp = await ctx.model.Remark.findOne({
+        master: userId,
+        guest: params.id,
       });
 
       this.success({
-        data: res,
+        data: resp,
       });
     } catch (err) {
       this.fail({

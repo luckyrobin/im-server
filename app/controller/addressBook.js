@@ -35,7 +35,8 @@ class AddressController extends HttpController {
 
   async index() {
     const { ctx } = this;
-    const { query } = ctx;
+    const { query, request } = ctx;
+    const { userId } = request;
     const size = query.count || 20;
     const page = query.page || 1;
     let conditions = {
@@ -51,7 +52,7 @@ class AddressController extends HttpController {
         },
       };
     }
-    const resp = await ctx.model.AddressBook.find(conditions)
+    const resp = await ctx.model.AddressBook.find(conditions, null, { comment: userId })
       .skip(size * (page - 1))
       .limit(parseInt(size));
 
@@ -62,37 +63,15 @@ class AddressController extends HttpController {
 
   async show() {
     const { ctx } = this;
-    const { params } = ctx;
-    const resp = await ctx.model.AddressBook.findById(params.id);
+    const { params, request } = ctx;
+    const { userId } = request;
+    const resp = await ctx.model.AddressBook.findById(params.id, null, { comment: userId });
 
     this.success({
       data: resp,
     });
   }
 
-  async search() {
-    const { ctx } = this;
-    const body = ctx.request.body;
-
-    const userRes = await ctx.model.User.find({
-      name: {
-        $regex: body.search,
-      },
-    });
-
-    const addressRes = await ctx.model.AddressBook.find({
-      name: {
-        $regex: body.search,
-      },
-    });
-
-    this.success({
-      data: {
-        user: userRes,
-        address: addressRes,
-      },
-    });
-  }
 
   async update() {
     const { ctx } = this;

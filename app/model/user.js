@@ -51,5 +51,14 @@ module.exports = app => {
 
   Schema.plugin(uniqueValidator);
 
+  Schema.set('toJSON', { virtuals: true });
+
+  Schema.virtual('remark', {
+    ref: 'remark',
+    localField: '_id',
+    foreignField: 'guest',
+    justOne: true,
+  });
+
   return mongoose.model('User', Schema); // 把model类return出去
 };

@@ -34,8 +34,6 @@ module.exports = app => {
 
   // 通讯录管理
   router.resources('/api/address', middleware.apiauth(), app.controller.addressBook);
-  // 通讯录模糊查询
-  // router.post('/api/address_search', middleware.apiauth(), app.controller.addressBook.search);
   // 通过部门查询 user
   router.post('/api/address_user', middleware.apiauth(), app.controller.user.findUser);
 
@@ -46,9 +44,7 @@ module.exports = app => {
   router.get('/api/user_info', middleware.apiauth(), app.controller.user.getCurrentUser);
 
   // 备注管理
-  router.post('/api/remark', middleware.apiauth(), app.controller.remark.setRemark);
-  router.get('/api/remark', middleware.apiauth(), app.controller.remark.list);
-  router.get('/api/remark/:id', middleware.apiauth(), app.controller.remark.findOne);
+  router.resources('/api/remark', middleware.apiauth(), app.controller.remark);
 
   // 系统消息
   router.resources('/api/note', middleware.apiauth(), app.controller.note);
