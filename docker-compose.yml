@@ -35,7 +35,7 @@ services:
       - ./docker-config/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - ./docker-config/mongo.conf:/etc/mongo.conf
       - ./docker-config/keyfile:/data/keyfile
-    # command: mongod --auth --keyFile /data/keyfile/auth.key --bind_ip_all --replSet rs0
+    command: mongod --auth --keyFile /data/keyfile/auth.key --replSet rs0
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root # 默认开启授权，并创建超管用户 mongo -u godis -p godis@admin --authenticationDatabase admin
       - MONGO_INITDB_ROOT_PASSWORD=123456 # 超管密码
