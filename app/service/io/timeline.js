@@ -177,6 +177,10 @@ class TimelineService extends Service {
   async updateAlias(toId, alias) {
     return await this.ctx.model.Timeline.updateMany({ to: toId }, { alias });
   }
+
+  async updateAvatar(toId, avatar) {
+    return await this.ctx.model.Timeline.updateMany({ to: toId }, { avatar });
+  }
 }
 
 module.exports = TimelineService;

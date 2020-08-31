@@ -35,6 +35,7 @@ class AvatarCheckController extends HttpController {
             avatar: item.avatar,
           }
         );
+        this.service.io.timeline.updateAvatar(item.user_id, item.avatar);
       });
     }
 
