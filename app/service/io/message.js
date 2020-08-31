@@ -148,11 +148,12 @@ class MessageService extends Service {
   }
 
   async recallStoreMessageByFp(owner, fp, type = 10) {
-    return await this.ctx.model.MessageStore.findOneAndUpdate({ fp }, { content: `${owner} recalled a message`, type }, { new: true });
+    const ownerInfo = await this.ctx.model.User.findById(owner);
+    return await this.ctx.model.MessageStore.findOneAndUpdate({ fp }, { content: `${ownerInfo.name} 撤回了一条消息`, type }, { new: true });
   }
 
   async recallStoreMessageById(owner, id, type = 10) {
-    return await this.ctx.model.MessageStore.findOneAndUpdate({ _id: id }, { content: 'Administrator recalled a message', type }, { new: true });
+    return await this.ctx.model.MessageStore.findOneAndUpdate({ _id: id }, { content: '该条消息已撤回', type }, { new: true });
   }
 
   async findStoreMessage(conditions) {
