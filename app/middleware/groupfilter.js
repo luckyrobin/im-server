@@ -16,7 +16,9 @@ module.exports = () => {
       if (!groupInfo) throw new HttpError(`[GROUP] current groupId ${params.id} is not exist`);
 
       if (groupInfo && groupInfo.onlyOwner && userId !== `${groupInfo.owner}`) {
-        throw new HttpError('[GROUP] only update by owner');
+        // 如果是自己退出群聊，则忽略 onlyOwner 的权限问题
+        const goOutBySelf = Reflect.has(body, 'membersUpdate') && (body.membersUpdate.length === 1) && (body.membersUpdate[0] === `-${userId}`);
+        if (!goOutBySelf) throw new HttpError('[GROUP] only update by owner');
       }
 
       if (Reflect.has(body, 'owner') || Reflect.has(body, 'onlyOwner')) {
