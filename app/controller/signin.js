@@ -28,9 +28,20 @@ class SignInController extends HttpController {
         TemplateParam: `{"code": ${code}}`,
       };
 
-      const userData = await ctx.model.User.findOne({
-        phone_number: body.phone_number,
-      });
+      let userData = null;
+      // 如果是用户自己修改新的手机号码，则通过 token 获取 uid 拿到用户详细数据
+      const token = ctx.request.header.authorization;
+      if (token) {
+        const verify = ctx.jwtToken.check(token);
+        userData = await ctx.model.User.findOne({
+          _id: verify.uid,
+        });
+      } else {
+        userData = await ctx.model.User.findOne({
+          phone_number: body.phone_number,
+        });
+      }
+
       if (!userData) throw new ctx.HttpError(app.config.errorCode.USER_NOT_EXIST);
 
       await SmsClient.request('SendSms', params, { method: 'POST' }).then(
