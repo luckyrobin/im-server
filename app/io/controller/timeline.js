@@ -21,7 +21,7 @@ class TimelineController extends HttpController {
   }
 
   async update() {
-    const { params, request } = this.ctx;
+    const { params, request, service, helper } = this.ctx;
     const body = request.body;
 
     const updatedParams = {};
@@ -30,6 +30,19 @@ class TimelineController extends HttpController {
     Reflect.has(body, 'saved') && (updatedParams.saved = body.saved);
 
     try {
+      // 如果没有创建群会话框，则自动创建一个
+      if (Reflect.has(updatedParams, 'saved')) {
+        const hasCreated = await service.io.timeline.findById(params.id);
+        if (!hasCreated) {
+          const conversation = helper.parseTimelineId(params.id);
+          await service.io.timeline.createBatch({
+            to: conversation.to,
+            from: conversation.from,
+            typeu: 2,
+          });
+        }
+      }
+
       const resp = await this.service.io.timeline.updateOneById({
         ...{ _id: params.id },
         ...updatedParams,
