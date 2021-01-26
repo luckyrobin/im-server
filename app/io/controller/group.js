@@ -4,12 +4,12 @@ const HttpController = require('../../controller/base/http');
 
 class GroupController extends HttpController {
   async create() {
-    const { request, app, helper } = this.ctx;
+    const { request, app, helper, service } = this.ctx;
     const body = request.body;
     const { userId } = request;
 
     try {
-      const resp = await this.service.io.group.create({
+      const resp = await service.io.group.create({
         name: body.name,
         members: body.members,
         owner: body.owner,
@@ -17,13 +17,19 @@ class GroupController extends HttpController {
       });
 
       // create group and join room immediately
-      await this.service.io.group.aggregationMembers(resp.members, resp._id);
+      await service.io.group.aggregationMembers(resp.members, resp._id);
 
       app.gateway.CHAT_GROUP_NOTICE(
         this.ctx,
         `${app.config.roomprefix}${resp._id}`,
         helper.parseIOMsg('CHAT_GROUP_NOTICE', { type: 'create', whoami: userId, groupId: resp._id, result: resp }, 'success')
       );
+
+      // 创建群会话框
+      await service.io.timeline.createBatch({
+        to: resp._id,
+        typeu: 2,
+      });
 
       this.success({
         data: resp,
