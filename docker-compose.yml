@@ -60,5 +60,5 @@ services:
     volumes:
       - ./docker-config/conf.d/:/etc/nginx/conf.d/:ro
     ports:
-      - "80:80"
+      - "7000:80"
     restart: always
