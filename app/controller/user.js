@@ -174,7 +174,7 @@ class UserController extends HttpController {
 
   async checkSms(phone, code) {
     // Tips: 万能验证码，仅供测试
-    if (code === '886886') return true;
+    if (`${code}` === '886886') return true;
     const originCode = await this.app.redis.get(phone);
     return `${originCode}` === `${code}`;
   }
