@@ -30,6 +30,7 @@ services:
     
   db:
     image: mongo # 镜像:版本
+    container_name: im-db
     volumes:
       - ./data/db:/data/db
       - ./docker-config/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
