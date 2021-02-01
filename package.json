@@ -36,7 +36,7 @@
     "node": ">=10.16.0"
   },
   "scripts": {
-    "start": "egg-scripts start --title=im-server --sticky",
+    "start": "egg-scripts start --title=im-server --sticky --workers=1",
     "stop": "egg-scripts stop --title=im-server",
     "dev": "docker_redis=localhost docker_db=localhost:27017 egg-bin dev --sticky",
     "debug": "egg-bin debug",
