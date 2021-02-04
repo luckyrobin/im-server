@@ -45,13 +45,11 @@ class ChatController extends Controller {
       userId = socket.handshake.query.userId;
       params = this.ctx.packet[1];
       const messagesList = await this._getHistoryMessage.call(this, userId, params);
-      if (!messagesList) return;
       app.gateway.CHAT_PULL_HISTORY_MESSAGE(this.ctx, socket.id, helper.parseIOMsg('CHAT_PULL_HISTORY_MESSAGE', messagesList, 'success'));
     } else {
       userId = request.userId;
       params = request.body;
       const messagesList = await this._getHistoryMessage.call(this, userId, params);
-      if (!messagesList) return;
       this.ctx.body = {
         code: 0,
         data: messagesList,
@@ -72,8 +70,13 @@ class ChatController extends Controller {
         historyMessages = await service.io.message.findGroupHistoryMessages(userId, params);
         break;
       }
+      case 3: // eslint-disable-next-line no-fallthrough
+      case 4: {
+        historyMessages = await service.io.message.findOwnerHistoryMessages(userId, params);
+        break;
+      }
       default:
-        return false;
+        return [];
     }
     return historyMessages;
   }
