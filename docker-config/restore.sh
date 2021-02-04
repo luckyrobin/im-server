@@ -1,11 +1,11 @@
 #!/bin/bash
 echo 'mongodb im restore start...'
 CONTAINER=im-db
-tar -zxvf ./data/backups/im.tar.gz
+FILENAME=im.20210129.archive
+docker cp ./data/backups/$FILENAME $CONTAINER:/home/
 docker exec -i $CONTAINER bash << 'EOF'
-mongorestore -h 127.0.0.1 --port 27017 -d im ./home/dump/im/ --drop --authenticationDatabase admin -u=root -p=123456
+FILENAME=im.20210129.archive
+mongorestore -h 127.0.0.1 --port 27017 -d im --archive=/home/$FILENAME --drop --authenticationDatabase admin -u=root -p=123456
 exit
 EOF
-echo 'remove dir...'
-rm -rf ./home
 echo 'mongodb im restore end'
