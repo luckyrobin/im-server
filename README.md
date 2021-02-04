@@ -49,14 +49,20 @@ $ docker run --name im-mongo -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_
 
 **Backup DataBase**
 
+**Tips: you must enter into ./docker-config**
+
 ```bash
-$ bash docker-config/backup.sh
+$ cd ./docker-config
+$ bash ./backup.sh
 ```
 
 **Restore DataBase**
 
+**Tips: you must enter into ./docker-config**
+
 ```bash
-$ bash docker-config/restore.sh 
+$ cd ./docker-config
+$ bash ./restore.sh
 ```
 
 ### npm scripts
