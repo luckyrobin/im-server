@@ -71,6 +71,8 @@ class MessageService extends Service {
     const { model, helper } = this.ctx;
     const limit = params.limit || 10;
 
+    const ownerMessageTrash = await this.getOwnerMessageTrash(owner);
+    const trashedMessages = ownerMessageTrash && ownerMessageTrash.messages || [];
     if (!params.messageId) {
       const conversation = helper.parseTimelineId(params.timelineId);
       return await model.MessageStore.find({
@@ -81,6 +83,7 @@ class MessageService extends Service {
               { timelineId: helper.generateTimelineId(conversation.to, conversation.from) },
             ],
           },
+          { _id: { $nin: trashedMessages } },
           {
             send_time: {
               $lte: Date.now(),
@@ -99,6 +102,7 @@ class MessageService extends Service {
             { timelineId: helper.generateTimelineId(currentMessage.to, currentMessage.from) },
           ],
         },
+        { _id: { $nin: trashedMessages } },
         {
           send_time: {
             $lt: currentMessage.send_time,
@@ -112,6 +116,8 @@ class MessageService extends Service {
     const { model, helper } = this.ctx;
     const limit = params.limit || 10;
 
+    const ownerMessageTrash = await this.getOwnerMessageTrash(owner);
+    const trashedMessages = ownerMessageTrash && ownerMessageTrash.messages || [];
     if (!params.messageId) {
       const conversation = helper.parseTimelineId(params.timelineId);
       return await model.MessageStore.find({
@@ -119,6 +125,7 @@ class MessageService extends Service {
           {
             to: conversation.to,
           },
+          { _id: { $nin: trashedMessages } },
           {
             send_time: {
               $lte: Date.now(),
@@ -134,6 +141,7 @@ class MessageService extends Service {
         {
           to: currentMessage.to,
         },
+        { _id: { $nin: trashedMessages } },
         {
           send_time: {
             $lt: currentMessage.send_time,
@@ -162,6 +170,24 @@ class MessageService extends Service {
 
   async removeStoreMessageByIds(ids) {
     return await this.ctx.model.MessageStore.deleteMany({ _id: { $in: ids } });
+  }
+
+  async getOwnerMessageTrash(owner) {
+    return await this.ctx.model.MessageTrash.findOne({ owner });
+  }
+
+  async addToMessageTrash(owner, ids) {
+    return await this.ctx.model.MessageTrash.update(
+      {
+        owner,
+      },
+      {
+        $push: {
+          messages: ids,
+        },
+      },
+      { new: true, upsert: true }
+    );
   }
 }
 

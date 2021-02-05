@@ -90,6 +90,9 @@ module.exports = app => {
   // pull history message
   router.post('/api/message', middleware.apiauth(), app.io.controller.chat.getHistoryMessage);
 
+  // delete message
+  router.del('/api/message', middleware.apiauth(), app.io.controller.chat.removeMessage);
+
   // chat files(images, audio) message
   router.post('/api/message/upload', middleware.apiauth(), app.io.controller.chat.upload);
 

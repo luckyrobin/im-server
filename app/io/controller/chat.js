@@ -172,6 +172,23 @@ class ChatController extends Controller {
     app.gateway.CHAT_TO_READED(this.ctx, socket.id, helper.parseIOMsg('CHAT_TO_READED', existedList.map(i => JSON.parse(i)), 'success'));
     await redis.del(`${app.config.readedListPrefix}${userId}`);
   }
+
+  async removeMessage() {
+    const { helper, service, request, HttpError } = this.ctx;
+    const userId = request.userId;
+    const params = request.body;
+
+    // 鉴别当前用户是否属于既定会话
+    const conversation = helper.parseTimelineId(params.timelineId);
+    if (conversation.from !== userId) {
+      throw new HttpError('[TIMELINE] current conversation is not belong to you');
+    }
+    await service.io.message.addToMessageTrash(userId, params.messageIds);
+    this.ctx.body = {
+      code: 0,
+      msg: 'ok',
+    };
+  }
 }
 
 module.exports = ChatController;
