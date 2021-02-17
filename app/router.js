@@ -38,6 +38,7 @@ module.exports = app => {
   router.post('/api/address_user', middleware.apiauth(), app.controller.user.findUser);
 
   // 录入 联系人
+  router.post('/api/register', app.controller.user.create);
   router.resources('/api/user', middleware.apiauth(), middleware.adminauth(1), app.controller.user);
   router.post('/api/user_delete', middleware.apiauth(), middleware.adminauth(1), app.controller.user.destroy);
   router.get('/api/user_info/:id', middleware.apiauth(), app.controller.user.getUser);
